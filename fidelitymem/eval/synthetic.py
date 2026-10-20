@@ -49,6 +49,7 @@ class BenchItem:
     gold: list[str]  # raw texts of gold episodes
     qtype: str
     answer: str = ""
+    gold_idx: list[int] | None = None  # episode indices; authoritative when set (texts may repeat)
 
 
 @dataclass
@@ -56,6 +57,31 @@ class Benchmark:
     episodes: list[tuple[str, datetime]]  # (text, timestamp) in ingestion order
     items: list[BenchItem]
     text_to_idx: dict[str, int] = field(default_factory=dict)
+    name: str = "synthetic"
+
+    def gold_indices(self, item: BenchItem) -> list[int]:
+        if item.gold_idx is not None:
+            return list(item.gold_idx)
+        return [self.text_to_idx[g] for g in item.gold]
+
+
+def from_real(bench, seed: int = 0, shuffle: bool = True) -> Benchmark:
+    """Adapt a RealBench (eval.datasets) to the Benchmark schema used by every runner.
+    Ingestion order is shuffled per seed so seeds measure order sensitivity too."""
+    import random
+
+    eps = list(bench.episodes)
+    if shuffle:
+        random.Random(seed).shuffle(eps)
+    idx_of = {eid: i for i, (eid, _, _) in enumerate(eps)}
+    episodes = [(text, ts) for _, text, ts in eps]
+    items = []
+    for q in bench.questions:
+        gi = [idx_of[g] for g in q.gold if g in idx_of]
+        if not gi and q.qtype != "adversarial":
+            continue
+        items.append(BenchItem(q.question, [episodes[i][0] for i in gi], q.qtype, q.answer, gi))
+    return Benchmark(episodes, items, {}, name=bench.name)
 
 
 def _wrap(rng: random.Random, fact: str, n_filler: tuple[int, int] = (2, 4)) -> str:

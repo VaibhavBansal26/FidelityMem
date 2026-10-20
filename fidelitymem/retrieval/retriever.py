@@ -92,11 +92,14 @@ class HybridRetriever:
                 hits = sorted(merged.items(), key=lambda x: x[1], reverse=True)[:k]
             return hits
         if route == "temporal":
-            # episodic memories matching the query, ordered most-recent first
+            # episodic memories matching the query; recency ordering only when the query
+            # asks for recent/latest state, otherwise "when did X happen" is answered by
+            # the best lexical match however old it is
             eps = self._type_ids(allowed, MemoryType.EPISODIC)
-            hits = [i for i, _ in self.lexical.search(query, k, eps)]
-            hits.sort(key=lambda i: self.memories[i].valid_from, reverse=True)
-            return [(i, 1.0) for i in hits]
+            hits = self.lexical.search(query, k, eps)
+            if plan.wants_recent:
+                hits = [(i, 1.0) for i in sorted((i for i, _ in hits), key=lambda i: self.memories[i].valid_from, reverse=True)]
+            return hits
         if route == "procedural":
             procs = {i for i, m in self.memories.items() if i in allowed and MemoryType.PROCEDURAL in m.types}
             return self.lexical.search(query, k, procs)
@@ -112,9 +115,10 @@ class HybridRetriever:
         fused = rrf(route_results, plan.weights)
         stats.candidates = len(fused)
         scored = []
+        fused_max = max(fused.values(), default=1.0)
         for mid, f in fused.items():
             m = self.memories[mid]
-            s = final_score(m, f, plan.weights, at, plan.recency_halflife_days, plan.type_boost)
+            s = final_score(m, f, plan.weights, at, plan.recency_halflife_days, plan.type_boost, fused_max)
             scored.append(RetrievedMemory(memory=m, score=s, sources={r: dict(v).get(mid, 0.0) for r, v in route_results.items() if mid in dict(v)}))
         scored.sort(key=lambda r: r.score, reverse=True)
         if plan.graph_hops >= 2 and self.enable_chaining:

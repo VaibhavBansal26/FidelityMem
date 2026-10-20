@@ -45,6 +45,8 @@ class Probe:
     def satisfied_by(self, text: str) -> bool:
         low = text.lower()
         t = self.target.lower()
+        if self.kind == "evidence":
+            return self.target in set(content_tokens(text))
         if self.kind == "negation":
             # the negation sentence's content words + a negation cue must survive
             words = set(content_tokens(self.target))
@@ -69,7 +71,18 @@ class ProbeSet:
         return [p for p in self.probes if not p.satisfied_by(text)]
 
 
-def build_probes(raw: str) -> ProbeSet:
+GATE_PROFILES = ("facts", "content")
+
+
+def build_probes(raw: str, profile: str = "facts", max_content_probes: int = 16) -> ProbeSet:
+    """Probes generated from the raw source.
+
+    profile "facts":   entities, numbers, dates, negated sentences.
+    profile "content": the same plus salient content words (long, non-stopword
+                       tokens), which protects plain-language facts such as
+                       "self-care is important" that carry no entity or value.
+                       Stricter: compression backs off more often. The controller
+                       treats the profile as a searchable knob."""
     ps: list[Probe] = []
     for e in extract_entities(raw):
         ps.append(Probe("entity", e, 1.0))
@@ -79,6 +92,14 @@ def build_probes(raw: str) -> ProbeSet:
         ps.append(Probe("date", d, 1.5))
     for s in extract_negations(raw):
         ps.append(Probe("negation", s, 2.0))
+    if profile == "content":
+        seen: set[str] = set()
+        words = [t for t in content_tokens(raw) if len(t) >= 5 and t.isalpha()]
+        # longest words first: a rough rarity proxy with no corpus statistics
+        for w in sorted(dict.fromkeys(words), key=len, reverse=True)[:max_content_probes]:
+            if w not in seen:
+                seen.add(w)
+                ps.append(Probe("evidence", w, 0.5))
     return ProbeSet(ps)
 
 
@@ -134,11 +155,12 @@ def compress_with_gate(
     min_fidelity: float,
     compressor: Compressor | None = None,
     probes: ProbeSet | None = None,
+    profile: str = "facts",
 ) -> CompressionResult:
     """Compress at `target_level`, backing off to lower levels until the fidelity
     gate passes. Level 0 always passes."""
     compressor = compressor or ExtractiveCompressor()
-    probes = probes or build_probes(raw)
+    probes = probes or build_probes(raw, profile)
     raw_tokens = max(1, estimate_tokens(raw))
     attempts: list[tuple[int, float]] = []
     for level in range(min(target_level, MAX_LEVEL), -1, -1):

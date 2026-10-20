@@ -61,7 +61,7 @@ class FidelityMem:
         self.memories: dict[str, Memory] = {}
         self.probes: dict[str, ProbeSet] = {}
         self.lexical = BM25Index()
-        self.vector = VectorIndex(embedder)
+        self.vector = VectorIndex(embedder)  # None -> process-wide default (stores.set_default_embedder)
         self.graph = GraphStore()
         self.trie = TrieIndex()
         self.compressor = compressor
@@ -75,7 +75,8 @@ class FidelityMem:
         )
         self.telemetry = Telemetry()
         self.reports: list[ValidationReport] = []
-        self._level_cache: dict[tuple[str, int], tuple[str, int, float]] = {}
+        self._level_cache: dict[tuple[str, int, str], tuple[str, int, float]] = {}
+        self._raw_text: dict[str, str] = {}
         self.gate_enabled = True  # ablation switch: False compresses without the fidelity gate
         self._raw_recall_cache: dict[tuple, tuple] = {}
 
@@ -131,7 +132,8 @@ class FidelityMem:
         ts = timestamp or now()
         prov = Provenance(source_id=cand.message_ids[0] if cand.message_ids else "direct", source_type=source_type, tenant=self.policy.tenant, namespace=self.policy.namespace, timestamp=ts, trusted=cand.trusted, authority=authority)
         ep = self.archive.put(Episode(text=cand.text, provenance=prov, message_ids=cand.message_ids))
-        probes = build_probes(cand.text)
+        profile = self.controller.current.gate_profile
+        probes = build_probes(cand.text, profile)
         level = self.controller.current.compression_level
         cr = compress_with_gate(cand.text, level, self.policy.minimum_recall_retention if self.gate_enabled else 0.0, self.compressor, probes)
         self._raw_recall_cache.clear()
@@ -143,7 +145,8 @@ class FidelityMem:
             provenance=prov, confidence=s1.confidence, valid_from=ts, fidelity_score=cr.fidelity,
         )
         self._index(mem, probes)
-        self._level_cache[(mem.id, level)] = (cr.text, cr.level, cr.fidelity)
+        self._raw_text[mem.id] = cand.text
+        self._level_cache[(mem.id, level, profile)] = (cr.text, cr.level, cr.fidelity)
         for old_id in s1.supersedes:
             self._supersede(old_id, mem.id, ts)
         self.telemetry.admitted += 1
@@ -186,16 +189,18 @@ class FidelityMem:
         return True
 
     # ---- recompression (policy change) ------------------------------
-    def recompress_all(self, level: int) -> int:
-        """Rebuild compressed representations from raw evidence at a new level."""
+    def recompress_all(self, level: int, profile: str | None = None) -> int:
+        """Rebuild compressed representations from raw evidence at a new level / gate profile."""
+        profile = profile or self.controller.current.gate_profile
         n = 0
         for mem in list(self.memories.values()):
-            key = (mem.id, level)
+            key = (mem.id, level, profile)
             if key not in self._level_cache:
                 ep = self.archive.get(mem.episode_id)
                 if not ep:
                     continue
-                cr = compress_with_gate(ep.text, level, self.policy.minimum_recall_retention if self.gate_enabled else 0.0, self.compressor, self.probes[mem.id])
+                probes = build_probes(ep.text, profile)
+                cr = compress_with_gate(ep.text, level, self.policy.minimum_recall_retention if self.gate_enabled else 0.0, self.compressor, probes, profile)
                 self._level_cache[key] = (cr.text, cr.level, cr.fidelity)
             text, lvl, fid = self._level_cache[key]
             if text != mem.compressed_text:
@@ -284,13 +289,15 @@ class FidelityMem:
                 self.trie.add(mid, t)
         return Measurement(cfg, r_raw, r_c, (r_c / r_raw) if r_raw > 0 else 1.0, contradiction_rate, toks, lat, stored / raw_tokens, 1 - prec)
 
-    def optimise(self, n_probes: int = 60, seed: int = 0) -> Measurement | None:
-        probes = make_probe_queries(self, n_probes, seed)
+    def optimise(self, n_probes: int = 60, seed: int = 0, probes: list[ProbeQuery] | None = None) -> Measurement | None:
+        """Guarded policy search. `probes` may be supplied from a query log (question,
+        gold episode ids); otherwise self-generated probes are sampled from the archive."""
+        probes = probes if probes is not None else make_probe_queries(self, n_probes, seed)
         if not probes:
             return None
         self._raw_recall_cache.clear()
         m = self.controller.optimise(self.evaluate_config, probes, seed=seed)
-        self.recompress_all(self.controller.current.compression_level)
+        self.recompress_all(self.controller.current.compression_level, self.controller.current.gate_profile)
         return m
 
     # ---- introspection -------------------------------------------------

@@ -32,7 +32,7 @@ def _run(name, bench: Benchmark, k, texts, stored_tokens, retrieve):
 
     runs, toks, lats = [], [], []
     for item in bench.items:
-        gold = [f"ep{bench.text_to_idx[g]}" for g in item.gold]
+        gold = [f"ep{i}" for i in bench.gold_indices(item)]
         t0 = time.perf_counter()
         got = retrieve(item.query)[:k]
         lats.append((time.perf_counter() - t0) * 1000)

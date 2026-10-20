@@ -33,6 +33,7 @@ class Config:
     top_k: int = 10
     expand_budget: int = 3
     routes: tuple[str, ...] = ("lexical", "vector", "graph", "temporal")
+    gate_profile: str = "facts"  # facts | content (stricter)
 
     def as_overrides(self) -> dict:
         return {"top_k": self.top_k, "expand_budget": self.expand_budget, "routes": list(self.routes), "per_route_k": self.top_k * 3}
@@ -111,7 +112,8 @@ class Controller:
             "compression_level": [0, 1, 2, 3],
             "top_k": [5, 10, 20],
             "expand_budget": [0, 2, 5],
-            "routes": [("lexical", "vector"), ("lexical", "vector", "trie"), ("lexical", "vector", "graph", "temporal"), ("lexical", "vector", "trie", "graph", "temporal", "procedural")],
+            "routes": [("lexical",), ("lexical", "trie"), ("lexical", "vector"), ("lexical", "vector", "graph", "temporal"), ("lexical", "vector", "trie", "graph", "temporal", "procedural")],
+            "gate_profile": ["facts", "content"],
         }
     )
 
@@ -129,8 +131,8 @@ class Controller:
             c = Config(**dict(zip(keys, combo)))
             if c.compression_level <= self.policy.max_compression_level:
                 out.append(c)
-        # group by level so the store is recompressed once per level, not once per candidate
-        out.sort(key=lambda c: c.compression_level, reverse=True)
+        # group by (level, profile) so the store is recompressed once per group, not once per candidate
+        out.sort(key=lambda c: (c.compression_level, c.gate_profile), reverse=True)
         return out
 
     def optimise(self, evaluate: Callable[[Config, list[ProbeQuery]], Measurement], probes: list[ProbeQuery], holdout_frac: float = 0.5, seed: int = 0, max_confirmations: int = 8) -> Measurement | None:
@@ -155,21 +157,21 @@ class Controller:
             if m.feasible(self.policy):
                 feasible.append((m.cost(self.policy), c))
         feasible.sort(key=lambda x: x[0])
-        rejected_levels: set[int] = set()
+        rejected_levels: set[tuple[int, str]] = set()
         tried = 0
         for _, cfg in feasible:
             if tried >= max_confirmations:
                 break
-            if cfg.compression_level in rejected_levels:
-                continue  # retention is level-driven; do not re-confirm a level that failed
+            if (cfg.compression_level, cfg.gate_profile) in rejected_levels:
+                continue  # retention is driven by level+profile; do not re-confirm one that failed
             tried += 1
             confirm = evaluate(cfg, hold)
             if confirm.feasible(self.policy):
                 self._promote(cfg, confirm)
                 return confirm
-            rejected_levels.add(cfg.compression_level)
+            rejected_levels.add((cfg.compression_level, cfg.gate_profile))
             self.history.append(PolicyVersion(self.history[-1].version, cfg, confirm, rejected=True))
-        safe = Config(0, max(self.search_space["top_k"]), max(self.search_space["expand_budget"]), tuple(self.search_space["routes"][-1]))
+        safe = Config(0, max(self.search_space["top_k"]), max(self.search_space["expand_budget"]), tuple(self.search_space["routes"][-1]), "facts")
         m = evaluate(safe, hold)
         self._promote(safe, m)
         return m

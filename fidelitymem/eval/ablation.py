@@ -14,7 +14,7 @@ def run(n: int = 1000, n_queries: int = 100, k: int = 10, seed: int = 0, level: 
     pol = MemoryPolicy(minimum_recall_retention=0.95, mode=Mode.BALANCED, max_context_tokens=100_000)
     results = []
 
-    def variant(name, gate=True, chaining=True, routes=None, expansion=True, hub=None):
+    def variant(name, gate=True, chaining=True, routes=None, expansion=True, hub=None, profile="facts"):
         from ..stores.graph import GraphStore
 
         old_hub = GraphStore.hub_degree
@@ -22,7 +22,7 @@ def run(n: int = 1000, n_queries: int = 100, k: int = 10, seed: int = 0, level: 
             GraphStore.hub_degree = hub
         fm, ep_ids, _ = _ingest(bench, pol) if gate else _ingest_nogate(bench, pol)
         fm.retriever.enable_chaining = chaining
-        _set_cfg(fm, level, k, expansion)
+        _set_cfg(fm, level, k, expansion, profile)
         if routes is not None:
             c = fm.controller.current
             fm.controller.current = c.__class__(compression_level=c.compression_level, top_k=c.top_k, expand_budget=c.expand_budget, routes=tuple(routes))
@@ -46,6 +46,7 @@ def run(n: int = 1000, n_queries: int = 100, k: int = 10, seed: int = 0, level: 
 
     full = variant(f"full_L{level}_gated")
     variant("- fidelity gate", gate=False)
+    variant("+ content gate profile", profile="content")
     variant("- raw expansion", expansion=False)
     variant("- relation chaining", chaining=False)
     variant("- graph route", routes=("lexical", "vector", "temporal"))

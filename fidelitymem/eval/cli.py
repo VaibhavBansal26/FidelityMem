@@ -18,11 +18,20 @@ def main(argv=None) -> None:
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--scale", type=int, nargs="*", help="run the scale study at these record counts")
     ap.add_argument("--out", type=str, default=None, help="write JSON report here")
+    ap.add_argument("--seeds", type=int, nargs="*", default=None, help="seeds for the scale study (mean ± 95% CI)")
+    ap.add_argument("--embedder", type=str, default="best", help="best | spacy | st | hashing")
     a = ap.parse_args(argv)
+    from ..stores import set_default_embedder
+    from ..stores.embedders import best_available, embedder_name
+
+    emb = best_available(None if a.embedder == "best" else a.embedder)
+    set_default_embedder(emb)
+    print(f"embedder={embedder_name(emb)}", flush=True)
     if a.scale is not None:
         from .harness import run_scale
 
-        rep = run_scale(tuple(a.scale) or (300, 1000, 3000, 10000), a.queries, a.k[0], a.seed, a.rho)
+        rep = run_scale(tuple(a.scale) or (300, 1000, 3000, 10000), a.queries, a.k[0], a.seed, a.rho, tuple(a.seeds) if a.seeds else None)
+        rep = {"embedder": embedder_name(emb), "seeds": a.seeds or [a.seed], "levels": rep}
         if a.out:
             with open(a.out, "w") as f:
                 json.dump(rep, f, indent=1)

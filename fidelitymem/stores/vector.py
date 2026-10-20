@@ -50,9 +50,23 @@ class HashingEmbedder:
         return out
 
 
+_DEFAULT_EMBEDDER: "Embedder | None" = None
+
+
+def set_default_embedder(e: "Embedder | None") -> None:
+    """Process-wide default used by every VectorIndex() created without an explicit
+    embedder, so a benchmark can give all systems the same semantic model."""
+    global _DEFAULT_EMBEDDER
+    _DEFAULT_EMBEDDER = e
+
+
+def get_default_embedder() -> "Embedder":
+    return _DEFAULT_EMBEDDER or HashingEmbedder()
+
+
 class VectorIndex:
     def __init__(self, embedder: Embedder | None = None, cache_size: int = 50_000):
-        self.embedder = embedder or HashingEmbedder()
+        self.embedder = embedder or get_default_embedder()
         self._cache: dict[str, np.ndarray] = {}
         self._cache_size = cache_size
         self._ids: list[str] = []
