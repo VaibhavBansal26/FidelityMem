@@ -254,8 +254,8 @@ class FidelityMem:
         original = {mid: (m.compressed_text, m.compression_level, m.fidelity_score) for mid, m in self.memories.items()}
         raw_tokens = sum(estimate_tokens(self.archive.get(m.episode_id).text) for m in self.memories.values()) or 1
 
-        def run(level: int) -> tuple[float, float, float, float]:
-            self.recompress_all(level)
+        def run(level: int) -> tuple[float, float, float, float, float]:
+            self.recompress_all(level, cfg.gate_profile)
             ov = cfg.as_overrides()
             recalls, toks, lat, prec, conflicts = [], [], [], [], 0
             for p in probes:
@@ -289,7 +289,7 @@ class FidelityMem:
                 self.trie.add(mid, t)
         return Measurement(cfg, r_raw, r_c, (r_c / r_raw) if r_raw > 0 else 1.0, contradiction_rate, toks, lat, stored / raw_tokens, 1 - prec)
 
-    def optimise(self, n_probes: int = 60, seed: int = 0, probes: list[ProbeQuery] | None = None) -> Measurement | None:
+    def optimise(self, n_probes: int = 120, seed: int = 0, probes: list[ProbeQuery] | None = None) -> Measurement | None:
         """Guarded policy search. `probes` may be supplied from a query log (question,
         gold episode ids); otherwise self-generated probes are sampled from the archive."""
         probes = probes if probes is not None else make_probe_queries(self, n_probes, seed)

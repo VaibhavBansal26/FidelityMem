@@ -78,7 +78,8 @@ def make_probe_queries(mem: "FidelityMem", n: int, seed: int = 0) -> list[ProbeQ
         # A probe needs a named entity *and* either a value (number/date) or a second
         # entity; boilerplate with a weekday in it does not qualify.
         def density(x: str) -> int:
-            ents, vals = extract_entities(x), extract_numbers(x) + extract_dates(x)
+            vals = extract_numbers(x) + extract_dates(x)
+            ents = [e for e in extract_entities(x) if e not in vals]
             if not ents or (len(ents) < 2 and not vals):
                 return 0
             return len(ents) + 2 * len(vals)
@@ -110,8 +111,8 @@ class Controller:
     search_space: dict = field(
         default_factory=lambda: {
             "compression_level": [0, 1, 2, 3],
-            "top_k": [5, 10, 20],
-            "expand_budget": [0, 2, 5],
+            "top_k": [5, 10],
+            "expand_budget": [0, 2],
             "routes": [("lexical",), ("lexical", "trie"), ("lexical", "vector"), ("lexical", "vector", "graph", "temporal"), ("lexical", "vector", "trie", "graph", "temporal", "procedural")],
             "gate_profile": ["facts", "content"],
         }

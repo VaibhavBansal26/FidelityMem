@@ -88,7 +88,13 @@ Retention cannot be observed on live queries, so it is measured on **self-genera
 
 **FidelityMem variants.** L0 raw; L1–L3 with expansion disabled (`noexpand`) and enabled (`gated`); and `ctrl`, the configuration the controller selected on its own probes (ρ = 0.95, ε = 0.01) with top-k reset to K for comparability.
 
-**Controls.** Same episodes, questions, seed, K and token accounting for every system; stochastic components are seeded; the controller never sees the benchmark questions.
+**Real data.** LoCoMo (10 multi-session human-style conversations, 5 882 turns, 1 986 questions) with the evidence dialogue ids the dataset provides as retrieval ground truth; categories multi-hop, temporal, open-domain, single-hop and adversarial (adversarial questions have no gold evidence and are excluded from recall). Two granularities: one memory per *turn* (hard retrieval, little to compress) and one per *session* (realistic compression target). 30 % of questions are held out per seed as the controller's "query log" and never scored; the controller is run twice, once on self-generated probes and once on that log. We also report an *answer-containment* proxy (fraction of gold-answer content tokens present in the served context); it is a proxy, not accuracy. LongMemEval has a loader in the repository but could not be fetched in the build environment (the dataset is distributed only through a host the environment's network policy blocks); the runner is identical and the result is pending.
+
+**Embedder and seeds.** All dense routes, in every system, use the same pretrained embedder (spaCy `en_core_web_md` word vectors, 300-d, IDF-weighted mean pooling; a sentence-transformer plugs in through the same protocol when available). Every experiment runs with seeds 0, 1 and 2 (synthetic: different worlds; real: different ingestion orders and calibration splits) and reports the mean with a 95 % t-interval over seeds.
+
+**LLM components.** A Claude-backed compressor, extractor, reader and judge are implemented behind the same protocols (`fidelitymem/llm.py`) with a mock for tests. No API credential was available in the build environment, so every number below is from the deterministic components; the LLM-judged accuracy columns are produced by the same runner with `--llm` and are the next step.
+
+**Controls.** Same episodes, questions, seed, K, embedder and token accounting for every system; stochastic components are seeded; the controller never sees scored questions.
 
 ## 5. Results
 
@@ -105,23 +111,35 @@ Retention cannot be observed on live queries, so it is measured on **self-genera
 * **Mem0-style atomic facts** has the smallest index of the baselines (≈23 % of raw) and loses recall where the atomic sentence is not the one that matches the query phrasing. **MemGPT-style** recall is as good as its vector store but its MRR collapses because the always-present core block occupies the top ranks.
 * **Latency.** FidelityMem's p95 is 1–3 ms higher than single-route baselines at 300–3 000 records and grows linearly with the dense index (a dense matmul in this container's BLAS); the comparison is of architectures, not of index engineering.
 
-### 5.2 Ablation (n = 1 000, K = 10, level 3 gated)
+### 5.3 Ablation (synthetic, n = 1 000, K = 10, level 3 gated, 3 seeds, pretrained embedder)
 
-One component removed at a time from the full system. `retain` is recall relative to the full system. Latencies in this table were measured while the scale study ran on the same machine and are omitted.
+One component removed at a time from the full system. `retain` is recall relative to the full system; ± is the 95% CI over seeds.
 
 | Variant | R@10 | CR@10 | MRR | nDCG | tok/q | stored tok | expand | retain | multi-hop R@10 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| full (L3, gated) | 1.000 | 1.000 | 0.980 | 0.986 | 417 | 30 885 | 1.16 | 1.000 | 1.000 |
-| − fidelity gate | 0.980 | 0.970 | 0.966 | 0.967 | 422 | 20 190 | 2.98 | 0.980 | 0.920 |
-| − raw expansion | 1.000 | 1.000 | 0.990 | 0.992 | 365 | 30 933 | 0.00 | 1.000 | 1.000 |
-| − relation chaining | 0.920 | 0.840 | 0.990 | 0.917 | 419 | 30 885 | 1.16 | 0.920 | 0.680 |
-| − graph route | 1.000 | 1.000 | 0.731 | 0.802 | 398 | 30 933 | 1.00 | 1.000 | 1.000 |
-| − graph route and chaining | 0.880 | 0.760 | 0.731 | 0.714 | 399 | 30 933 | 1.05 | 0.880 | 0.520 |
-| − hub penalty / pruning | 1.000 | 1.000 | 0.985 | 0.990 | 417 | 30 933 | 1.15 | 1.000 | 1.000 |
-| − trie route | 1.000 | 1.000 | 0.990 | 0.991 | 419 | 30 933 | 1.16 | 1.000 | 1.000 |
-| lexical + vector only | 1.000 | 1.000 | 0.915 | 0.941 | 390 | 30 933 | 1.00 | 1.000 | 1.000 |
+| full (L3, gated) | 0.995 ±0.012 | 0.993 | 0.981 | 0.984 | 458 | 32 076 | 1.11 | 1.000 | 0.993 |
+| − fidelity gate | 0.948 ±0.071 | 0.937 | 0.935 | 0.935 | 444 | 20 392 | 2.97 | 0.953 | 0.847 |
+| + content gate profile | 0.995 ±0.012 | 0.993 | 0.929 | 0.947 | 762 | 73 427 | 0.00 | 1.000 | — |
+| − raw expansion | 0.995 ±0.012 | 0.993 | 0.980 | 0.983 | 403 | 32 076 | 0.00 | 1.000 | — |
+| − relation chaining | 0.917 ±0.083 | 0.837 | 0.976 | 0.908 | 458 | 32 075 | 1.14 | 0.921 | — |
+| − graph route | 0.995 ±0.012 | 0.993 | 0.881 | 0.912 | 442 | 32 091 | 0.86 | 1.000 | — |
+| − graph route and chaining | 0.877 ±0.019 | 0.757 | 0.881 | 0.826 | 440 | 32 060 | 0.88 | 0.881 | — |
+| − hub penalty / pruning | 0.995 ±0.012 | 0.993 | 0.978 | 0.983 | 457 | 32 076 | 1.10 | 1.000 | — |
+| − trie route | 0.995 ±0.012 | 0.993 | 0.978 | 0.982 | 458 | 32 060 | 1.11 | 1.000 | — |
+| lexical + vector only | 0.995 ±0.012 | 0.993 | 0.901 | 0.927 | 436 | 32 075 | 0.84 | 1.000 | — |
 
-Three findings. **Relation chaining is the multi-hop component**: without it, second-hop recall falls to 0.68, and to 0.52 when the graph route is also removed; the graph route by itself mainly improves ranking (MRR 0.73 → 0.98). **The gate protects relations as well as values**: without it the gist drops the sentence carrying the dependency relation in 8 % of multi-hop cases, the index shrinks to the lossy-summary size, and the retriever compensates with nearly three times as many raw expansions per query. **Expansion, the trie and hub pruning are neutral on recall here**: expansion serves exact-value questions whose answer must be quoted (it is mandatory for them) and costs 14 % more context tokens; the trie helps only when identifiers are the query, which this question set does not isolate; hub pruning is a latency measure. Because chaining uses relations found in the top lexical hits, it recovers the second hop even in the lexical+vector-only configuration the controller selected, which is why that cheaper configuration remained feasible.
+Three findings. **Relation chaining is the multi-hop component**: without it recall falls to 0.92 and complete-set recall to 0.84, and to 0.88 / 0.76 when the graph route is also removed; the graph route by itself mainly improves ranking (MRR 0.88 → 0.98). **The gate protects relations as well as values**: without it the gist drops the sentence carrying the dependency relation in 15 % of multi-hop cases, the index shrinks to the lossy-summary size, and the retriever compensates with nearly three times as many raw expansions per query; the variance across seeds also triples. **The "content" gate profile is the other extreme**: it holds recall exactly but refuses to drop any content-bearing sentence, so on this corpus it stores the raw size. Expansion, the trie and hub pruning are neutral on recall here. Because chaining uses relations found in the top lexical hits, it recovers the second hop even in the lexical+vector-only configuration the controller selects, which is why that cheaper configuration remains feasible.
+
+### 5.5 The semantic-codebook trie (negative result)
+
+A proposal raised during the design discussion: number semantically similar words with one code (a codebook from k-means over the embedder's word vectors), store each memory as its code sequence in a word trie so shared prefixes are stored once, and match queries in code space so synonyms hit. We built it (`stores/semantic_trie.py`) with one safeguard, that entities, numbers, dates and negation cues are never coded, and measured storage, decode fidelity against the probes, and Recall@10 against BM25 on the same episodes (`eval/semantic_trie_experiment.py`, pretrained word vectors, 1 000 and 3 000 codes).
+
+| Corpus | stored bytes / raw | decode fidelity (facts) | decode fidelity (content) | R@10 trie | R@10 BM25 |
+|---|---:|---:|---:|---:|---:|
+| synthetic, 1 000 episodes (vocab 194) | 0.76 | 0.81 | 0.79 | 0.875 | 0.875 |
+| LoCoMo, 3 conversations, 1 451 turns (vocab 2 675) | 1.08–1.10 | 0.98 | 0.85–0.87 | 0.53–0.54 | 0.613 |
+
+The storage saving exists only where text repeats (the synthetic filler), and comes from prefix sharing and stopword dropping rather than from semantics. On real conversation the trie is larger than the raw text (per-node overhead, no shared prefixes). The codebook does what the fidelity argument predicts: even with as many codes as vocabulary entries, k-means merges neighbours, so "machine" decodes as "dashboard" and "mentioned" as "clarified"; the protected-token rule keeps fact-probe fidelity at 0.98 on LoCoMo, but content-word fidelity drops to 0.85 and retrieval loses 8 points to BM25 because merged codes create false matches and flatten idf. Context tokens are unchanged in any case, since the model reads decoded text. We therefore keep the trie as an exact/prefix identifier route (§3.4) and do not use a semantic codebook for storage. A variant that codes only predicates and keeps every argument verbatim is the one worth revisiting; it is a graph-store compaction, not a compression of memories.
 
 ## 6. Limitations and what is not shown
 

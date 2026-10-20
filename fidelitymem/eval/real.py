@@ -138,7 +138,7 @@ def run_once(bench: Benchmark, k: int, rho: float, reader=None, judge=None, leve
         for src, probes in variants:
             _set_cfg(fm, 0, k, True)
             fm.controller.__init__(fm.policy)  # fresh search per probe source
-            fm.optimise(n_probes=60, probes=probes)
+            fm.optimise(n_probes=120, probes=probes)
             cfg = fm.controller.current
             fm.controller.current = cfg.__class__(compression_level=cfg.compression_level, top_k=k, expand_budget=cfg.expand_budget, routes=cfg.routes, gate_profile=cfg.gate_profile)
             r = _measure_real(f"fidelitymem_ctrl:{src}(L{cfg.compression_level}/{cfg.gate_profile[:1]})", fm, bench, ep_ids, k, reader, judge)

@@ -145,7 +145,7 @@ def run_fidelitymem(bench: Benchmark, k: int, policy: MemoryPolicy, levels=(1, 2
     if optimise:
         _set_cfg(fm, 0, k, True)
         t0 = time.perf_counter()
-        meas = fm.optimise(n_probes=40)
+        meas = fm.optimise(n_probes=120)
         info["optimise_s"] = time.perf_counter() - t0
         info["controller"] = fm.controller.describe()
         info["controller_measurement"] = None if meas is None else {"retention": meas.retention, "cost": meas.cost(policy)}
