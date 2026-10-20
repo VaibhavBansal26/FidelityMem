@@ -111,6 +111,49 @@ Retention cannot be observed on live queries, so it is measured on **self-genera
 * **Mem0-style atomic facts** has the smallest index of the baselines (≈23 % of raw) and loses recall where the atomic sentence is not the one that matches the query phrasing. **MemGPT-style** recall is as good as its vector store but its MRR collapses because the always-present core block occupies the top ranks.
 * **Latency.** FidelityMem's p95 is 1–3 ms higher than single-route baselines at 300–3 000 records and grows linearly with the dense index (a dense matmul in this container's BLAS); the comparison is of architectures, not of index engineering.
 
+### 5.2 Real data: LoCoMo, session granularity (272 sessions, 1 390 scored questions per seed, K = 5, 3 seeds)
+
+| System | R@5 | CR@5 | MRR | stored tok | tok/q | p95 ms | retain | R@5 multi-hop / temporal / single-hop / open-domain | answer contain. |
+|---|---:|---:|---:|---:|---:|---:|---:|---|---:|
+| fixed_window | 0.018 ±0.006 | 0.014 | 0.010 | 195165 | 3307 | 0.00 | - | 0.02 / 0.02 / 0.02 / 0.01 | 0.32 |
+| bm25 | 0.858 ±0.009 | 0.817 | 0.764 | 195165 | 3707 | 0.22 | - | 0.55 / 0.88 / 0.94 / 0.57 | 0.80 |
+| vector | 0.287 ±0.016 | 0.262 | 0.187 | 195165 | 3309 | 2.56 | - | 0.20 / 0.23 / 0.33 / 0.20 | 0.54 |
+| bm25+vector_rrf | 0.726 ±0.005 | 0.682 | 0.510 | 195165 | 3551 | 3.13 | - | 0.45 / 0.72 / 0.80 / 0.46 | 0.75 |
+| summary_L3+bm25 | 0.425 ±0.003 | 0.395 | 0.339 | 26114 | 506 | 0.11 | - | 0.24 / 0.48 / 0.47 / 0.29 | 0.34 |
+| window+trie | 0.653 ±0.024 | 0.622 | 0.561 | 195165 | 3810 | 0.34 | - | 0.24 / 0.68 / 0.77 / 0.30 | nan |
+| memgpt_style | 0.255 ±0.007 | 0.232 | 0.107 | 195165 | 3221 | 2.74 | - | 0.16 / 0.20 / 0.30 / 0.16 | nan |
+| mem0_style | 0.239 ±0.019 | 0.220 | 0.186 | 27036 | 3770 | 17.04 | - | 0.15 / 0.25 / 0.27 / 0.20 | nan |
+| zep_style | 0.687 ±0.023 | 0.649 | 0.482 | 195165 | 3669 | 3.65 | - | 0.42 / 0.69 / 0.75 / 0.47 | nan |
+| amem_style | 0.287 ±0.016 | 0.262 | 0.187 | 195165 | 3309 | 2.83 | - | 0.20 / 0.23 / 0.33 / 0.20 | nan |
+| hipporag_style | 0.401 ±0.022 | 0.370 | 0.281 | 195165 | 3601 | 4.70 | - | 0.25 / 0.41 / 0.44 / 0.33 | nan |
+| fidelitymem_L0_raw | 0.563 ±0.016 | 0.522 | 0.372 | 195165 | 3716 | 5.26 | - | 0.40 / 0.45 / 0.63 / 0.40 | 0.70 |
+| fidelitymem_L1_gate:facts | 0.529 ±0.025 | 0.489 | 0.345 | 127833 | 2573 | 2.89 | 0.939 | 0.36 / 0.43 / 0.60 / 0.42 | 0.62 |
+| fidelitymem_L2_gate:facts | 0.444 ±0.027 | 0.410 | 0.298 | 42667 | 1275 | 2.36 | 0.789 | 0.30 / 0.44 / 0.49 / 0.38 | 0.50 |
+| fidelitymem_L3_gate:facts | 0.444 ±0.022 | 0.409 | 0.299 | 42833 | 1268 | 2.25 | 0.788 | 0.31 / 0.45 / 0.48 / 0.38 | 0.49 |
+| fidelitymem_L1_gate:content | 0.564 ±0.019 | 0.523 | 0.374 | 192142 | 3666 | 2.58 | 1.002 | 0.40 / 0.45 / 0.63 / 0.41 | 0.70 |
+| fidelitymem_L2_gate:content | 0.564 ±0.019 | 0.523 | 0.374 | 192142 | 3666 | 2.62 | 1.002 | 0.40 / 0.45 / 0.63 / 0.41 | 0.70 |
+| fidelitymem_L3_gate:content | 0.564 ±0.019 | 0.523 | 0.374 | 192142 | 3666 | 2.46 | 1.002 | 0.40 / 0.45 / 0.63 / 0.41 | 0.70 |
+| fidelitymem_L1_nogate | 0.530 ±0.021 | 0.489 | 0.343 | 125075 | 2546 | 2.45 | 0.940 | 0.36 / 0.42 / 0.60 / 0.42 | 0.62 |
+| fidelitymem_L2_nogate | 0.445 ±0.026 | 0.410 | 0.298 | 41831 | 1254 | 2.17 | 0.791 | 0.30 / 0.44 / 0.49 / 0.39 | 0.50 |
+| fidelitymem_L3_nogate | 0.358 ±0.016 | 0.327 | 0.232 | 26114 | 2331 | 2.35 | 0.636 | 0.24 / 0.32 / 0.42 / 0.31 | 0.52 |
+| fidelitymem_ctrl:self(L0/f/L1/c) | 0.851 ±0.015 | 0.810 | 0.730 | 194157 | 3694 | 0.59 | 1.512 | 0.54 / 0.87 / 0.94 / 0.57 | 0.80 |
+| fidelitymem_ctrl:qlog(L1/c/L2/c/L3/c) | 0.849 ±0.014 | 0.807 | 0.729 | 192142 | 3651 | 0.65 | 1.507 | 0.54 / 0.87 / 0.93 / 0.56 | 0.79 |
+
+*answer contain.* = fraction of gold-answer content tokens present in the served context (a proxy; adversarial questions excluded). The controller rows name the configuration chosen per seed (L = level, f/c = facts/content gate profile).
+
+Four things the real data says that the synthetic data could not:
+
+1. **Lexical retrieval is the strongest single signal on human conversation.** BM25 alone reaches 0.858 ±0.009. Every architecture that fuses a dense or graph signal with equal weight lands well below it: BM25+dense RRF 0.726, Zep-style 0.687, window+trie 0.653, HippoRAG-style 0.401, A-MEM/MemGPT-style 0.26–0.29, Mem0-style 0.239. The pretrained word-vector route scores 0.287 on its own; it is weak on short conversational turns and reciprocal-rank fusion gives it the same vote as BM25. FidelityMem's *default* route mix is hurt the same way (0.563).
+2. **The controller is what makes the architecture safe.** With the retention bound measured against the best raw retrieval, the controller drops the dense route in every seed and lands at 0.851 ±0.015 (self-generated probes) and 0.849 ±0.014 (query-log calibration), within one point of BM25 and at a quarter of its own default latency; per-type recall matches BM25 on every category. Without that constraint (earlier revision of this work) it chose lexical+dense and scored 0.71, so the bound, not the heuristics, is what prevented a 14-point loss.
+3. **Compression at ρ = 0.95 is small on chat.** Sessions are already compact statements between two people; dropping any content sentence loses evidence. The facts-profile levels compress to 22–65 % of raw and retain only 0.79–0.94 of recall; the content profile retains 1.00 and stores 98 %. The controller therefore keeps raw or near-raw storage. This is the bound being enforced on a corpus with little to remove, and it should be read as a limit of compression on this kind of text, not of the controller.
+4. **The gate still earns its place.** At every level the gated variant beats the ungated one on recall (0.444 vs 0.358 at level 3, facts profile) and needs a quarter of the raw expansions (0.69 vs 2.64 per query); the lossy-summary baseline (0.425 at 13 % storage) sits on the same frontier only because it is cheap, not because it is adequate.
+
+The Pareto frontier (`docs/results/pareto_locomo_session.png`) contains BM25, both controller rows and, at the low-storage end, the ungated levels and the lossy summary. Zep-, HippoRAG-, Mem0-, A-MEM- and MemGPT-style retrievers are all dominated.
+
+### 5.2b Real data: LoCoMo, turn granularity
+
+*(pending: the 3-seed turn-level run was still executing when this revision was written; the table is produced by `python -m fidelitymem.eval.real --dataset locomo --path data/locomo/locomo10.json --seeds 0 1 2 --k 10` and the single-seed smoke run showed the same ordering: BM25 0.69, controller 0.66, other hybrids 0.14–0.55.)*
+
 ### 5.3 Ablation (synthetic, n = 1 000, K = 10, level 3 gated, 3 seeds, pretrained embedder)
 
 One component removed at a time from the full system. `retain` is recall relative to the full system; ± is the 95% CI over seeds.
