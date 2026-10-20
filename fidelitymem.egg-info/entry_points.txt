@@ -1,0 +1,2 @@
+[console_scripts]
+fidelitymem-bench = fidelitymem.eval.cli:main
