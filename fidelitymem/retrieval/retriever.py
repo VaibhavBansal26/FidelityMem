@@ -33,6 +33,7 @@ class HybridRetriever:
         self.graph = graph
         # maintained by the facade on index / supersede / forget
         self.active: set[str] = set()
+        self.enable_chaining = True  # ablation switch
         self.by_type: dict[MemoryType, set[str]] = {t: set() for t in MemoryType}
 
     def track(self, m: Memory) -> None:
@@ -116,7 +117,7 @@ class HybridRetriever:
             s = final_score(m, f, plan.weights, at, plan.recency_halflife_days, plan.type_boost)
             scored.append(RetrievedMemory(memory=m, score=s, sources={r: dict(v).get(mid, 0.0) for r, v in route_results.items() if mid in dict(v)}))
         scored.sort(key=lambda r: r.score, reverse=True)
-        if plan.graph_hops >= 2:
+        if plan.graph_hops >= 2 and self.enable_chaining:
             scored = self._chain_relations(query, scored, allowed, plan.top_k)
         top = scored[: plan.top_k]
         # sufficiency + raw expansion

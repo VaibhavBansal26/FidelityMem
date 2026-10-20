@@ -76,6 +76,7 @@ class FidelityMem:
         self.telemetry = Telemetry()
         self.reports: list[ValidationReport] = []
         self._level_cache: dict[tuple[str, int], tuple[str, int, float]] = {}
+        self.gate_enabled = True  # ablation switch: False compresses without the fidelity gate
         self._raw_recall_cache: dict[tuple, tuple] = {}
 
     # ---- ingestion -----------------------------------------------------
@@ -132,7 +133,7 @@ class FidelityMem:
         ep = self.archive.put(Episode(text=cand.text, provenance=prov, message_ids=cand.message_ids))
         probes = build_probes(cand.text)
         level = self.controller.current.compression_level
-        cr = compress_with_gate(cand.text, level, self.policy.minimum_recall_retention, self.compressor, probes)
+        cr = compress_with_gate(cand.text, level, self.policy.minimum_recall_retention if self.gate_enabled else 0.0, self.compressor, probes)
         self._raw_recall_cache.clear()
         if cr.level < min(level, 3):
             self.telemetry.compression_backoffs += 1
@@ -194,7 +195,7 @@ class FidelityMem:
                 ep = self.archive.get(mem.episode_id)
                 if not ep:
                     continue
-                cr = compress_with_gate(ep.text, level, self.policy.minimum_recall_retention, self.compressor, self.probes[mem.id])
+                cr = compress_with_gate(ep.text, level, self.policy.minimum_recall_retention if self.gate_enabled else 0.0, self.compressor, self.probes[mem.id])
                 self._level_cache[key] = (cr.text, cr.level, cr.fidelity)
             text, lvl, fid = self._level_cache[key]
             if text != mem.compressed_text:
