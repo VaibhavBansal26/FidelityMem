@@ -1,0 +1,73 @@
+{
+ "embedder": "spacy:en_core_web_md",
+ "runs": [
+  {
+   "n_codes": 1000,
+   "episodes": 1000,
+   "vocab": 194,
+   "build_s": 0.6,
+   "raw_bytes": 295193,
+   "trie_bytes": 223974,
+   "storage_ratio": 0.759,
+   "decode_fidelity_facts": 0.812,
+   "decode_fidelity_content": 0.793,
+   "recall@10_semantic_trie": 0.875,
+   "recall@10_bm25": 0.875,
+   "p50_ms": 0.13,
+   "example_decode": "retro clarified coffee dashboard second floor broken retro team spent retro retro sync going roadmap quarter parking situation floor office retro mess mondays o",
+   "example_raw": "Someone mentioned that the coffee machine on the second floor is broken again. The team spent the first part of the sync going over the roadmap for the quarter.",
+   "dataset": "synthetic"
+  },
+  {
+   "n_codes": 3000,
+   "episodes": 1000,
+   "vocab": 194,
+   "build_s": 0.7,
+   "raw_bytes": 295193,
+   "trie_bytes": 223974,
+   "storage_ratio": 0.759,
+   "decode_fidelity_facts": 0.812,
+   "decode_fidelity_content": 0.793,
+   "recall@10_semantic_trie": 0.875,
+   "recall@10_bm25": 0.875,
+   "p50_ms": 0.11,
+   "example_decode": "retro clarified coffee dashboard second floor broken retro team spent retro retro sync going roadmap quarter parking situation floor office retro mess mondays o",
+   "example_raw": "Someone mentioned that the coffee machine on the second floor is broken again. The team spent the first part of the sync going over the roadmap for the quarter.",
+   "dataset": "synthetic"
+  },
+  {
+   "n_codes": 1000,
+   "episodes": 1451,
+   "vocab": 2675,
+   "build_s": 1.6,
+   "raw_bytes": 266201,
+   "trie_bytes": 286598,
+   "storage_ratio": 1.077,
+   "decode_fidelity_facts": 0.983,
+   "decode_fidelity_content": 0.854,
+   "recall@10_semantic_trie": 0.526,
+   "recall@10_bm25": 0.613,
+   "p50_ms": 0.71,
+   "example_decode": "1 56 pm 8 2023 caroline hey mel going seeing",
+   "example_raw": "[1:56 pm on 8 May, 2023] Caroline: Hey Mel! Good to see you! How have you been?",
+   "dataset": "locomo"
+  },
+  {
+   "n_codes": 3000,
+   "episodes": 1451,
+   "vocab": 2675,
+   "build_s": 2.0,
+   "raw_bytes": 266201,
+   "trie_bytes": 293627,
+   "storage_ratio": 1.103,
+   "decode_fidelity_facts": 0.983,
+   "decode_fidelity_content": 0.866,
+   "recall@10_semantic_trie": 0.539,
+   "recall@10_bm25": 0.613,
+   "p50_ms": 0.62,
+   "example_decode": "1 56 pm 8 2023 caroline hey mel going lacking",
+   "example_raw": "[1:56 pm on 8 May, 2023] Caroline: Hey Mel! Good to see you! How have you been?",
+   "dataset": "locomo"
+  }
+ ]
+}

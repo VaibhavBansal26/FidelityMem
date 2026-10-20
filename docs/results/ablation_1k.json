@@ -1,182 +1,321 @@
-[
- {
-  "system": "full_L3_gated",
-  "k": 10,
-  "recall": 1.0,
-  "complete_recall": 1.0,
-  "mrr": 0.98,
-  "ndcg": 0.9863092975357145,
-  "tokens_per_query": 416.72,
-  "p50_ms": 8.033819000047515,
-  "p95_ms": 20.506843000021036,
-  "storage_tokens": 30885,
-  "expansion_rate": 1.16,
-  "retention": 1.0,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 1.0,
-   "exact": 1.0
+{
+ "embedder": "spacy:en_core_web_md",
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "n": 1000,
+ "aggregate": [
+  {
+   "system": "full_L3_gated",
+   "k": 10,
+   "recall": 0.995,
+   "complete_recall": 0.9933333333333333,
+   "mrr": 0.981388888888889,
+   "ndcg": 0.9842357358949837,
+   "tokens_per_query": 458.44000000000005,
+   "p50_ms": 4.327335999732895,
+   "p95_ms": 9.723672333166178,
+   "storage_tokens": 32076,
+   "expansion_rate": 1.1133333333333333,
+   "retention": 1.0,
+   "per_type": {
+    "multi_hop": 0.9933333333333333,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.012421691041614811,
+    "complete_recall": 0.014343333333333345,
+    "mrr": 0.03908028281252303,
+    "ndcg": 0.02795932439802684,
+    "tokens_per_query": 61.333963372254836,
+    "p50_ms": 0.5191219845876692,
+    "p95_ms": 4.608737416751463,
+    "storage_tokens": 2470.1822819689737,
+    "expansion_rate": 0.1929698142485271
+   }
+  },
+  {
+   "system": "- fidelity gate",
+   "k": 10,
+   "recall": 0.9483333333333333,
+   "complete_recall": 0.9366666666666666,
+   "mrr": 0.935202380952381,
+   "ndcg": 0.9351723341582788,
+   "tokens_per_query": 444.49333333333334,
+   "p50_ms": 3.768698333260545,
+   "p95_ms": 9.109245333396151,
+   "storage_tokens": 20392,
+   "expansion_rate": 2.973333333333333,
+   "retention": 0.95304773023366,
+   "per_type": {
+    "multi_hop": 0.8466666666666667,
+    "temporal": 1.0,
+    "factual": 0.96,
+    "exact": 0.9866666666666667
+   },
+   "ci95": {
+    "recall": 0.07063272520188102,
+    "complete_recall": 0.07589778594340615,
+    "mrr": 0.10929650459725235,
+    "ndcg": 0.09801609776617706,
+    "tokens_per_query": 27.878540406291783,
+    "p50_ms": 1.7601412180346647,
+    "p95_ms": 8.261120275137065,
+    "storage_tokens": 448.3479137371384,
+    "expansion_rate": 0.07171666666666705
+   }
+  },
+  {
+   "system": "+ content gate profile",
+   "k": 10,
+   "recall": 0.995,
+   "complete_recall": 0.9933333333333333,
+   "mrr": 0.9289894179894181,
+   "ndcg": 0.9467083363180989,
+   "tokens_per_query": 761.84,
+   "p50_ms": 3.843051000027723,
+   "p95_ms": 9.582076666750558,
+   "storage_tokens": 73427,
+   "expansion_rate": 0.0,
+   "retention": 1.0,
+   "per_type": {
+    "multi_hop": 0.9933333333333333,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.012421691041614811,
+    "complete_recall": 0.014343333333333345,
+    "mrr": 0.04123694938532834,
+    "ndcg": 0.032117070132504276,
+    "tokens_per_query": 48.48204313462485,
+    "p50_ms": 2.6004320135121013,
+    "p95_ms": 11.0703648963704,
+    "storage_tokens": 509.58817352915264,
+    "expansion_rate": 0.0
+   }
+  },
+  {
+   "system": "- raw expansion",
+   "k": 10,
+   "recall": 0.995,
+   "complete_recall": 0.9933333333333333,
+   "mrr": 0.9797222222222223,
+   "ndcg": 0.9834147840224284,
+   "tokens_per_query": 403.18666666666667,
+   "p50_ms": 3.921995333257655,
+   "p95_ms": 11.344578666770152,
+   "storage_tokens": 32076,
+   "expansion_rate": 0.0,
+   "retention": 1.0,
+   "per_type": {
+    "multi_hop": 0.9933333333333333,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.012421691041614811,
+    "complete_recall": 0.014343333333333345,
+    "mrr": 0.03830487655811868,
+    "ndcg": 0.029401460005398977,
+    "tokens_per_query": 51.929291052373095,
+    "p50_ms": 2.2121280870417364,
+    "p95_ms": 4.237292471877421,
+    "storage_tokens": 2470.1822819689737,
+    "expansion_rate": 0.0
+   }
+  },
+  {
+   "system": "- relation chaining",
+   "k": 10,
+   "recall": 0.9166666666666666,
+   "complete_recall": 0.8366666666666668,
+   "mrr": 0.9763888888888889,
+   "ndcg": 0.9081519804036509,
+   "tokens_per_query": 457.68333333333334,
+   "p50_ms": 4.218592666499414,
+   "p95_ms": 10.603223666597236,
+   "storage_tokens": 32075,
+   "expansion_rate": 1.1433333333333333,
+   "retention": 0.9212966346885945,
+   "per_type": {
+    "multi_hop": 0.68,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.08270769474144729,
+    "complete_recall": 0.15972060035505053,
+    "mrr": 0.05131348521031294,
+    "ndcg": 0.012705244510020728,
+    "tokens_per_query": 54.95861684083528,
+    "p50_ms": 1.8975804226914743,
+    "p95_ms": 0.8248883992180531,
+    "storage_tokens": 2576.254329915257,
+    "expansion_rate": 0.183123421252201
+   }
+  },
+  {
+   "system": "- graph route",
+   "k": 10,
+   "recall": 0.995,
+   "complete_recall": 0.9933333333333333,
+   "mrr": 0.880638888888889,
+   "ndcg": 0.9124179582311895,
+   "tokens_per_query": 441.9166666666667,
+   "p50_ms": 2.618749333426725,
+   "p95_ms": 5.914170333198854,
+   "storage_tokens": 32091,
+   "expansion_rate": 0.8566666666666668,
+   "retention": 1.0,
+   "per_type": {
+    "multi_hop": 0.9933333333333333,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.012421691041614811,
+    "complete_recall": 0.014343333333333345,
+    "mrr": 0.03422316361001169,
+    "ndcg": 0.02001110885642294,
+    "tokens_per_query": 51.953008634595385,
+    "p50_ms": 0.09363718423299036,
+    "p95_ms": 4.084324289807171,
+    "storage_tokens": 2507.8053979901324,
+    "expansion_rate": 0.16541538948289483
+   }
+  },
+  {
+   "system": "- graph & chaining",
+   "k": 10,
+   "recall": 0.8766666666666666,
+   "complete_recall": 0.7566666666666667,
+   "mrr": 0.880638888888889,
+   "ndcg": 0.8261031799630573,
+   "tokens_per_query": 439.97,
+   "p50_ms": 2.7192240001265113,
+   "p95_ms": 5.882470000263614,
+   "storage_tokens": 32060,
+   "expansion_rate": 0.8766666666666666,
+   "retention": 0.881078371656261,
+   "per_type": {
+    "multi_hop": 0.52,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.018974446485851573,
+    "complete_recall": 0.02868666666666669,
+    "mrr": 0.03422316361001169,
+    "ndcg": 0.019565550586129094,
+    "tokens_per_query": 49.861856150090304,
+    "p50_ms": 0.3208944072464285,
+    "p95_ms": 4.674229427166857,
+    "storage_tokens": 2538.7704051788755,
+    "expansion_rate": 0.20686249517762056
+   }
+  },
+  {
+   "system": "- hub penalty/pruning",
+   "k": 10,
+   "recall": 0.995,
+   "complete_recall": 0.9933333333333333,
+   "mrr": 0.9780555555555556,
+   "ndcg": 0.9828687915708114,
+   "tokens_per_query": 456.76666666666665,
+   "p50_ms": 3.6562556664042254,
+   "p95_ms": 9.729101333202076,
+   "storage_tokens": 32076,
+   "expansion_rate": 1.0999999999999999,
+   "retention": 1.0,
+   "per_type": {
+    "multi_hop": 0.9933333333333333,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.012421691041614811,
+    "complete_recall": 0.014343333333333345,
+    "mrr": 0.052876689633132606,
+    "ndcg": 0.03766175277596674,
+    "tokens_per_query": 53.95859818986447,
+    "p50_ms": 1.7702568423621758,
+    "p95_ms": 2.873497026914466,
+    "storage_tokens": 2470.1822819689737,
+    "expansion_rate": 0.08605999999999976
+   }
+  },
+  {
+   "system": "- trie route",
+   "k": 10,
+   "recall": 0.995,
+   "complete_recall": 0.9933333333333333,
+   "mrr": 0.9780555555555556,
+   "ndcg": 0.9824595092886049,
+   "tokens_per_query": 458.06,
+   "p50_ms": 4.544384999765801,
+   "p95_ms": 10.601661999923332,
+   "storage_tokens": 32060,
+   "expansion_rate": 1.11,
+   "retention": 1.0,
+   "per_type": {
+    "multi_hop": 0.9933333333333333,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.012421691041614811,
+    "complete_recall": 0.014343333333333345,
+    "mrr": 0.04470722384025963,
+    "ndcg": 0.03266836945504048,
+    "tokens_per_query": 60.64881205996455,
+    "p50_ms": 2.5652156381835156,
+    "p95_ms": 4.800608988854463,
+    "storage_tokens": 2538.7704051788755,
+    "expansion_rate": 0.1791481759140552
+   }
+  },
+  {
+   "system": "lexical+vector only",
+   "k": 10,
+   "recall": 0.995,
+   "complete_recall": 0.9933333333333333,
+   "mrr": 0.9011944444444445,
+   "ndcg": 0.9274444390675777,
+   "tokens_per_query": 436.2366666666667,
+   "p50_ms": 2.6865783332444457,
+   "p95_ms": 5.7343673333889456,
+   "storage_tokens": 32075,
+   "expansion_rate": 0.84,
+   "retention": 1.0,
+   "per_type": {
+    "multi_hop": 0.9933333333333333,
+    "temporal": 1.0,
+    "factual": 0.9866666666666667,
+    "exact": 1.0
+   },
+   "ci95": {
+    "recall": 0.012421691041614811,
+    "complete_recall": 0.014343333333333345,
+    "mrr": 0.026339268688099816,
+    "ndcg": 0.0256030910003033,
+    "tokens_per_query": 44.08813800126525,
+    "p50_ms": 0.275601354555238,
+    "p95_ms": 4.635250091443795,
+    "storage_tokens": 2576.254329915257,
+    "expansion_rate": 0.1739036745826072
+   }
   }
- },
- {
-  "system": "- fidelity gate",
-  "k": 10,
-  "recall": 0.98,
-  "complete_recall": 0.97,
-  "mrr": 0.96625,
-  "ndcg": 0.9672629438553092,
-  "tokens_per_query": 422.18,
-  "p50_ms": 7.95373400023891,
-  "p95_ms": 16.373476999888226,
-  "storage_tokens": 20190,
-  "expansion_rate": 2.98,
-  "retention": 0.98,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 0.92,
-   "exact": 1.0
-  }
- },
- {
-  "system": "- raw expansion",
-  "k": 10,
-  "recall": 1.0,
-  "complete_recall": 1.0,
-  "mrr": 0.99,
-  "ndcg": 0.9922629438553092,
-  "tokens_per_query": 364.86,
-  "p50_ms": 7.952597999974387,
-  "p95_ms": 16.86217500036946,
-  "storage_tokens": 30933,
-  "expansion_rate": 0.0,
-  "retention": 1.0,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 1.0,
-   "exact": 1.0
-  }
- },
- {
-  "system": "- relation chaining",
-  "k": 10,
-  "recall": 0.92,
-  "complete_recall": 0.84,
-  "mrr": 0.99,
-  "ndcg": 0.9165578715621027,
-  "tokens_per_query": 418.87,
-  "p50_ms": 4.430859999956738,
-  "p95_ms": 15.821020999737812,
-  "storage_tokens": 30885,
-  "expansion_rate": 1.16,
-  "retention": 0.92,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 0.68,
-   "exact": 1.0
-  }
- },
- {
-  "system": "- graph route",
-  "k": 10,
-  "recall": 1.0,
-  "complete_recall": 1.0,
-  "mrr": 0.731,
-  "ndcg": 0.80153582933222,
-  "tokens_per_query": 398.05,
-  "p50_ms": 4.117569000300136,
-  "p95_ms": 12.096187999759422,
-  "storage_tokens": 30933,
-  "expansion_rate": 1.0,
-  "retention": 1.0,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 1.0,
-   "exact": 1.0
-  }
- },
- {
-  "system": "- graph & chaining",
-  "k": 10,
-  "recall": 0.88,
-  "complete_recall": 0.76,
-  "mrr": 0.731,
-  "ndcg": 0.7137611604734004,
-  "tokens_per_query": 398.69,
-  "p50_ms": 7.772330000079819,
-  "p95_ms": 8.853355999690393,
-  "storage_tokens": 30933,
-  "expansion_rate": 1.05,
-  "retention": 0.88,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 0.52,
-   "exact": 1.0
-  }
- },
- {
-  "system": "- hub penalty/pruning",
-  "k": 10,
-  "recall": 1.0,
-  "complete_recall": 1.0,
-  "mrr": 0.985,
-  "ndcg": 0.99,
-  "tokens_per_query": 416.96,
-  "p50_ms": 7.7819110001655645,
-  "p95_ms": 20.43487199989613,
-  "storage_tokens": 30933,
-  "expansion_rate": 1.15,
-  "retention": 1.0,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 1.0,
-   "exact": 1.0
-  }
- },
- {
-  "system": "- trie route",
-  "k": 10,
-  "recall": 1.0,
-  "complete_recall": 1.0,
-  "mrr": 0.99,
-  "ndcg": 0.991460151746791,
-  "tokens_per_query": 418.73,
-  "p50_ms": 7.321807000153058,
-  "p95_ms": 16.04893900002935,
-  "storage_tokens": 30933,
-  "expansion_rate": 1.16,
-  "retention": 1.0,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 1.0,
-   "exact": 1.0
-  }
- },
- {
-  "system": "lexical+vector only",
-  "k": 10,
-  "recall": 1.0,
-  "complete_recall": 1.0,
-  "mrr": 0.915,
-  "ndcg": 0.9405455239912937,
-  "tokens_per_query": 389.74,
-  "p50_ms": 4.252372999872023,
-  "p95_ms": 12.05433399991307,
-  "storage_tokens": 30933,
-  "expansion_rate": 1.0,
-  "retention": 1.0,
-  "per_type": {
-   "factual": 1.0,
-   "temporal": 1.0,
-   "multi_hop": 1.0,
-   "exact": 1.0
-  }
- }
-]
+ ]
+}

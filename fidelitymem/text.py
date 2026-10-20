@@ -89,15 +89,17 @@ def extract_entities(text: str) -> list[str]:
     for sent in sentences(text):
         words = sent.split()
         for i, w in enumerate(words):
-            w_clean = w.strip(",.;:()[]\"'")
+            w_clean = w.strip(",.;:()[]\"'!?")
             if not w_clean:
                 continue
             m = _ENTITY.fullmatch(w_clean)
             if not m:
                 continue
             # skip sentence-initial plainly-capitalised words ("Notes", "Several") unless
-            # they look like identifiers or recur capitalised mid-sentence
-            if i == 0 and w_clean[0].isupper() and not re.search(r"[-_.\d]", w_clean):
+            # they look like identifiers or recur capitalised mid-sentence; a word after a
+            # speaker label ("Caroline: Hey") is sentence-initial too
+            after_label = i > 0 and words[i - 1].endswith(":")
+            if (i == 0 or after_label) and w_clean[0].isupper() and not re.search(r"[-_.\d]", w_clean):
                 if not re.search(rf"(?<!^)(?<![.!?]\s){re.escape(w_clean)}\b", text[text.find(sent) + 1 :] if False else " ".join(words[1:])):
                     continue
             if w_clean.lower() in STOPWORDS:

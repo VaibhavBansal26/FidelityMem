@@ -1,23 +1,25 @@
-ablation n=1000 K=10 (retain = recall relative to full)
+ablation n=1000 K=10 seeds=[0, 1, 2] embedder=spacy:en_core_web_md (retain = recall relative to full; ± = 95% CI)
 system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
-full_L3_gated                10   1.000   1.000  0.980  0.986      417    8.03   20.51     30885   1.16   1.000
-- fidelity gate              10   0.980   0.970  0.966  0.967      422    7.95   16.37     20190   2.98   0.980
-- raw expansion              10   1.000   1.000  0.990  0.992      365    7.95   16.86     30933   0.00   1.000
-- relation chaining          10   0.920   0.840  0.990  0.917      419    4.43   15.82     30885   1.16   0.920
-- graph route                10   1.000   1.000  0.731  0.802      398    4.12   12.10     30933   1.00   1.000
-- graph & chaining           10   0.880   0.760  0.731  0.714      399    7.77    8.85     30933   1.05   0.880
-- hub penalty/pruning        10   1.000   1.000  0.985  0.990      417    7.78   20.43     30933   1.15   1.000
-- trie route                 10   1.000   1.000  0.990  0.991      419    7.32   16.05     30933   1.16   1.000
-lexical+vector only          10   1.000   1.000  0.915  0.941      390    4.25   12.05     30933   1.00   1.000
+full_L3_gated                10   0.995 ±0.012   0.993  0.981  0.984      458    4.33    9.72     32076   1.11   1.000
+- fidelity gate              10   0.948 ±0.071   0.937  0.935  0.935      444    3.77    9.11     20392   2.97   0.953
++ content gate profile       10   0.995 ±0.012   0.993  0.929  0.947      762    3.84    9.58     73427   0.00   1.000
+- raw expansion              10   0.995 ±0.012   0.993  0.980  0.983      403    3.92   11.34     32076   0.00   1.000
+- relation chaining          10   0.917 ±0.083   0.837  0.976  0.908      458    4.22   10.60     32075   1.14   0.921
+- graph route                10   0.995 ±0.012   0.993  0.881  0.912      442    2.62    5.91     32091   0.86   1.000
+- graph & chaining           10   0.877 ±0.019   0.757  0.881  0.826      440    2.72    5.88     32060   0.88   0.881
+- hub penalty/pruning        10   0.995 ±0.012   0.993  0.978  0.983      457    3.66    9.73     32076   1.10   1.000
+- trie route                 10   0.995 ±0.012   0.993  0.978  0.982      458    4.54   10.60     32060   1.11   1.000
+lexical+vector only          10   0.995 ±0.012   0.993  0.901  0.927      436    2.69    5.73     32075   0.84   1.000
 
 per-type Recall@10:
-  full_L3_gated            exact=1.000, factual=1.000, multi_hop=1.000, temporal=1.000
-  - fidelity gate          exact=1.000, factual=1.000, multi_hop=0.920, temporal=1.000
-  - raw expansion          exact=1.000, factual=1.000, multi_hop=1.000, temporal=1.000
-  - relation chaining      exact=1.000, factual=1.000, multi_hop=0.680, temporal=1.000
-  - graph route            exact=1.000, factual=1.000, multi_hop=1.000, temporal=1.000
-  - graph & chaining       exact=1.000, factual=1.000, multi_hop=0.520, temporal=1.000
-  - hub penalty/pruning    exact=1.000, factual=1.000, multi_hop=1.000, temporal=1.000
-  - trie route             exact=1.000, factual=1.000, multi_hop=1.000, temporal=1.000
-  lexical+vector only      exact=1.000, factual=1.000, multi_hop=1.000, temporal=1.000
+  full_L3_gated            exact=1.000, factual=0.987, multi_hop=0.993, temporal=1.000
+  - fidelity gate          exact=0.987, factual=0.960, multi_hop=0.847, temporal=1.000
+  + content gate profile   exact=1.000, factual=0.987, multi_hop=0.993, temporal=1.000
+  - raw expansion          exact=1.000, factual=0.987, multi_hop=0.993, temporal=1.000
+  - relation chaining      exact=1.000, factual=0.987, multi_hop=0.680, temporal=1.000
+  - graph route            exact=1.000, factual=0.987, multi_hop=0.993, temporal=1.000
+  - graph & chaining       exact=1.000, factual=0.987, multi_hop=0.520, temporal=1.000
+  - hub penalty/pruning    exact=1.000, factual=0.987, multi_hop=0.993, temporal=1.000
+  - trie route             exact=1.000, factual=0.987, multi_hop=0.993, temporal=1.000
+  lexical+vector only      exact=1.000, factual=0.987, multi_hop=0.993, temporal=1.000
 DONE

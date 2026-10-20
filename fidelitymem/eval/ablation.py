@@ -60,12 +60,26 @@ def run(n: int = 1000, n_queries: int = 100, k: int = 10, seed: int = 0, level: 
 
 
 if __name__ == "__main__":
-    n = int(sys.argv[1]) if len(sys.argv) > 1 else 1000
-    res = run(n)
-    print(f"ablation n={n} K=10 (retain = recall relative to full)")
+    import argparse
+
+    from ..stores import set_default_embedder
+    from ..stores.embedders import best_available, embedder_name
+    from .harness import aggregate
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("n", type=int, nargs="?", default=1000)
+    ap.add_argument("out", nargs="?", default=None)
+    ap.add_argument("--seeds", type=int, nargs="+", default=[0])
+    ap.add_argument("--embedder", default="best")
+    a = ap.parse_args()
+    emb = best_available(None if a.embedder == "best" else a.embedder)
+    set_default_embedder(emb)
+    per_seed = [run(a.n, seed=sd) for sd in a.seeds]
+    res = aggregate(per_seed) if len(per_seed) > 1 else per_seed[0]
+    print(f"ablation n={a.n} K=10 seeds={a.seeds} embedder={embedder_name(emb)} (retain = recall relative to full; ± = 95% CI)")
     print(format_table(res))
     print("\nper-type Recall@10:")
     for r in res:
         print(f"  {r.system:<24} " + ", ".join(f"{t}={v:.3f}" for t, v in sorted(r.per_type.items())))
-    if len(sys.argv) > 2:
-        json.dump([r.__dict__ for r in res], open(sys.argv[2], "w"), indent=1)
+    if a.out:
+        json.dump({"embedder": embedder_name(emb), "seeds": a.seeds, "n": a.n, "aggregate": [{k: v for k, v in r.__dict__.items() if k != "per_query_recall"} for r in res]}, open(a.out, "w"), indent=1)
