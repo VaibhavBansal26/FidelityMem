@@ -105,6 +105,24 @@ Retention cannot be observed on live queries, so it is measured on **self-genera
 * **Mem0-style atomic facts** has the smallest index of the baselines (≈23 % of raw) and loses recall where the atomic sentence is not the one that matches the query phrasing. **MemGPT-style** recall is as good as its vector store but its MRR collapses because the always-present core block occupies the top ranks.
 * **Latency.** FidelityMem's p95 is 1–3 ms higher than single-route baselines at 300–3 000 records and grows linearly with the dense index (a dense matmul in this container's BLAS); the comparison is of architectures, not of index engineering.
 
+### 5.2 Ablation (n = 1 000, K = 10, level 3 gated)
+
+One component removed at a time from the full system. `retain` is recall relative to the full system. Latencies in this table were measured while the scale study ran on the same machine and are omitted.
+
+| Variant | R@10 | CR@10 | MRR | nDCG | tok/q | stored tok | expand | retain | multi-hop R@10 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| full (L3, gated) | 1.000 | 1.000 | 0.980 | 0.986 | 417 | 30 885 | 1.16 | 1.000 | 1.000 |
+| − fidelity gate | 0.980 | 0.970 | 0.966 | 0.967 | 422 | 20 190 | 2.98 | 0.980 | 0.920 |
+| − raw expansion | 1.000 | 1.000 | 0.990 | 0.992 | 365 | 30 933 | 0.00 | 1.000 | 1.000 |
+| − relation chaining | 0.920 | 0.840 | 0.990 | 0.917 | 419 | 30 885 | 1.16 | 0.920 | 0.680 |
+| − graph route | 1.000 | 1.000 | 0.731 | 0.802 | 398 | 30 933 | 1.00 | 1.000 | 1.000 |
+| − graph route and chaining | 0.880 | 0.760 | 0.731 | 0.714 | 399 | 30 933 | 1.05 | 0.880 | 0.520 |
+| − hub penalty / pruning | 1.000 | 1.000 | 0.985 | 0.990 | 417 | 30 933 | 1.15 | 1.000 | 1.000 |
+| − trie route | 1.000 | 1.000 | 0.990 | 0.991 | 419 | 30 933 | 1.16 | 1.000 | 1.000 |
+| lexical + vector only | 1.000 | 1.000 | 0.915 | 0.941 | 390 | 30 933 | 1.00 | 1.000 | 1.000 |
+
+Three findings. **Relation chaining is the multi-hop component**: without it, second-hop recall falls to 0.68, and to 0.52 when the graph route is also removed; the graph route by itself mainly improves ranking (MRR 0.73 → 0.98). **The gate protects relations as well as values**: without it the gist drops the sentence carrying the dependency relation in 8 % of multi-hop cases, the index shrinks to the lossy-summary size, and the retriever compensates with nearly three times as many raw expansions per query. **Expansion, the trie and hub pruning are neutral on recall here**: expansion serves exact-value questions whose answer must be quoted (it is mandatory for them) and costs 14 % more context tokens; the trie helps only when identifiers are the query, which this question set does not isolate; hub pruning is a latency measure. Because chaining uses relations found in the top lexical hits, it recovers the second hop even in the lexical+vector-only configuration the controller selected, which is why that cheaper configuration remained feasible.
+
 ## 6. Limitations and what is not shown
 
 1. **No LLM in the loop.** Ingestion, compression and the benchmark are deterministic. Answer accuracy on LoCoMo or LongMemEval, which needs an LLM reader and judge, is not measured. The protocols are compatible: the same gate and controller apply to an LLM compressor.

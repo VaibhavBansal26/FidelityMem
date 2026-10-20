@@ -1,0 +1,182 @@
+[
+ {
+  "system": "full_L3_gated",
+  "k": 10,
+  "recall": 1.0,
+  "complete_recall": 1.0,
+  "mrr": 0.98,
+  "ndcg": 0.9863092975357145,
+  "tokens_per_query": 416.72,
+  "p50_ms": 8.033819000047515,
+  "p95_ms": 20.506843000021036,
+  "storage_tokens": 30885,
+  "expansion_rate": 1.16,
+  "retention": 1.0,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 1.0,
+   "exact": 1.0
+  }
+ },
+ {
+  "system": "- fidelity gate",
+  "k": 10,
+  "recall": 0.98,
+  "complete_recall": 0.97,
+  "mrr": 0.96625,
+  "ndcg": 0.9672629438553092,
+  "tokens_per_query": 422.18,
+  "p50_ms": 7.95373400023891,
+  "p95_ms": 16.373476999888226,
+  "storage_tokens": 20190,
+  "expansion_rate": 2.98,
+  "retention": 0.98,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 0.92,
+   "exact": 1.0
+  }
+ },
+ {
+  "system": "- raw expansion",
+  "k": 10,
+  "recall": 1.0,
+  "complete_recall": 1.0,
+  "mrr": 0.99,
+  "ndcg": 0.9922629438553092,
+  "tokens_per_query": 364.86,
+  "p50_ms": 7.952597999974387,
+  "p95_ms": 16.86217500036946,
+  "storage_tokens": 30933,
+  "expansion_rate": 0.0,
+  "retention": 1.0,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 1.0,
+   "exact": 1.0
+  }
+ },
+ {
+  "system": "- relation chaining",
+  "k": 10,
+  "recall": 0.92,
+  "complete_recall": 0.84,
+  "mrr": 0.99,
+  "ndcg": 0.9165578715621027,
+  "tokens_per_query": 418.87,
+  "p50_ms": 4.430859999956738,
+  "p95_ms": 15.821020999737812,
+  "storage_tokens": 30885,
+  "expansion_rate": 1.16,
+  "retention": 0.92,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 0.68,
+   "exact": 1.0
+  }
+ },
+ {
+  "system": "- graph route",
+  "k": 10,
+  "recall": 1.0,
+  "complete_recall": 1.0,
+  "mrr": 0.731,
+  "ndcg": 0.80153582933222,
+  "tokens_per_query": 398.05,
+  "p50_ms": 4.117569000300136,
+  "p95_ms": 12.096187999759422,
+  "storage_tokens": 30933,
+  "expansion_rate": 1.0,
+  "retention": 1.0,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 1.0,
+   "exact": 1.0
+  }
+ },
+ {
+  "system": "- graph & chaining",
+  "k": 10,
+  "recall": 0.88,
+  "complete_recall": 0.76,
+  "mrr": 0.731,
+  "ndcg": 0.7137611604734004,
+  "tokens_per_query": 398.69,
+  "p50_ms": 7.772330000079819,
+  "p95_ms": 8.853355999690393,
+  "storage_tokens": 30933,
+  "expansion_rate": 1.05,
+  "retention": 0.88,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 0.52,
+   "exact": 1.0
+  }
+ },
+ {
+  "system": "- hub penalty/pruning",
+  "k": 10,
+  "recall": 1.0,
+  "complete_recall": 1.0,
+  "mrr": 0.985,
+  "ndcg": 0.99,
+  "tokens_per_query": 416.96,
+  "p50_ms": 7.7819110001655645,
+  "p95_ms": 20.43487199989613,
+  "storage_tokens": 30933,
+  "expansion_rate": 1.15,
+  "retention": 1.0,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 1.0,
+   "exact": 1.0
+  }
+ },
+ {
+  "system": "- trie route",
+  "k": 10,
+  "recall": 1.0,
+  "complete_recall": 1.0,
+  "mrr": 0.99,
+  "ndcg": 0.991460151746791,
+  "tokens_per_query": 418.73,
+  "p50_ms": 7.321807000153058,
+  "p95_ms": 16.04893900002935,
+  "storage_tokens": 30933,
+  "expansion_rate": 1.16,
+  "retention": 1.0,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 1.0,
+   "exact": 1.0
+  }
+ },
+ {
+  "system": "lexical+vector only",
+  "k": 10,
+  "recall": 1.0,
+  "complete_recall": 1.0,
+  "mrr": 0.915,
+  "ndcg": 0.9405455239912937,
+  "tokens_per_query": 389.74,
+  "p50_ms": 4.252372999872023,
+  "p95_ms": 12.05433399991307,
+  "storage_tokens": 30933,
+  "expansion_rate": 1.0,
+  "retention": 1.0,
+  "per_type": {
+   "factual": 1.0,
+   "temporal": 1.0,
+   "multi_hop": 1.0,
+   "exact": 1.0
+  }
+ }
+]
