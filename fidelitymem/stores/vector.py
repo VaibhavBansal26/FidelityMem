@@ -57,10 +57,11 @@ class VectorIndex:
         self._cache_size = cache_size
         self._ids: list[str] = []
         self._pos: dict[str, int] = {}
-        self._mat = np.zeros((0, self.embedder.dim), dtype=np.float32)
+        self._mat = np.zeros((1024, self.embedder.dim), dtype=np.float32)  # capacity-doubling buffer
+        self._n = 0
 
     def __len__(self) -> int:
-        return len(self._ids)
+        return self._n
 
     def _embed(self, texts: list[str]) -> np.ndarray:
         missing = [t for t in texts if t not in self._cache]
@@ -71,46 +72,66 @@ class VectorIndex:
                 self._cache[t] = v
         return np.stack([self._cache[t] for t in texts])
 
-    def add(self, doc_id: str, text: str) -> None:
-        vec = self._embed([text])[0]
-        if doc_id in self._pos:
-            self._mat[self._pos[doc_id]] = vec
+    def _grow(self, need: int) -> None:
+        if self._n + need <= self._mat.shape[0]:
             return
-        self._pos[doc_id] = len(self._ids)
-        self._ids.append(doc_id)
-        self._mat = np.vstack([self._mat, vec[None, :]])
+        cap = self._mat.shape[0]
+        while cap < self._n + need:
+            cap *= 2
+        new = np.zeros((cap, self.embedder.dim), dtype=np.float32)
+        new[: self._n] = self._mat[: self._n]
+        self._mat = new
+
+    def add(self, doc_id: str, text: str) -> None:
+        self.add_many([(doc_id, text)])
 
     def add_many(self, items: list[tuple[str, str]]) -> None:
         if not items:
             return
         vecs = self._embed([t for _, t in items])
-        new = [(i, v) for (i, _), v in zip(items, vecs) if i not in self._pos]
+        new_rows = []
         for (i, _), v in zip(items, vecs):
             if i in self._pos:
                 self._mat[self._pos[i]] = v
-        if new:
-            for i, _ in new:
-                self._pos[i] = len(self._ids)
+            else:
+                new_rows.append((i, v))
+        if new_rows:
+            self._grow(len(new_rows))
+            for i, v in new_rows:
+                self._pos[i] = self._n
                 self._ids.append(i)
-            self._mat = np.vstack([self._mat, np.stack([v for _, v in new])])
+                self._mat[self._n] = v
+                self._n += 1
 
     def remove(self, doc_id: str) -> None:
-        if doc_id not in self._pos:
+        """Swap-remove: O(1), keeps the buffer dense."""
+        p = self._pos.pop(doc_id, None)
+        if p is None:
             return
-        p = self._pos.pop(doc_id)
-        self._ids.pop(p)
-        self._mat = np.delete(self._mat, p, axis=0)
-        self._pos = {i: n for n, i in enumerate(self._ids)}
+        last = self._n - 1
+        if p != last:
+            last_id = self._ids[last]
+            self._mat[p] = self._mat[last]
+            self._ids[p] = last_id
+            self._pos[last_id] = p
+        self._ids.pop()
+        self._n -= 1
 
     def search(self, query: str, k: int = 10, allowed: set[str] | None = None) -> list[tuple[str, float]]:
-        if not self._ids:
+        if self._n == 0:
             return []
-        q = self.embedder.embed([query])[0]
-        sims = self._mat @ q
-        if allowed is not None:
-            mask = np.array([i in allowed for i in self._ids])
-            sims = np.where(mask, sims, -np.inf)
-        k = min(k, len(self._ids))
+        q = self._embed([query])[0]
+        if allowed is not None and len(allowed) < self._n:
+            rows = [self._pos[i] for i in allowed if i in self._pos]
+            if not rows:
+                return []
+            idx = np.fromiter(rows, dtype=np.int64, count=len(rows))
+            sims = self._mat[idx] @ q
+            ids = [self._ids[r] for r in rows]
+        else:
+            sims = self._mat[: self._n] @ q
+            ids = self._ids
+        k = min(k, len(ids))
         top = np.argpartition(-sims, k - 1)[:k]
         top = top[np.argsort(-sims[top])]
-        return [(self._ids[i], float(sims[i])) for i in top if np.isfinite(sims[i])]
+        return [(ids[i], float(sims[i])) for i in top]

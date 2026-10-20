@@ -103,8 +103,23 @@ class FidelityMem:
             c.types = types
         return self.admit(c, source_type=source_type, authority=authority, timestamp=timestamp)
 
+    def _neighbours(self, cand: Candidate, limit: int = 64) -> list[Memory]:
+        """Memories worth comparing a candidate against: those sharing an entity, plus the
+        candidate's own top lexical hits. Keeps admission sub-linear in store size."""
+        ids: dict[str, None] = {}
+        for e in cand.entities:
+            for mid in self.graph._entity_mems.get(e.lower(), ()):
+                ids.setdefault(mid)
+        # a short, rare-term query (identifiers and values) is both cheaper and more
+        # selective than the full candidate text
+        probe = " ".join(cand.entities + cand.numbers + cand.dates) or cand.text
+        for mid, _ in self.lexical.search(probe, 16):
+            ids.setdefault(mid)
+        out = [self.memories[i] for i in list(ids)[:limit] if i in self.memories]
+        return out
+
     def admit(self, cand: Candidate, *, source_type: str = "message", authority: float = 0.5, timestamp: Optional[datetime] = None) -> Optional[Memory]:
-        existing = list(self.memories.values())
+        existing = self._neighbours(cand)
         s1 = stage1_source_consistency(cand, existing, authority)
         s2 = stage2_relevance_utility(cand, existing)
         self.telemetry.contradictions_detected += len(s1.contradictions)
@@ -137,6 +152,7 @@ class FidelityMem:
     def _index(self, mem: Memory, probes: ProbeSet) -> None:
         self.memories[mem.id] = mem
         self.probes[mem.id] = probes
+        self.retriever.track(mem)
         self.lexical.add(mem.id, mem.compressed_text)
         self.vector.add(mem.id, mem.compressed_text)
         self.trie.add(mem.id, mem.compressed_text)
@@ -147,6 +163,7 @@ class FidelityMem:
         if old and old.active:
             old.valid_to = at
             old.superseded_by = new_id
+            self.retriever.untrack(old)
             self.lexical.remove(old_id)
             self.vector.remove(old_id)
             self.trie.remove(old_id)
@@ -158,6 +175,7 @@ class FidelityMem:
         m = self.memories.pop(memory_id, None)
         if not m:
             return False
+        self.retriever.untrack(m)
         self.lexical.remove(memory_id)
         self.vector.remove(memory_id)
         self.trie.remove(memory_id)
@@ -243,8 +261,8 @@ class FidelityMem:
                 recalls.append(recall_at_k(got, p.gold_episode_ids, cfg.top_k))
                 toks.append(st.tokens)
                 prec.append(len(set(got) & set(p.gold_episode_ids)) / max(1, len(got)))
-                # a contradiction in context counts only if it was not resolved by expansion
-                if st.conflicts and not any(r.expanded for r in res):
+                # a contradiction counts only while a party to it is compressed and unexpanded
+                if st.unresolved_conflicts:
                     conflicts += 1
             n = max(1, len(probes))
             return sum(recalls) / n, sum(toks) / n, sum(lat) / n, sum(prec) / n, conflicts / n
@@ -265,7 +283,7 @@ class FidelityMem:
                 self.trie.add(mid, t)
         return Measurement(cfg, r_raw, r_c, (r_c / r_raw) if r_raw > 0 else 1.0, contradiction_rate, toks, lat, stored / raw_tokens, 1 - prec)
 
-    def optimise(self, n_probes: int = 40, seed: int = 0) -> Measurement | None:
+    def optimise(self, n_probes: int = 60, seed: int = 0) -> Measurement | None:
         probes = make_probe_queries(self, n_probes, seed)
         if not probes:
             return None

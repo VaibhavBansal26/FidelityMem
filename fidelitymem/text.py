@@ -8,6 +8,7 @@ from __future__ import annotations
 import math
 import re
 from collections import Counter
+from functools import lru_cache
 
 _WORD = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_\-\.']*")
 _SENT = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\"'(\[])|\n+")
@@ -54,8 +55,13 @@ def stem(t: str) -> str:
     return t
 
 
+@lru_cache(maxsize=200_000)
+def _content_tokens_cached(text: str) -> tuple[str, ...]:
+    return tuple(stem(t) for t in tokenize(text) if t not in STOPWORDS and len(t) > 1)
+
+
 def content_tokens(text: str) -> list[str]:
-    return [stem(t) for t in tokenize(text) if t not in STOPWORDS and len(t) > 1]
+    return list(_content_tokens_cached(text))
 
 
 def estimate_tokens(text: str) -> int:

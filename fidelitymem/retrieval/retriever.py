@@ -20,6 +20,7 @@ class RetrievalStats:
     tokens: int = 0
     route_hits: dict[str, int] = field(default_factory=dict)
     conflicts: int = 0
+    unresolved_conflicts: int = 0
 
 
 class HybridRetriever:
@@ -30,20 +31,33 @@ class HybridRetriever:
         self.lexical = lexical
         self.vector = vector
         self.graph = graph
+        # maintained by the facade on index / supersede / forget
+        self.active: set[str] = set()
+        self.by_type: dict[MemoryType, set[str]] = {t: set() for t in MemoryType}
+
+    def track(self, m: Memory) -> None:
+        self.active.add(m.id)
+        for t in m.types:
+            self.by_type[t].add(m.id)
+
+    def untrack(self, m: Memory) -> None:
+        self.active.discard(m.id)
+        for t in m.types:
+            self.by_type[t].discard(m.id)
 
     # ---- routes ------------------------------------------------------
     def _active_ids(self) -> set[str]:
-        return {i for i, m in self.memories.items() if m.active}
+        return self.active
 
     def _type_ids(self, allowed: set[str], t: MemoryType) -> set[str]:
-        return {i for i in allowed if t in self.memories[i].types}
+        return self.by_type[t] if allowed is self.active else self.by_type[t] & allowed
 
     def _route(self, route: str, query: str, plan: RetrievalPlan, allowed: set[str]) -> list[tuple[str, float]]:
         k = plan.per_route_k
         if route == "lexical":
-            return self.lexical.search(query, k, allowed)
+            return self.lexical.search(query, k, None if allowed is self.active else allowed)
         if route == "vector":
-            return self.vector.search(query, k, allowed)
+            return self.vector.search(query, k, None if allowed is self.active else allowed)
         if route == "trie":
             return self.trie.search(query, k, allowed) if self.trie is not None else []
         if route == "graph":
@@ -106,8 +120,10 @@ class HybridRetriever:
             scored = self._chain_relations(query, scored, allowed, plan.top_k)
         top = scored[: plan.top_k]
         # sufficiency + raw expansion
-        stats.conflicts = self._conflicts(top)
-        stats.expansions = self._expand(query, plan, top, stats.conflicts > 0)
+        conflict_ids = self._conflicts(top)
+        stats.conflicts = len(conflict_ids)
+        stats.expansions = self._expand(query, plan, top, bool(conflict_ids), conflict_ids)
+        stats.unresolved_conflicts = sum(1 for r in top if r.memory.id in conflict_ids and r.memory.compression_level > 0 and not r.expanded)
         # token budget trim
         kept, used = [], 0
         for r in top:
@@ -165,20 +181,25 @@ class HybridRetriever:
         return out
 
     # ---- expansion ---------------------------------------------------
-    def _conflicts(self, results: list[RetrievedMemory]) -> int:
-        n = 0
+    def _conflicts(self, results: list[RetrievedMemory]) -> set[str]:
+        """Ids of retrieved memories that contradict another retrieved memory."""
+        from ..validation import _relation_conflict
+
+        ids: set[str] = set()
         for i in range(len(results)):
             for j in range(i + 1, len(results)):
                 a, b = results[i].memory, results[j].memory
+                hit = False
                 if a.entities and set(a.entities) == set(b.entities) and a.numbers and b.numbers and set(a.numbers) != set(b.numbers):
-                    n += 1
-                for ra in a.relations:
-                    for rb in b.relations:
-                        if ra.subject.lower() == rb.subject.lower() and ra.predicate == rb.predicate and (ra.object.lower() != rb.object.lower() or ra.negated != rb.negated):
-                            n += 1
-        return n
+                    hit = True
+                if not hit:
+                    hit = any(_relation_conflict(ra, rb) for ra in a.relations for rb in b.relations)
+                if hit:
+                    ids.add(a.id)
+                    ids.add(b.id)
+        return ids
 
-    def _needs_expansion(self, query: str, r: RetrievedMemory, plan: RetrievalPlan, conflict: bool) -> tuple[bool, str]:
+    def _needs_expansion(self, query: str, r: RetrievedMemory, plan: RetrievalPlan, conflict: bool, conflict_ids: set[str] | None = None) -> tuple[bool, str]:
         m = r.memory
         if m.compression_level == 0:
             return False, ""
@@ -188,7 +209,7 @@ class HybridRetriever:
             return True, "low_confidence"
         if m.fidelity_score < 0.9:
             return True, "low_fidelity"
-        if conflict:
+        if conflict and (conflict_ids is None or m.id in conflict_ids):
             return True, "conflict"
         q_nums, q_dates = set(extract_numbers(query)), set(extract_dates(query))
         if (q_nums or q_dates) and plan.query_type in (QueryType.EXACT, QueryType.TEMPORAL):
@@ -201,13 +222,13 @@ class HybridRetriever:
             return True, "multi_hop_relations"
         return False, ""
 
-    def _expand(self, query: str, plan: RetrievalPlan, results: list[RetrievedMemory], conflict: bool) -> int:
+    def _expand(self, query: str, plan: RetrievalPlan, results: list[RetrievedMemory], conflict: bool, conflict_ids: set[str] | None = None) -> int:
         budget = plan.expand_budget
         n = 0
         for r in results:
             if budget <= 0:
                 break
-            need, _ = self._needs_expansion(query, r, plan, conflict)
+            need, _ = self._needs_expansion(query, r, plan, conflict, conflict_ids)
             if need:
                 ep = self.archive.get(r.memory.episode_id)
                 if ep:

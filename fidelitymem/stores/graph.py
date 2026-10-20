@@ -8,6 +8,8 @@ from ..types import Relation
 
 
 class GraphStore:
+    hub_degree: int = 40
+
     def __init__(self):
         self._adj: dict[str, set[str]] = defaultdict(set)  # entity -> entities
         self._entity_mems: dict[str, set[str]] = defaultdict(set)  # entity -> memory ids
@@ -70,10 +72,13 @@ class GraphStore:
             if e in seen or d > hops:
                 continue
             seen[e] = (d, w)
-            # follow outgoing relations first (they are the multi-hop path), then co-mentions
+            # follow outgoing relations first (they are the multi-hop path), then co-mentions;
+            # never traverse *through* a hub entity reached by co-mention: it connects everything
             for _, o in self._out.get(e, ()):
                 if o not in seen:
                     q.append((o, d + 1, w))
+            if d > 0 and len(self._adj.get(e, ())) > self.hub_degree:
+                continue
             for nb in self._adj.get(e, ()):
                 if nb not in seen:
                     q.append((nb, d + 1, w * 0.5))

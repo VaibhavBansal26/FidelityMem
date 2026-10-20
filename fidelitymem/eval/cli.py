@@ -16,7 +16,17 @@ def main(argv=None) -> None:
     ap.add_argument("--rho", type=float, default=0.95)
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--scale", type=int, nargs="*", help="run the scale study at these record counts")
+    ap.add_argument("--out", type=str, default=None, help="write JSON report here")
     a = ap.parse_args(argv)
+    if a.scale is not None:
+        from .harness import run_scale
+
+        rep = run_scale(tuple(a.scale) or (300, 1000, 3000, 10000), a.queries, a.k[0], a.seed, a.rho)
+        if a.out:
+            with open(a.out, "w") as f:
+                json.dump(rep, f, indent=1)
+        return
     res = run_suite(a.memories, a.queries, tuple(a.k), a.seed, a.rho, a.quick)
     if a.json:
         print(json.dumps([r.__dict__ for r in res], indent=2))

@@ -73,9 +73,17 @@ def make_probe_queries(mem: "FidelityMem", n: int, seed: int = 0) -> list[ProbeQ
     for ep in eps:
         if len(out) >= n:
             break
-        # pick the most fact-dense sentence: that is what a user would ask about
-        sents = sorted(sentences(ep.text), key=lambda x: len(extract_numbers(x)) * 2 + len(extract_dates(x)) * 2 + len(extract_entities(x)), reverse=True)
-        if not sents or (len(extract_numbers(sents[0])) + len(extract_dates(sents[0])) + len(extract_entities(sents[0]))) < 2:
+        # pick the most fact-dense sentence: that is what a user would ask about.
+        # A probe needs a named entity *and* either a value (number/date) or a second
+        # entity; boilerplate with a weekday in it does not qualify.
+        def density(x: str) -> int:
+            ents, vals = extract_entities(x), extract_numbers(x) + extract_dates(x)
+            if not ents or (len(ents) < 2 and not vals):
+                return 0
+            return len(ents) + 2 * len(vals)
+
+        sents = sorted(sentences(ep.text), key=density, reverse=True)
+        if not sents or density(sents[0]) == 0:
             continue
         s = sents[0]
         toks = s.split()
@@ -121,9 +129,11 @@ class Controller:
             c = Config(**dict(zip(keys, combo)))
             if c.compression_level <= self.policy.max_compression_level:
                 out.append(c)
+        # group by level so the store is recompressed once per level, not once per candidate
+        out.sort(key=lambda c: c.compression_level, reverse=True)
         return out
 
-    def optimise(self, evaluate: Callable[[Config, list[ProbeQuery]], Measurement], probes: list[ProbeQuery], holdout_frac: float = 0.4, seed: int = 0, max_confirmations: int = 4) -> Measurement | None:
+    def optimise(self, evaluate: Callable[[Config, list[ProbeQuery]], Measurement], probes: list[ProbeQuery], holdout_frac: float = 0.5, seed: int = 0, max_confirmations: int = 8) -> Measurement | None:
         """Guarded offline search.
 
         1. Evaluate every candidate on the tuning split; keep those that satisfy the
@@ -145,11 +155,19 @@ class Controller:
             if m.feasible(self.policy):
                 feasible.append((m.cost(self.policy), c))
         feasible.sort(key=lambda x: x[0])
-        for _, cfg in feasible[:max_confirmations]:
+        rejected_levels: set[int] = set()
+        tried = 0
+        for _, cfg in feasible:
+            if tried >= max_confirmations:
+                break
+            if cfg.compression_level in rejected_levels:
+                continue  # retention is level-driven; do not re-confirm a level that failed
+            tried += 1
             confirm = evaluate(cfg, hold)
             if confirm.feasible(self.policy):
                 self._promote(cfg, confirm)
                 return confirm
+            rejected_levels.add(cfg.compression_level)
             self.history.append(PolicyVersion(self.history[-1].version, cfg, confirm, rejected=True))
         safe = Config(0, max(self.search_space["top_k"]), max(self.search_space["expand_budget"]), tuple(self.search_space["routes"][-1]))
         m = evaluate(safe, hold)

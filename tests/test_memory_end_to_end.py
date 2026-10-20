@@ -84,7 +84,7 @@ def test_controller_satisfies_retention_and_compresses():
     fm = FidelityMem(MemoryPolicy(max_context_tokens=100_000, minimum_recall_retention=0.95))
     for text, ts in bench.episodes:
         fm.remember(text, timestamp=ts)
-    meas = fm.optimise(n_probes=30)
+    meas = fm.optimise()  # default 60 probes; 30 is too few to certify rho=0.95
     assert meas is not None and meas.retention >= 0.95
     assert fm.controller.current.compression_level >= 1  # found a feasible compressed config
     assert fm.controller.history[-1].version >= 1

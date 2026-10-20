@@ -89,19 +89,19 @@ def _baseline(name: str, bench: Benchmark, k: int, mode: str) -> Result:
     return _summarise(name, k, runs, toks, lats, sum(estimate_tokens(t) for t in stored), 0)
 
 
-def _fidelitymem(name: str, bench: Benchmark, k: int, policy: MemoryPolicy, level: int | None, optimise: bool, expansion: bool = True) -> tuple[Result, FidelityMem]:
+def _ingest(bench: Benchmark, policy: MemoryPolicy) -> tuple[FidelityMem, dict[int, str], float]:
     fm = FidelityMem(policy)
-    if level is not None:
-        fm.controller.current = fm.controller.current.__class__(compression_level=level, top_k=k, expand_budget=fm.controller.current.expand_budget if expansion else 0, routes=fm.controller.current.routes)
+    t0 = time.perf_counter()
     ep_ids: dict[int, str] = {}
     for idx, (text, ts) in enumerate(bench.episodes):
         m = fm.remember(text, timestamp=ts, importance=0.6)
         if m:
             ep_ids[idx] = m.episode_id
-    if optimise:
-        fm.optimise(n_probes=40)
+    return fm, ep_ids, time.perf_counter() - t0
+
+
+def _measure(name: str, fm: FidelityMem, bench: Benchmark, ep_ids: dict[int, str], k: int) -> Result:
     runs, toks, lats, exp = [], [], [], 0
-    cfg = fm.controller.current
     for item in bench.items:
         gold = [ep_ids.get(bench.text_to_idx[g], "missing") for g in item.gold]
         t0 = time.perf_counter()
@@ -111,38 +111,73 @@ def _fidelitymem(name: str, bench: Benchmark, k: int, policy: MemoryPolicy, leve
         toks.append(st.tokens)
         exp += st.expansions
         runs.append((got, gold, item.qtype))
-    r = _summarise(name, k, runs, toks, lats, sum(estimate_tokens(m.compressed_text) for m in fm.memories.values()), exp)
-    return r, fm
+    return _summarise(name, k, runs, toks, lats, sum(estimate_tokens(m.compressed_text) for m in fm.memories.values()), exp)
+
+
+def _set_cfg(fm: FidelityMem, level: int, k: int, expansion: bool) -> None:
+    cur = fm.controller.current
+    budget = fm.policy.mode_defaults()["expand_budget"]
+    fm.controller.current = cur.__class__(compression_level=level, top_k=k, expand_budget=budget if expansion else 0, routes=cur.routes)
+    fm.recompress_all(level)
+
+
+def run_fidelitymem(bench: Benchmark, k: int, policy: MemoryPolicy, levels=(1, 2, 3), optimise: bool = True) -> tuple[list[Result], dict]:
+    """One ingestion, then every compression level with and without expansion, then the controller."""
+    fm, ep_ids, ingest_s = _ingest(bench, policy)
+    out: list[Result] = []
+    _set_cfg(fm, 0, k, True)
+    raw = _measure("fidelitymem_L0_raw", fm, bench, ep_ids, k)
+    out.append(raw)
+    for lvl in levels:
+        for expansion in (False, True):
+            _set_cfg(fm, lvl, k, expansion)
+            r = _measure(f"fidelitymem_L{lvl}_{'gated' if expansion else 'noexpand'}", fm, bench, ep_ids, k)
+            r.retention = r.recall / raw.recall if raw.recall else 1.0
+            out.append(r)
+    info = {"ingest_s": ingest_s, "memories": len(fm.memories), "backoffs": fm.telemetry.compression_backoffs}
+    if optimise:
+        _set_cfg(fm, 0, k, True)
+        t0 = time.perf_counter()
+        meas = fm.optimise(n_probes=40)
+        info["optimise_s"] = time.perf_counter() - t0
+        info["controller"] = fm.controller.describe()
+        info["controller_measurement"] = None if meas is None else {"retention": meas.retention, "cost": meas.cost(policy)}
+        cfg = fm.controller.current
+        fm.controller.current = cfg.__class__(compression_level=cfg.compression_level, top_k=k, expand_budget=cfg.expand_budget, routes=cfg.routes)
+        r = _measure(f"fidelitymem_ctrl(L{cfg.compression_level})", fm, bench, ep_ids, k)
+        r.retention = r.recall / raw.recall if raw.recall else 1.0
+        out.append(r)
+    return out, info
 
 
 def run_suite(n_memories: int = 1000, n_queries: int = 100, ks: tuple[int, ...] = (5, 10), seed: int = 0, rho: float = 0.95, quick: bool = False) -> list[Result]:
     bench = generate(n_memories, n_queries, seed)
     results: list[Result] = []
+    from .competitors import ALL as COMPETITORS
+
     for k in ks:
         results.append(_baseline("fixed_window", bench, k, "window"))
         results.append(_baseline("bm25", bench, k, "bm25"))
         results.append(_baseline("vector", bench, k, "vector"))
         results.append(_baseline("bm25+vector_rrf", bench, k, "hybrid"))
         results.append(_baseline("summary_L3+bm25", bench, k, "summary"))
-        from .competitors import ALL as COMPETITORS
-
         for fn in COMPETITORS:
             results.append(fn(bench, k))
         pol = MemoryPolicy(minimum_recall_retention=rho, mode=Mode.BALANCED, max_context_tokens=100_000)
-        raw, _ = _fidelitymem("fidelitymem_L0_raw", bench, k, pol, 0, False)
-        results.append(raw)
-        for lvl in ([2] if quick else [1, 2, 3]):
-            r, _ = _fidelitymem(f"fidelitymem_L{lvl}_noexpand", bench, k, pol, lvl, False, expansion=False)
-            r.retention = r.recall / raw.recall if raw.recall else 1.0
-            results.append(r)
-            r2, _ = _fidelitymem(f"fidelitymem_L{lvl}_gated", bench, k, pol, lvl, False)
-            r2.retention = r2.recall / raw.recall if raw.recall else 1.0
-            results.append(r2)
-        opt, fm = _fidelitymem("fidelitymem_controller", bench, k, pol, None, True)
-        opt.retention = opt.recall / raw.recall if raw.recall else 1.0
-        opt.system = f"fidelitymem_ctrl(L{fm.controller.current.compression_level})"
-        results.append(opt)
+        res, info = run_fidelitymem(bench, k, pol, levels=((2,) if quick else (1, 2, 3)))
+        results.extend(res)
+        print(f"[fidelitymem n={n_memories} k={k}] {info}", flush=True)
     return results
+
+
+def run_scale(levels=(300, 1000, 3000, 10000), n_queries: int = 100, k: int = 10, seed: int = 0, rho: float = 0.95) -> dict:
+    """Same question families and distractor generator at increasing record counts."""
+    report = {}
+    for n in levels:
+        results = run_suite(n, n_queries, (k,), seed, rho, quick=False)
+        report[n] = [r.__dict__ for r in results]
+        print(f"\n### {n} memories, K={k}\n{format_table(results)}", flush=True)
+    return report
 
 
 def format_table(results: list[Result]) -> str:
