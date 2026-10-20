@@ -254,9 +254,11 @@ class FidelityMem:
         original = {mid: (m.compressed_text, m.compression_level, m.fidelity_score) for mid, m in self.memories.items()}
         raw_tokens = sum(estimate_tokens(self.archive.get(m.episode_id).text) for m in self.memories.values()) or 1
 
-        def run(level: int) -> tuple[float, float, float, float, float]:
+        def run(level: int, routes: tuple[str, ...] | None = None) -> tuple[float, float, float, float, float]:
             self.recompress_all(level, cfg.gate_profile)
             ov = cfg.as_overrides()
+            if routes is not None:
+                ov["routes"] = list(routes)
             recalls, toks, lat, prec, conflicts = [], [], [], [], 0
             for p in probes:
                 plan = plan_for(p.query, self.policy, ov)
@@ -273,9 +275,16 @@ class FidelityMem:
             n = max(1, len(probes))
             return sum(recalls) / n, sum(toks) / n, sum(lat) / n, sum(prec) / n, conflicts / n
 
-        rk = (cfg.top_k, cfg.expand_budget, cfg.routes, id(probes))
+        # Reference: the *best* raw (level-0) retrieval over the route sets in the search
+        # space, at this candidate's depth and expansion budget. The bound is relative to
+        # the uncompressed system, not to a candidate's own raw twin, so a route choice
+        # that loses recall is infeasible rather than merely cheap.
+        rk = (cfg.top_k, cfg.expand_budget, id(probes))
         if rk not in self._raw_recall_cache:
-            self._raw_recall_cache[rk] = run(0)
+            best = 0.0
+            for routes in self.controller.search_space["routes"]:
+                best = max(best, run(0, tuple(routes))[0])
+            self._raw_recall_cache[rk] = (best,)
         r_raw = self._raw_recall_cache[rk][0]
         r_c, toks, lat, prec, contradiction_rate = run(cfg.compression_level)
         stored = sum(estimate_tokens(m.compressed_text) for m in self.memories.values())
