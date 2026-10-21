@@ -62,3 +62,6 @@ fidelitymem_ctrl:qlog(L3/c)  10   0.908   0.867  0.734  0.764     7294    0.94  
 [timing] window_trie: 5.0s
 [timing] memgpt_style: 54.9s
 [timing] mem0_style: 32.4s
+[timing] zep_style: 54.5s
+[timing] amem_style: 51.4s
+[timing] hipporag_style: 53.9s
