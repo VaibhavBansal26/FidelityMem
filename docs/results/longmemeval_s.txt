@@ -1,0 +1,1 @@
+dataset=longmemeval questions=120 calib=12 k=5 embedder=onnx:all-MiniLM-L6-v2-onnx sessions/question=47.8
