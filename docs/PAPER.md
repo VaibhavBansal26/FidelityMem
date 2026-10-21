@@ -150,9 +150,55 @@ Four things the real data says that the synthetic data could not:
 
 The Pareto frontier (`docs/results/pareto_locomo_session.png`) contains BM25, both controller rows and, at the low-storage end, the ungated levels and the lossy summary. Zep-, HippoRAG-, Mem0-, A-MEM- and MemGPT-style retrievers are all dominated.
 
-### 5.2b Real data: LoCoMo, turn granularity
+### 5.2b Real data: LoCoMo, turn granularity (5 880 turns, 1 390 scored questions per seed, K = 10, 3 seeds)
 
-*(pending: the 3-seed turn-level run was still executing when this revision was written; the table is produced by `python -m fidelitymem.eval.real --dataset locomo --path data/locomo/locomo10.json --seeds 0 1 2 --k 10` and the single-seed smoke run showed the same ordering: BM25 0.69, controller 0.66, other hybrids 0.14–0.55.)*
+| System | R@10 | CR@10 | MRR | stored tok | tok/q | p95 ms | retain | R@10 multi-hop / temporal / single-hop / open-domain |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| fixed_window | 0.001 ±0.003 | 0.001 | 0.000 | 255158 | 423 | 0.0 | - | 0.00 / 0.00 / 0.00 / 0.00 |
+| bm25 | 0.558 ±0.014 | 0.515 | 0.409 | 255158 | 452 | 2.6 | - | 0.28 / 0.65 / 0.64 / 0.29 |
+| vector | 0.216 ±0.009 | 0.196 | 0.132 | 255158 | 584 | 10.6 | - | 0.11 / 0.30 / 0.24 / 0.08 |
+| bm25+vector_rrf | 0.516 ±0.026 | 0.474 | 0.326 | 255158 | 524 | 18.7 | - | 0.24 / 0.60 / 0.59 / 0.25 |
+| summary_L3+bm25 | 0.225 ±0.010 | 0.199 | 0.170 | 95597 | 206 | 2.4 | - | 0.12 / 0.18 / 0.29 / 0.10 |
+| window+trie | 0.371 ±0.013 | 0.349 | 0.286 | 255158 | 489 | 5.0 | - | 0.10 / 0.50 / 0.45 / 0.12 |
+| memgpt_style | 0.201 ±0.008 | 0.181 | 0.055 | 255158 | 531 | 12.0 | - | 0.10 / 0.28 / 0.22 / 0.07 |
+| mem0_style | 0.149 ±0.009 | 0.134 | 0.096 | 103263 | 577 | 12.0 | - | 0.06 / 0.21 / 0.16 / 0.08 |
+| zep_style | 0.499 ±0.027 | 0.461 | 0.310 | 255158 | 516 | 28.4 | - | 0.22 / 0.59 / 0.57 / 0.24 |
+| amem_style | 0.216 ±0.009 | 0.196 | 0.132 | 255158 | 584 | 13.3 | - | 0.11 / 0.30 / 0.24 / 0.08 |
+| hipporag_style | 0.131 ±0.014 | 0.116 | 0.098 | 255158 | 482 | 29.4 | - | 0.06 / 0.19 / 0.15 / 0.09 |
+| fidelitymem_L0_raw | 0.490 ±0.023 | 0.448 | 0.295 | 255126 | 537 | 42.2 | - | 0.26 / 0.59 / 0.55 / 0.25 |
+| fidelitymem_L1_gate:facts | 0.460 ±0.017 | 0.419 | 0.283 | 180176 | 426 | 39.0 | 0.939 | 0.24 / 0.61 / 0.50 / 0.25 |
+| fidelitymem_L2_gate:facts | 0.367 ±0.008 | 0.333 | 0.247 | 114695 | 334 | 43.2 | 0.749 | 0.18 / 0.53 / 0.38 / 0.21 |
+| fidelitymem_L3_gate:facts | 0.368 ±0.007 | 0.334 | 0.247 | 114584 | 333 | 41.8 | 0.750 | 0.18 / 0.53 / 0.38 / 0.21 |
+| fidelitymem_L1_gate:content | 0.488 ±0.014 | 0.447 | 0.294 | 242633 | 528 | 41.0 | 0.996 | 0.27 / 0.61 / 0.54 / 0.24 |
+| fidelitymem_L2_gate:content | 0.488 ±0.010 | 0.447 | 0.293 | 241358 | 527 | 37.3 | 0.996 | 0.27 / 0.61 / 0.54 / 0.24 |
+| fidelitymem_L3_gate:content | 0.488 ±0.010 | 0.447 | 0.293 | 241358 | 527 | 37.0 | 0.996 | 0.27 / 0.61 / 0.54 / 0.24 |
+| fidelitymem_L1_nogate | 0.447 ±0.012 | 0.406 | 0.278 | 176252 | 419 | 35.2 | 0.912 | 0.24 / 0.60 / 0.49 / 0.23 |
+| fidelitymem_L2_nogate | 0.319 ±0.005 | 0.289 | 0.212 | 106874 | 325 | 37.4 | 0.651 | 0.17 / 0.46 / 0.34 / 0.17 |
+| fidelitymem_L3_nogate | 0.215 ±0.007 | 0.190 | 0.135 | 95585 | 307 | 42.4 | 0.438 | 0.12 / 0.22 / 0.26 / 0.08 |
+| fidelitymem_ctrl:self(L0/f) | 0.534 ±0.064 | 0.494 | 0.360 | 255126 | 497 | 51.0 | 1.090 | 0.25 / 0.64 / 0.61 / 0.25 |
+| fidelitymem_ctrl:qlog(L0/c/L0/f) | 0.529 ±0.073 | 0.490 | 0.366 | 255126 | 496 | 36.3 | 1.080 | 0.25 / 0.65 / 0.60 / 0.24 |
+
+Turn granularity is the hard setting: the gold evidence is one or two short utterances among 5 880. The ordering is the same as at session level with every number lower. BM25 0.558 ±0.014; the FidelityMem controller 0.534 ±0.064 (self-probes) and 0.529 ±0.073 (query log), which is BM25-level in the seeds where it drops the dense route and about four points below where it keeps all routes; Zep-style 0.499; window+trie 0.371; every other architecture 0.13–0.22. Compression retains 0.94 of recall at level 1 (71 % storage) and 0.75 at levels 2–3 (45 %); without the gate 0.91 / 0.65 / 0.44. Latency is where the all-routes configuration pays at this scale: 24 ms p50 for raw FidelityMem against 0.4 ms for BM25, mostly the dense matmul over 5 880 vectors and two-hop graph expansion; the controller rows show the same cost when they keep those routes. These timings are with three evaluation processes sharing the machine and are indicative only.
+
+### 5.2c The retrieval-adapted embedder
+
+The weak dense route is the common cause of every hybrid architecture's loss to BM25 on conversation, so we trained an embedder for it (`stores/learned_embedder.py`): pretrained word vectors with a learned weight per word (initialised from IDF) and a learned 300×256 projection (initialised to the identity), trained by InfoNCE on (question, gold evidence) pairs with in-batch and BM25 hard negatives. Training uses only the controller's calibration split of the seed being evaluated plus a synthetic world with an unrelated seed, and takes about a minute on CPU.
+
+| Held-out set | dense Recall before → after | BM25+dense RRF before → after | BM25 |
+|---|---|---|---|
+| Synthetic 1k, different world | 0.705 → 0.865 | 0.870 → 0.890 | 0.875 |
+| LoCoMo sessions (K=5) | 0.287 → 0.498 | 0.727 → 0.784 | 0.856 |
+| LoCoMo turns (K=10) | 0.214 → 0.356 | 0.504 → 0.555 | 0.551 |
+
+Every dense-using system improves when all of them share the adapted embedder (3 seeds, per-seed training, LoCoMo sessions): dense alone 0.287 → 0.484, Zep-style 0.687 → 0.731, HippoRAG-style 0.401 → 0.475, FidelityMem's default route mix 0.563 → 0.635. Fusion now beats BM25 on synthetic and turn data and trails it by seven points on sessions.
+
+The adapted embedder also exposed a flaw in the controller's objective. With a stronger dense route, lexical+dense configurations pass the retention bound on the calibration probes (within 2–5 % of the best raw retrieval) and the cost term then prefers them for their better precision; on the test split they lose ten points (controller 0.742 ±0.048 against 0.849 with the base embedder). Tightening ρ to 0.98 did not change the choice: the gap between calibration and test exceeded the slack either way. The repair is in the objective, not the bound: a term that charges for recall lost *inside* the bound (λ·(1 − retention), λ = 1), so a feasible configuration that gives up two points of recall has to buy them back with real savings. Results with that term are in §5.2d.
+
+A last negative control for the embedder: the semantic-trie node embeddings of §5.5 (a memory as the IDF-weighted mean of its code-cluster centroids) match full dense recall exactly on the synthetic corpus and lose 3–6 points on LoCoMo turns, for a dense index 4–9× smaller. Quantising the *adapted* embedder's space the same way is the natural follow-up.
+
+### 5.2d Adapted embedder with the recall-charged objective
+
+*(pending: 3-seed run in progress at the time of writing; produced by `python -m fidelitymem.eval.real --dataset locomo --path data/locomo/locomo10.json --session-level --seeds 0 1 2 --k 5 --fast-controller --embedder adapted-train`.)*
 
 ### 5.3 Ablation (synthetic, n = 1 000, K = 10, level 3 gated, 3 seeds, pretrained embedder)
 
