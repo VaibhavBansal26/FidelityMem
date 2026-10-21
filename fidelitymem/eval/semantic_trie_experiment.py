@@ -11,7 +11,7 @@ import time
 from ..compression import build_probes
 from ..stores import BM25Index, set_default_embedder
 from ..stores.embedders import best_available, embedder_name
-from ..stores.semantic_trie import SemanticCodebook, SemanticTrie
+from ..stores.semantic_trie import NodeEmbeddedTrie, SemanticCodebook, SemanticTrie
 from ..text import estimate_tokens
 from .datasets import load_locomo
 from .metrics import recall_at_k
@@ -37,6 +37,17 @@ def run(bench, n_codes: int, embedder, k: int = 10) -> dict:
     bm = BM25Index()
     for i, t in zip(ids, texts):
         bm.add(i, t)
+    # node-embedded variant: dense retrieval over quantised (code-sequence) memory embeddings
+    from ..stores.learned_embedder import SpacyTokenVectors, _idf
+    from ..stores import VectorIndex
+
+    tv = SpacyTokenVectors()
+    net = NodeEmbeddedTrie(cb, tv, _idf(texts))
+    for i, t in zip(ids, texts):
+        net.add(i, t)
+    vi = VectorIndex(embedder)
+    vi.add_many(list(zip(ids, texts)))
+    rec_node, rec_dense = [], []
     rec_trie, rec_bm, lat = [], [], []
     for item in bench.items:
         gold = [f"ep{g}" for g in bench.gold_indices(item)]
@@ -47,12 +58,17 @@ def run(bench, n_codes: int, embedder, k: int = 10) -> dict:
         lat.append((time.perf_counter() - t0) * 1000)
         rec_trie.append(recall_at_k(got, gold, k))
         rec_bm.append(recall_at_k([d for d, _ in bm.search(item.query, k)], gold, k))
+        q = embedder.embed([item.query])[0]
+        rec_node.append(recall_at_k([d for d, _ in net.dense_search(q, k)], gold, k))
+        rec_dense.append(recall_at_k([d for d, _ in vi.search(item.query, k)], gold, k))
     n = max(1, len(rec_trie))
     return {
         "n_codes": n_codes, "episodes": len(texts), "vocab": len(cb.code_of), "build_s": round(build_s, 1),
         "raw_bytes": raw_bytes, "trie_bytes": trie.storage_bytes(), "storage_ratio": round(trie.storage_bytes() / raw_bytes, 3),
         "decode_fidelity_facts": round(sum(fid_facts) / len(fid_facts), 3), "decode_fidelity_content": round(sum(fid_content) / len(fid_content), 3),
-        "recall@10_semantic_trie": round(sum(rec_trie) / n, 3), "recall@10_bm25": round(sum(rec_bm) / n, 3), "p50_ms": round(sorted(lat)[len(lat) // 2], 2) if lat else 0,
+        "recall@10_semantic_trie": round(sum(rec_trie) / n, 3), "recall@10_bm25": round(sum(rec_bm) / n, 3),
+        "recall@10_node_embedded_dense": round(sum(rec_node) / n, 3), "recall@10_full_dense": round(sum(rec_dense) / n, 3),
+        "dense_index_bytes_full": int(len(texts) * embedder.dim * 4), "dense_index_bytes_node": net.index_bytes(), "p50_ms": round(sorted(lat)[len(lat) // 2], 2) if lat else 0,
         "example_decode": trie.decode(ids[0])[:160], "example_raw": texts[0][:160],
     }
 

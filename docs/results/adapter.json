@@ -1,0 +1,52 @@
+{
+ "pairs": 1812,
+ "epochs": 12,
+ "dim": 256,
+ "results": {
+  "locomo_session_test": {
+   "k": 5,
+   "base": {
+    "dense": 0.287,
+    "bm25+dense_rrf": 0.727,
+    "bm25": 0.856,
+    "n": 1388
+   },
+   "adapted": {
+    "dense": 0.498,
+    "bm25+dense_rrf": 0.784,
+    "bm25": 0.856,
+    "n": 1388
+   }
+  },
+  "locomo_turn_test": {
+   "k": 10,
+   "base": {
+    "dense": 0.214,
+    "bm25+dense_rrf": 0.504,
+    "bm25": 0.551,
+    "n": 1384
+   },
+   "adapted": {
+    "dense": 0.356,
+    "bm25+dense_rrf": 0.555,
+    "bm25": 0.551,
+    "n": 1384
+   }
+  },
+  "synthetic_1k": {
+   "k": 10,
+   "base": {
+    "dense": 0.705,
+    "bm25+dense_rrf": 0.87,
+    "bm25": 0.875,
+    "n": 100
+   },
+   "adapted": {
+    "dense": 0.865,
+    "bm25+dense_rrf": 0.89,
+    "bm25": 0.875,
+    "n": 100
+   }
+  }
+ }
+}

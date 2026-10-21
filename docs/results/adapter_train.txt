@@ -1,0 +1,18 @@
+training pairs=1812 corpus=7154
+[adapter] epoch 1/12 loss=3.6474
+[adapter] epoch 2/12 loss=2.7737
+[adapter] epoch 3/12 loss=2.3251
+[adapter] epoch 4/12 loss=2.0122
+[adapter] epoch 5/12 loss=1.7962
+[adapter] epoch 6/12 loss=1.5838
+[adapter] epoch 7/12 loss=1.4139
+[adapter] epoch 8/12 loss=1.3430
+[adapter] epoch 9/12 loss=1.2555
+[adapter] epoch 10/12 loss=1.1028
+[adapter] epoch 11/12 loss=1.0934
+[adapter] epoch 12/12 loss=1.0023
+trained in 62s
+locomo_session_test    K=5  dense 0.287 -> 0.498   bm25+dense 0.727 -> 0.784   bm25 0.856
+locomo_turn_test       K=10  dense 0.214 -> 0.356   bm25+dense 0.504 -> 0.555   bm25 0.551
+synthetic_1k           K=10  dense 0.705 -> 0.865   bm25+dense 0.870 -> 0.890   bm25 0.875
+DONE

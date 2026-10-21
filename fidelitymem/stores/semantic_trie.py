@@ -171,3 +171,73 @@ class SemanticTrie:
             n = stack.pop()
             yield n
             stack.extend(n.children.values())
+
+
+# --------------------------------------------------------------------------- node embeddings
+class NodeEmbeddedTrie(SemanticTrie):
+    """Semantic trie whose nodes carry embeddings.
+
+    * A code node's embedding is its cluster centroid, stored once in the codebook.
+    * A protected (verbatim) token keeps its own word vector.
+    * A memory's embedding is the IDF-weighted mean of the node vectors along its path,
+      so the dense index stores one short integer code sequence per memory instead of a
+      float vector: vector quantisation of the dense route, with the query still embedded
+      in full and compared asymmetrically.
+    """
+
+    def __init__(self, codebook: SemanticCodebook, token_vectors, idf: dict[str, float] | None = None):
+        super().__init__(codebook)
+        self.tv = token_vectors  # exposes vector_of(token) -> vector | None
+        self.idf = idf or {}
+        self.centroids = self._centroids()
+        self._emb: dict[str, np.ndarray] = {}
+
+    def _centroids(self) -> dict[int, np.ndarray]:
+        sums: dict[int, list] = defaultdict(list)
+        for w, c in self.cb.code_of.items():
+            v = self.tv.vector_of(w)
+            if v is not None:
+                sums[c].append(v)
+        return {c: np.mean(np.stack(vs), axis=0) for c, vs in sums.items() if vs}
+
+    def node_vector(self, code: str):
+        if code.startswith("#") and code[1:].isdigit():
+            return self.centroids.get(int(code[1:]))
+        return self.tv.vector_of(code)
+
+    def add(self, doc_id: str, text: str) -> None:
+        super().add(doc_id, text)
+        self._emb.pop(doc_id, None)
+
+    def embedding(self, doc_id: str) -> np.ndarray:
+        if doc_id not in self._emb:
+            vecs, ws = [], []
+            for c in self._seq.get(doc_id, []):
+                v = self.node_vector(c)
+                if v is None:
+                    continue
+                word = self.cb.rep.get(int(c[1:]), c) if c.startswith("#") and c[1:].isdigit() else c
+                vecs.append(v)
+                ws.append(self.idf.get(word, 1.0))
+            if not vecs:
+                e = np.zeros(self.tv.dim, dtype=np.float32)
+            else:
+                e = np.average(np.stack(vecs), axis=0, weights=np.asarray(ws, dtype=np.float32)).astype(np.float32)
+                n = np.linalg.norm(e)
+                if n > 0:
+                    e /= n
+            self._emb[doc_id] = e
+        return self._emb[doc_id]
+
+    def dense_search(self, query_vec: np.ndarray, k: int = 10) -> list[tuple[str, float]]:
+        ids = list(self._seq)
+        if not ids:
+            return []
+        M = np.stack([self.embedding(i) for i in ids])
+        sims = M @ query_vec
+        top = np.argsort(-sims)[:k]
+        return [(ids[i], float(sims[i])) for i in top]
+
+    def index_bytes(self) -> int:
+        """Codebook centroids (float16) + one 2-byte code per token per memory."""
+        return len(self.centroids) * self.tv.dim * 2 + sum(2 * len(s) for s in self._seq.values())

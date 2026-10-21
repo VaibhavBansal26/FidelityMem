@@ -59,7 +59,12 @@ class SentenceTransformerEmbedder:
 
 
 def best_available(prefer: str | None = None):
-    """Return the best installed embedder. `prefer` may force 'st', 'spacy' or 'hashing'."""
+    """Return the best installed embedder. `prefer` may force 'st', 'spacy', 'hashing' or
+    'adapted:<path.npz>' (a retrieval-adapted embedder saved by eval.train_embedder)."""
+    if prefer and prefer.startswith("adapted:"):
+        from .learned_embedder import AdaptedEmbedder, SpacyTokenVectors
+
+        return AdaptedEmbedder.load(prefer.split(":", 1)[1], SpacyTokenVectors())
     order = [prefer] if prefer else ["st", "spacy", "hashing"]
     for kind in order:
         try:
