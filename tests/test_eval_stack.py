@@ -85,3 +85,18 @@ def test_embedder_fallback_is_unit_norm():
     e = best_available("hashing")
     v = e.embed(["billing-api runs on PostgreSQL"])
     assert abs(float((v[0] ** 2).sum()) - 1.0) < 1e-4 and "Hashing" in embedder_name(e)
+
+
+def test_adapter_trains_and_separates():
+    import pytest
+
+    pytest.importorskip("spacy")
+    from fidelitymem.stores.learned_embedder import SpacyTokenVectors, train_adapter
+
+    base = SpacyTokenVectors()
+    pairs = [("when did caroline go to the support group", "Caroline went to the LGBTQ support group yesterday."), ("where does billing-api store sessions", "billing-api stores its session data in Redis.")] * 6
+    corpus = [p for _, p in pairs] + ["The parking lot is closed on Mondays."]
+    ad = train_adapter(base, pairs, corpus, d_out=64, epochs=2, batch=6, log=lambda s: None)
+    v = ad.embed([pairs[0][0], pairs[0][1], corpus[-1]])
+    assert v.shape == (3, 64) and abs(float((v[0] ** 2).sum()) - 1) < 1e-3
+    assert float(v[0] @ v[1]) > float(v[0] @ v[2])
