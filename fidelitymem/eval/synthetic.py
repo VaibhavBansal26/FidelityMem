@@ -103,9 +103,14 @@ def generate(n_memories: int = 1000, n_queries: int = 100, seed: int = 0, filler
     world_dep = {s: rng.choice([x for x in services if x != s]) for s in services}
     used_ids: set[int] = set()
 
+    # unique numeric ids; the 4-digit range holds ~9 900 values, enough below ~3 000 records
+    # (two ids per distractor). Larger worlds widen the range. The threshold keeps the
+    # 300/1k/3k worlds byte-identical to earlier runs.
+    id_hi = 9999 if n_memories <= 3000 else 20 * n_memories
+
     def uid() -> int:
         while True:
-            n = rng.randint(100, 9999)
+            n = rng.randint(100, id_hi)
             if n not in used_ids:
                 used_ids.add(n)
                 return n
