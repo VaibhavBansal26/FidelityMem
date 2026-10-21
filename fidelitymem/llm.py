@@ -87,6 +87,10 @@ class MockLLM:
             return json.dumps({"correct": gold in pred, "reason": "containment"})
         if "ANSWER" in system:
             return "unknown"
+        if "REWRITE" in system:
+            return ""
+        if "RERANK" in system:
+            return "[0, 1, 2, 3, 4]"
         return ""
 
 
@@ -200,4 +204,52 @@ class ClaudeJudge:
             return gold.strip().lower() in candidate.lower()
 
 
-__all__ = ["LLM", "ClaudeLLM", "MockLLM", "ClaudeCompressor", "ClaudeExtractor", "ClaudeReader", "ClaudeJudge", "available", "Relation"]
+# --------------------------------------------------------------------------- query rewriting + reranking
+_REWRITE_SYSTEM = (
+    "REWRITE. Rewrite the question as the one or two sentences a person would have said in a conversation that "
+    "answers it, keeping every name, place and time expression from the question. Output only the sentences."
+)
+_RERANK_SYSTEM = (
+    "RERANK. You are given a question and numbered memory snippets. Return the numbers of the snippets most likely "
+    "to contain the information needed to answer, best first, as a JSON list of integers. Return at most the requested count."
+)
+
+
+class ClaudeRewriter:
+    """HyDE-style: the query is expanded with a hypothetical evidence sentence."""
+
+    def __init__(self, llm: LLM | None = None):
+        self.llm = llm or ClaudeLLM(model="claude-haiku-5-5")
+        self.cache: dict[str, str] = {}
+
+    def rewrite(self, question: str) -> str:
+        if question not in self.cache:
+            out = self.llm.complete(_REWRITE_SYSTEM, question, max_tokens=120).strip()
+            self.cache[question] = f"{question} {out}" if out else question
+        return self.cache[question]
+
+
+class ClaudeReranker:
+    def __init__(self, llm: LLM | None = None):
+        self.llm = llm or ClaudeLLM(model="claude-haiku-5-5")
+
+    def rerank(self, question: str, candidates: list[tuple[str, str]], k: int) -> list[str]:
+        """candidates: [(id, text)] in current order; returns the top-k ids after reranking."""
+        if len(candidates) <= k:
+            return [i for i, _ in candidates]
+        listing = "\n".join(f"[{n}] {t[:600]}" for n, (_, t) in enumerate(candidates))
+        raw = self.llm.complete(_RERANK_SYSTEM, f"QUESTION: {question}\nRETURN {k} NUMBERS.\n\n{listing}", max_tokens=80)
+        try:
+            order = [int(x) for x in json.loads(raw[raw.index("[") : raw.rindex("]") + 1])]
+        except Exception:  # noqa: BLE001
+            return [i for i, _ in candidates[:k]]
+        chosen = [candidates[n][0] for n in order if 0 <= n < len(candidates)]
+        for i, _ in candidates:  # fill with the original order if the model returned fewer
+            if len(chosen) >= k:
+                break
+            if i not in chosen:
+                chosen.append(i)
+        return chosen[:k]
+
+
+__all__ = ["LLM", "ClaudeRewriter", "ClaudeReranker", "ClaudeLLM", "MockLLM", "ClaudeCompressor", "ClaudeExtractor", "ClaudeReader", "ClaudeJudge", "available", "Relation"]

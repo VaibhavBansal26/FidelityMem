@@ -77,11 +77,25 @@ def _bm25_system(bench: Benchmark, k: int):
     for i, t in enumerate(texts):
         bm.add(f"ep{i}", t)
 
-    def retrieve(q: str):
-        hits = [i for i, _ in bm.search(q, k)]
+    def retrieve(q: str, kk: int = k):
+        hits = [i for i, _ in bm.search(q, kk)]
         return hits, "\n".join(texts[int(i[2:])] for i in hits)
 
     return retrieve
+
+
+def _with_llm_steps(retrieve, texts_of, k: int, rewriter=None, reranker=None, pool: int = 20):
+    """Wrap a retrieval closure with optional query rewriting and reranking of a wider pool."""
+
+    def wrapped(q: str, kk: int = k):
+        q2 = rewriter.rewrite(q) if rewriter else q
+        if reranker is None:
+            return retrieve(q2, kk)
+        hits, _ = retrieve(q2, pool)
+        top = reranker.rerank(q, [(h, texts_of(h)) for h in hits], kk)
+        return top, "\n".join(texts_of(h) for h in top)
+
+    return wrapped
 
 
 def _competitor_system(name: str, bench: Benchmark, k: int):
@@ -103,9 +117,9 @@ def _competitor_system(name: str, bench: Benchmark, k: int):
             g.add_memory(i, extract_entities(t), extract_relations(t))
         vi.add_many(list(zip(ids, texts)))
 
-        def retrieve(q: str):
-            fused = rrf({"lexical": bm.search(q, k * 3), "vector": vi.search(q, k * 3), "graph": g.expand(extract_entities(q), 1, k * 3)}, {"lexical": 1, "vector": 1, "graph": 1})
-            hits = [i for i, _ in sorted(fused.items(), key=lambda x: x[1], reverse=True)[:k]]
+        def retrieve(q: str, kk: int = k):
+            fused = rrf({"lexical": bm.search(q, kk * 3), "vector": vi.search(q, kk * 3), "graph": g.expand(extract_entities(q), 1, kk * 3)}, {"lexical": 1, "vector": 1, "graph": 1})
+            hits = [i for i, _ in sorted(fused.items(), key=lambda x: x[1], reverse=True)[:kk]]
             return hits, "\n".join(texts[int(i[2:])] for i in hits)
 
         return retrieve
@@ -134,15 +148,17 @@ def _fidelitymem_system(bench: Benchmark, calib: Benchmark | None, k: int, rho: 
     fm.controller.current = cfg.__class__(cfg.compression_level, k, cfg.expand_budget, cfg.routes, cfg.gate_profile)
     inv = {v: i for i, v in ep_ids.items()}
 
-    def retrieve(q: str):
-        res, st = fm.search(q, k=k)
+    def retrieve(q: str, kk: int = k):
+        res, st = fm.search(q, k=kk)
         return [f"ep{inv[r.memory.episode_id]}" for r in res if r.memory.episode_id in inv], "\n".join(r.context_text for r in res)
 
     return retrieve, fm
 
 
-def run(bench: Benchmark, calib: Benchmark | None, systems: list[str], k: int, rho: float, reader, judge, llm_compress: bool, log=print) -> list[dict]:
+def run(bench: Benchmark, calib: Benchmark | None, systems: list[str], k: int, rho: float, reader, judge, llm_compress: bool, log=print, rewriter=None, reranker=None, retrieval_only: bool = False) -> list[dict]:
     out = []
+    texts = [t for t, _ in bench.episodes]
+    texts_of = lambda h: texts[int(h[2:])]
     for name in systems:
         t0 = time.perf_counter()
         if name == "bm25":
@@ -157,8 +173,10 @@ def run(bench: Benchmark, calib: Benchmark | None, systems: list[str], k: int, r
             log(f"[phase6] fidelitymem controller: {fm.controller.describe()}")
         else:
             retrieve = _competitor_system(name, bench, k)
+        if rewriter or reranker:
+            retrieve = _with_llm_steps(retrieve, texts_of, k, rewriter, reranker)
         log(f"[phase6] {name}: built in {time.perf_counter() - t0:.0f}s")
-        sr = SystemResult(name)
+        sr = SystemResult(name + ("+rewrite" if rewriter else "") + ("+rerank" if reranker else ""))
         for it in bench.items:
             gold = [f"ep{i}" for i in bench.gold_indices(it)]
             t1 = time.perf_counter()
@@ -167,6 +185,9 @@ def run(bench: Benchmark, calib: Benchmark | None, systems: list[str], k: int, r
             sr.tokens.append(estimate_tokens(ctx))
             if gold:
                 sr.recall.append(recall_at_k(hits, gold, k))
+            if retrieval_only:
+                sr.n += 1
+                continue
             r_in0, r_out0 = reader.llm.input_tokens, reader.llm.output_tokens
             answer = reader.answer(it.query, ctx)
             sr.reader_in += reader.llm.input_tokens - r_in0
@@ -201,6 +222,9 @@ def main(argv=None):
     ap.add_argument("--llm-compress", action="store_true", help="use the Claude compressor/extractor at FidelityMem ingestion")
     ap.add_argument("--embedder", default="spacy")
     ap.add_argument("--mock", action="store_true", help="mock reader/judge (containment heuristic); validates the pipeline without credentials")
+    ap.add_argument("--rewrite", action="store_true", help="HyDE-style query rewriting with a Haiku call per question")
+    ap.add_argument("--rerank", action="store_true", help="Haiku reranking of a 20-candidate pool down to K")
+    ap.add_argument("--retrieval-only", action="store_true", help="skip reader and judge; report recall only")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv)
 
@@ -234,7 +258,17 @@ def main(argv=None):
         judge = ClaudeJudge(ClaudeLLM(model=a.judge_model, effort="low"))
         mode = "claude"
     print(f"phase6 dataset={real.name} granularity={real.meta.get('granularity')} questions={len(test.items)} calib={len(calib.items)} K={a.k} mode={mode} embedder={embedder_name(set_default_embedder.__globals__['get_default_embedder']())}", flush=True)
-    results = run(test, calib, a.systems, a.k, a.rho, reader, judge, a.llm_compress, log=lambda s: print(s, flush=True))
+    rewriter = reranker = None
+    if a.rewrite or a.rerank:
+        from ..llm import ClaudeLLM, ClaudeReranker, ClaudeRewriter, MockLLM
+
+        aux = MockLLM() if a.mock else ClaudeLLM(model="claude-haiku-5-5", effort="low")
+        rewriter = ClaudeRewriter(aux) if a.rewrite else None
+        reranker = ClaudeReranker(aux) if a.rerank else None
+    results = run(test, calib, a.systems, a.k, a.rho, reader, judge, a.llm_compress, log=lambda s: print(s, flush=True), rewriter=rewriter, reranker=reranker, retrieval_only=a.retrieval_only)
+    if rewriter or reranker:
+        aux = (rewriter or reranker).llm
+        print(f"[phase6] rewrite/rerank API tokens: in={aux.input_tokens} out={aux.output_tokens} (claude-haiku-5-5)", flush=True)
     rows = [r.summary(a.reader_model, a.judge_model) for r in results]
     print("\n| System | accuracy | abstain | recall@K | tokens/q | p50 ms | est. cost / q |\n|---|---:|---:|---:|---:|---:|---:|")
     for r in rows:
