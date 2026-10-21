@@ -1,1 +1,2 @@
 dataset=locomo episodes=272 questions=1986 embedder=onnx:all-MiniLM-L6-v2-onnx seeds=[0, 1, 2]
+[seed 0] ingest 26s, semantic trie 8s (2000 codes)
