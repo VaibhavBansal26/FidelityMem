@@ -120,3 +120,4 @@ fidelitymem_ctrl:qlog(L1/c)  10   0.912   0.875  0.736  0.767     7328    0.83  
 [timing] zep_style: 160.6s
 [timing] amem_style: 244.5s
 [timing] hipporag_style: 164.6s
+[timing] fidelitymem_L0_raw: 36.6s

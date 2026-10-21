@@ -21,3 +21,5 @@ dataset=locomo episodes=272 questions=1986 embedder=onnx:all-MiniLM-L6-v2-onnx s
 [seed 1] fm:lex1.2+vec1.0+trie1.2     R@10=0.902 CR=0.858 MRR=0.699 (11s)
 [seed 1] fm:lex1.2+vec1.0+graph1.2    R@10=0.886 CR=0.843 MRR=0.581 (11s)
 [seed 1] fm:all-planner-weights       R@10=0.863 CR=0.818 MRR=0.542 (36s)
+[seed 2] ingest 51s, semantic trie 3s (2000 codes)
+[seed 2] fm:lexical                   R@10=0.915 CR=0.874 MRR=0.741 (2s)
