@@ -12,3 +12,13 @@ episodes=272 questions=1986 seeds=[0, 1, 2]
 [seed 1] m=6 alpha=0.2: R@10=0.914 MRR=0.758 adversarial=0.964 multi_hop=0.702 open_domain=0.656 single_hop=0.977 temporal=0.942
 [seed 1] m=6 alpha=0.4: R@10=0.905 MRR=0.719 adversarial=0.946 multi_hop=0.693 open_domain=0.668 single_hop=0.968 temporal=0.937
 [seed 2] lexicon m=3: 3849 keys, 6s
+[seed 2] m=3 alpha=0.2: R@10=0.916 MRR=0.767 adversarial=0.966 multi_hop=0.695 open_domain=0.654 single_hop=0.981 temporal=0.944
+[seed 2] m=3 alpha=0.4: R@10=0.913 MRR=0.747 adversarial=0.960 multi_hop=0.689 open_domain=0.676 single_hop=0.979 temporal=0.942
+[seed 2] lexicon m=6: 3849 keys, 4s
+[seed 2] m=6 alpha=0.2: R@10=0.914 MRR=0.758 adversarial=0.964 multi_hop=0.702 open_domain=0.656 single_hop=0.977 temporal=0.942
+[seed 2] m=6 alpha=0.4: R@10=0.905 MRR=0.719 adversarial=0.946 multi_hop=0.693 open_domain=0.668 single_hop=0.968 temporal=0.937
+
+### BM25 + semantic lexicon expansion, LoCoMo sessions, seeds [0, 1, 2]
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+bm25                         10   0.915 ±0.000   0.875  0.772  0.794     7426    0.14    0.35    195165   0.00     -  
+bm25+lexicon(m3,a0.2/m3,a0.4/m6,a0.2/m6,a0.4) 10   0.912 ±0.003   0.871  0.748  0.776     7558    0.32    1.28    195165   0.00     -  
