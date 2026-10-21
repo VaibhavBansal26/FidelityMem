@@ -183,7 +183,7 @@ def main(argv=None) -> None:
     from ..stores import set_default_embedder
     from ..stores.embedders import best_available, embedder_name
 
-    emb = best_available(None if a.embedder == "best" else a.embedder)
+    emb = best_available(None if a.embedder in ("best", "adapted-train") else a.embedder)
     set_default_embedder(emb)
     kw = {}
     if a.dataset == "locomo":
@@ -212,6 +212,20 @@ def main(argv=None) -> None:
             cut = int(len(items) * a.calib_frac)
             calib = Benchmark(bench.episodes, items[:cut], {}, name=bench.name + "-calib")
             bench = Benchmark(bench.episodes, items[cut:], {}, name=bench.name)
+        if a.embedder == "adapted-train":
+            # train the retrieval-adapted embedder on THIS seed's calibration split only (no test leakage),
+            # plus a synthetic world with an unrelated seed; every system in this seed then shares it
+            from ..stores.learned_embedder import SpacyTokenVectors, train_adapter
+            from .synthetic import generate
+
+            syn = generate(1000, 200, seed=sd + 100)
+            pairs = [(it.query, bench.episodes[gi][0]) for b in ((calib,) if calib else ()) for it in b.items for gi in b.gold_indices(it)]
+            pairs += [(it.query, syn.episodes[gi][0]) for it in syn.items for gi in syn.gold_indices(it)]
+            corpus = [t for t, _ in bench.episodes] + [t for t, _ in syn.episodes]
+            t0 = time.perf_counter()
+            emb = train_adapter(SpacyTokenVectors(), pairs, corpus, seed=sd, log=lambda s: None)
+            set_default_embedder(emb)
+            print(f"[adapter] seed {sd}: trained on {len(pairs)} pairs in {time.perf_counter() - t0:.0f}s", flush=True)
         per_seed.append(run_once(bench, a.k, a.rho, reader, judge, with_controller=not a.no_controller, calib=calib, fast_controller=a.fast_controller))
         print(f"\n### seed {sd}\n{format_table(per_seed[-1])}", flush=True)
     agg = aggregate(per_seed) if len(per_seed) > 1 else per_seed[0]
@@ -221,7 +235,7 @@ def main(argv=None) -> None:
         print(f"  {r.system:<26} " + ", ".join(f"{t}={v:.3f}" for t, v in sorted(r.per_type.items())))
     if a.out:
         with open(a.out, "w") as f:
-            json.dump({"dataset": real.name, "granularity": real.meta.get("granularity"), "embedder": embedder_name(emb), "seeds": a.seeds, "k": a.k, "episodes": len(real.episodes), "questions": len(real.questions), "calib_frac": a.calib_frac,
+            json.dump({"dataset": real.name, "granularity": real.meta.get("granularity"), "embedder": a.embedder if a.embedder == "adapted-train" else embedder_name(emb), "seeds": a.seeds, "k": a.k, "episodes": len(real.episodes), "questions": len(real.questions), "calib_frac": a.calib_frac,
                        "aggregate": [{k2: v for k2, v in r.__dict__.items() if k2 != "per_query_recall"} for r in agg],
                        "per_seed": [[{k2: v for k2, v in r.__dict__.items() if k2 != "per_query_recall"} for r in rs] for rs in per_seed]}, f, indent=1)
 
