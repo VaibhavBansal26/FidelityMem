@@ -207,6 +207,7 @@ Lexical retrieval is the strongest single signal on human conversation: BM25 alo
 \label{tab:locomo5}
 \centering
 \scriptsize
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrrrrl}
 \toprule
 System & R@5 & CR@5 & MRR & Stor. & Categories \\
@@ -228,7 +229,7 @@ FM L3, no gate & 0.358 $\pm$.016 & 0.327 & 0.232 & 13\% & .24 / .32 / .42 / .31 
 FM controller, self-probes & 0.851 $\pm$.015 & 0.810 & 0.730 & 99\% & .54 / .87 / .94 / .57 \\
 FM controller, query log & 0.849 $\pm$.014 & 0.807 & 0.729 & 98\% & .54 / .87 / .93 / .56 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \subsection{Session granularity with a sentence embedder ($K=10$, 3 seeds)}
