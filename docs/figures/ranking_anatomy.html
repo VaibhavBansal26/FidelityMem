@@ -1,0 +1,317 @@
+<title>FidelityMem Ranking Anatomy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: one reading column, figures full width of the column, tables scroll on their own */
+:root{
+  --bg:#f7f6f2; --fg:#1d1f1b; --muted:#5d6158; --line:#d6d4cb; --panel:#ecebe4;
+  --accent:#b4461f; --accent-soft:#f3dccf; --lex:#2f6f9f; --dense:#6b4c9a; --graph:#2e7d5b;
+  --font:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161815; --fg:#e8e6df; --muted:#a3a79b; --line:#363a33; --panel:#20231f;
+  --accent:#e8794f; --accent-soft:#3a271d; --lex:#6fa9d8; --dense:#b094e0; --graph:#63b792; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161815; --fg:#e8e6df; --muted:#a3a79b; --line:#363a33; --panel:#20231f;
+  --accent:#e8794f; --accent-soft:#3a271d; --lex:#6fa9d8; --dense:#b094e0; --graph:#63b792; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.55;font-size:16px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+main{max-width:860px;margin:0 auto;display:grid;gap:40px}
+h1{font-size:2rem;line-height:1.15;margin:0 0 6px;text-wrap:balance;font-weight:600}
+h2{font-size:1.3rem;margin:0 0 10px;font-weight:600;text-wrap:balance}
+h3{font-size:1.02rem;margin:18px 0 6px;font-weight:600}
+p{margin:0 0 12px;max-width:68ch}
+.lede{color:var(--muted);font-size:1.05rem;max-width:68ch}
+section{display:grid;gap:4px}
+figure{margin:14px 0 6px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;overflow-x:auto}
+figure svg{max-width:100%;height:auto;display:block;font-family:var(--font);font-size:12px;color:var(--fg)}
+figcaption{font-size:.9rem;color:var(--muted);margin-top:10px;max-width:72ch}
+code,.mono{font-family:var(--mono);font-size:.9em}
+pre{font-family:var(--mono);font-size:.85rem;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:8px 0 14px}
+.wrap{overflow-x:auto;margin:8px 0 14px}
+table{border-collapse:collapse;font-size:.9rem;min-width:620px;width:100%}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td.num{font-variant-numeric:tabular-nums;text-align:right}
+.tag{display:inline-block;padding:1px 7px;border-radius:3px;font-size:.78rem;font-weight:500;border:1px solid var(--line)}
+.lex{color:var(--lex)} .dense{color:var(--dense)} .graph{color:var(--graph)} .acc{color:var(--accent)}
+ul{padding-left:20px;margin:0 0 12px;max-width:70ch} li{margin-bottom:4px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;max-width:72ch}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;font-size:.92rem;max-width:72ch}
+.kv dt{font-family:var(--mono);font-size:.85rem;color:var(--muted)} .kv dd{margin:0}
+@media (max-width:520px){.kv{grid-template-columns:1fr}}
+</style>
+<main>
+<header>
+  <h1>How each system ranks a memory</h1>
+  <p class="lede">The scoring algorithms behind the LoCoMo and LongMemEval numbers: what BM25 computes, what the dense route computes, how reciprocal-rank fusion merges them, and what FidelityMem adds on top. Every formula and constant is taken from the code in the repository.</p>
+</header>
+
+<section id="bm25">
+  <h2>1. BM25 (lexical route, and the strongest baseline)</h2>
+  <p>BM25 scores a document by summing, over the query terms it contains, a rarity weight (IDF) times a saturating term-frequency factor that is normalised by document length. Nothing about meaning is involved: a document matches only if it shares the literal (stemmed) words.</p>
+  <figure>
+  <svg viewBox="0 0 820 230" role="img" aria-label="BM25: query terms are looked up in an inverted index, each posting contributes IDF times saturated term frequency, contributions are summed per document and sorted">
+    <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+    <rect x="10" y="60" width="150" height="70" rx="5" fill="none" stroke="currentColor"/>
+    <text x="85" y="86" text-anchor="middle" font-weight="600">query</text>
+    <text x="85" y="106" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">tokenize → stem</text>
+    <text x="85" y="122" text-anchor="middle" font-size="11">drop stop words</text>
+    <line x1="160" y1="95" x2="215" y2="95" stroke="currentColor" marker-end="url(#a1)"/>
+    <text x="187" y="86" text-anchor="middle" font-size="11">terms</text>
+    <rect x="220" y="30" width="190" height="130" rx="5" fill="none" stroke="currentColor"/>
+    <text x="315" y="52" text-anchor="middle" font-weight="600">inverted index</text>
+    <text x="232" y="76" font-family="IBM Plex Mono, monospace" font-size="11">paris  → d3(2) d9(1)</text>
+    <text x="232" y="94" font-family="IBM Plex Mono, monospace" font-size="11">bakeri → d3(1)</text>
+    <text x="232" y="112" font-family="IBM Plex Mono, monospace" font-size="11">move   → d3(1) d4(1) d9(1)</text>
+    <text x="232" y="138" font-size="11" fill="var(--muted)">df(t), tf(t,d), |d|, avgdl</text>
+    <line x1="410" y1="95" x2="465" y2="95" stroke="currentColor" marker-end="url(#a1)"/>
+    <text x="437" y="86" text-anchor="middle" font-size="11">postings</text>
+    <rect x="470" y="30" width="200" height="130" rx="5" fill="none" stroke="var(--lex)" stroke-width="1.5"/>
+    <text x="570" y="52" text-anchor="middle" font-weight="600" fill="var(--lex)">per-term contribution</text>
+    <text x="570" y="80" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">idf(t) · tf·(k1+1)</text>
+    <line x1="500" y1="86" x2="640" y2="86" stroke="currentColor"/>
+    <text x="570" y="102" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">tf + k1·(1−b+b·|d|/avgdl)</text>
+    <text x="570" y="128" text-anchor="middle" font-size="11">k1 = 1.5   b = 0.75</text>
+    <text x="570" y="146" text-anchor="middle" font-size="11" fill="var(--muted)">idf = ln(1 + (N−df+0.5)/(df+0.5))</text>
+    <line x1="670" y1="95" x2="725" y2="95" stroke="currentColor" marker-end="url(#a1)"/>
+    <text x="697" y="86" text-anchor="middle" font-size="11">sum</text>
+    <rect x="730" y="60" width="80" height="70" rx="5" fill="none" stroke="currentColor"/>
+    <text x="770" y="86" text-anchor="middle" font-weight="600">score</text>
+    <text x="770" y="106" text-anchor="middle" font-size="11">per doc</text>
+    <text x="770" y="122" text-anchor="middle" font-size="11">sort, top k</text>
+    <text x="10" y="200" font-size="12" fill="var(--muted)">tf saturates: the 2nd occurrence of a term adds less than the 1st; long documents are penalised through |d|/avgdl.</text>
+    <text x="10" y="218" font-size="12" fill="var(--muted)">A session is one document, so a long session that mentions the query words once still scores well on rare words.</text>
+  </svg>
+  <figcaption>BM25 as implemented in the lexical store: exact stemmed-term overlap, rarity weighting, saturation, length normalisation. Latency on 272 sessions is a fraction of a millisecond.</figcaption>
+  </figure>
+  <p><strong>Why it wins on LoCoMo.</strong> The questions reuse the words of the evidence ("What did Caroline bake for the fundraiser?" against a session that says "bake" and "fundraiser"). Rare words such as names, places and activities have high IDF, so a single shared rare word puts the right session near the top. The dense route cannot exploit that precision.</p>
+</section>
+
+<section id="dense">
+  <h2>2. Dense retrieval (vector route)</h2>
+  <p>The embedder maps text to a unit vector; the score is the cosine (dot product) between the query vector and each stored vector. The three embedders used in the project differ only in how the vector is produced.</p>
+  <figure>
+  <svg viewBox="0 0 820 250" role="img" aria-label="Dense route: query and memory are both embedded, long memories as the mean of overlapping word windows, score is the dot product of unit vectors">
+    <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+    <rect x="10" y="20" width="130" height="50" rx="5" fill="none" stroke="currentColor"/>
+    <text x="75" y="50" text-anchor="middle" font-weight="600">query text</text>
+    <rect x="10" y="150" width="130" height="80" rx="5" fill="none" stroke="currentColor"/>
+    <text x="75" y="176" text-anchor="middle" font-weight="600">memory text</text>
+    <text x="75" y="194" text-anchor="middle" font-size="11">split into 120-word</text>
+    <text x="75" y="210" text-anchor="middle" font-size="11">windows, 50% overlap</text>
+    <line x1="140" y1="45" x2="215" y2="45" stroke="currentColor" marker-end="url(#a2)"/>
+    <line x1="140" y1="190" x2="215" y2="190" stroke="currentColor" marker-end="url(#a2)"/>
+    <text x="177" y="181" text-anchor="middle" font-size="11">each window</text>
+    <rect x="220" y="20" width="230" height="210" rx="5" fill="none" stroke="var(--dense)" stroke-width="1.5"/>
+    <text x="335" y="42" text-anchor="middle" font-weight="600" fill="var(--dense)">embedder → unit vector</text>
+    <text x="232" y="70" font-size="11" font-weight="600">MiniLM-L6 (ONNX), 384-d</text>
+    <text x="232" y="86" font-size="11">6 transformer layers, mean-pool tokens</text>
+    <text x="232" y="112" font-size="11" font-weight="600">spaCy word vectors, 300-d</text>
+    <text x="232" y="128" font-size="11">IDF-weighted mean of GloVe-style vectors</text>
+    <text x="232" y="154" font-size="11" font-weight="600">adapted embedder, 256-d</text>
+    <text x="232" y="170" font-size="11">learned word weights + projection,</text>
+    <text x="232" y="186" font-size="11">InfoNCE with BM25 hard negatives</text>
+    <text x="232" y="214" font-size="11" fill="var(--muted)">windows: mean of window vectors, renormalised</text>
+    <line x1="450" y1="45" x2="525" y2="45" stroke="currentColor" marker-end="url(#a2)"/>
+    <text x="487" y="36" text-anchor="middle" font-size="11">q</text>
+    <line x1="450" y1="190" x2="525" y2="190" stroke="currentColor" marker-end="url(#a2)"/>
+    <text x="487" y="181" text-anchor="middle" font-size="11">m₁ … mₙ</text>
+    <rect x="530" y="20" width="150" height="210" rx="5" fill="none" stroke="currentColor"/>
+    <text x="605" y="42" text-anchor="middle" font-weight="600">vector index</text>
+    <text x="605" y="68" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">score = q · mᵢ</text>
+    <text x="605" y="86" text-anchor="middle" font-size="11">(cosine, both unit)</text>
+    <text x="605" y="112" text-anchor="middle" font-size="11">dense matrix,</text>
+    <text x="605" y="128" text-anchor="middle" font-size="11">one matmul per query</text>
+    <text x="605" y="154" text-anchor="middle" font-size="11">embed cache by text</text>
+    <text x="605" y="180" text-anchor="middle" font-size="11">top k by score</text>
+    <line x1="680" y1="125" x2="735" y2="125" stroke="currentColor" marker-end="url(#a2)"/>
+    <rect x="740" y="95" width="70" height="60" rx="5" fill="none" stroke="currentColor"/>
+    <text x="775" y="121" text-anchor="middle" font-weight="600">ranked</text>
+    <text x="775" y="139" text-anchor="middle" font-size="11">list</text>
+  </svg>
+  <figcaption>Dense route. Replacing word vectors with MiniLM lifted the vector-only baseline on LoCoMo sessions from 0.29 to 0.75 Recall@10, still below BM25 at 0.91: a session is a long mixture of topics, so its one vector is blurred, while a rare query word is sharp.</figcaption>
+  </figure>
+</section>
+
+<section id="rrf">
+  <h2>3. Reciprocal-rank fusion (how routes are merged)</h2>
+  <p>Routes produce lists in incompatible score units (BM25 scores, cosines, graph hop weights), so FidelityMem, the Zep-style and the HippoRAG-style systems merge by rank rather than by score. Each route contributes <span class="mono">w / (60 + rank)</span> for every document it lists; the contributions are summed per document.</p>
+  <figure>
+  <svg viewBox="0 0 820 240" role="img" aria-label="Reciprocal rank fusion: three ranked lists contribute weight over 60 plus rank for each document, sums are compared, a document high on two lists beats one that is first on only one">
+    <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+    <rect x="10" y="20" width="140" height="92" rx="5" fill="none" stroke="var(--lex)" stroke-width="1.5"/>
+    <text x="80" y="40" text-anchor="middle" font-weight="600" fill="var(--lex)">lexical  w=1.0</text>
+    <text x="22" y="62" font-family="IBM Plex Mono, monospace" font-size="11">1. d3   1/61</text>
+    <text x="22" y="80" font-family="IBM Plex Mono, monospace" font-size="11">2. d9   1/62</text>
+    <text x="22" y="98" font-family="IBM Plex Mono, monospace" font-size="11">3. d4   1/63</text>
+    <rect x="10" y="124" width="140" height="92" rx="5" fill="none" stroke="var(--dense)" stroke-width="1.5"/>
+    <text x="80" y="144" text-anchor="middle" font-weight="600" fill="var(--dense)">vector  w=1.0</text>
+    <text x="22" y="166" font-family="IBM Plex Mono, monospace" font-size="11">1. d7   1/61</text>
+    <text x="22" y="184" font-family="IBM Plex Mono, monospace" font-size="11">2. d3   1/62</text>
+    <text x="22" y="202" font-family="IBM Plex Mono, monospace" font-size="11">3. d2   1/63</text>
+    <rect x="190" y="72" width="140" height="92" rx="5" fill="none" stroke="var(--graph)" stroke-width="1.5"/>
+    <text x="260" y="92" text-anchor="middle" font-weight="600" fill="var(--graph)">graph  w=1.2</text>
+    <text x="202" y="114" font-family="IBM Plex Mono, monospace" font-size="11">1. d9   1.2/61</text>
+    <text x="202" y="132" font-family="IBM Plex Mono, monospace" font-size="11">2. d3   1.2/62</text>
+    <text x="202" y="150" font-size="11" fill="var(--muted)">(multi-hop query)</text>
+    <line x1="150" y1="66" x2="385" y2="110" stroke="currentColor" marker-end="url(#a3)"/>
+    <line x1="150" y1="170" x2="385" y2="124" stroke="currentColor" marker-end="url(#a3)"/>
+    <line x1="330" y1="118" x2="385" y2="118" stroke="currentColor" marker-end="url(#a3)"/>
+    <rect x="390" y="40" width="200" height="156" rx="5" fill="none" stroke="currentColor"/>
+    <text x="490" y="62" text-anchor="middle" font-weight="600">sum per document</text>
+    <text x="402" y="88" font-family="IBM Plex Mono, monospace" font-size="11">d3 = 1/61+1/62+1.2/62</text>
+    <text x="402" y="104" font-family="IBM Plex Mono, monospace" font-size="11">   = .0519  ← top</text>
+    <text x="402" y="124" font-family="IBM Plex Mono, monospace" font-size="11">d9 = 1/62+1.2/61 = .0358</text>
+    <text x="402" y="144" font-family="IBM Plex Mono, monospace" font-size="11">d7 = 1/61        = .0164</text>
+    <text x="402" y="164" font-family="IBM Plex Mono, monospace" font-size="11">d4 = 1/63        = .0159</text>
+    <text x="402" y="184" font-size="11" fill="var(--muted)">adjacent ranks differ by ~1.6%</text>
+    <line x1="590" y1="118" x2="645" y2="118" stroke="currentColor" marker-end="url(#a3)"/>
+    <rect x="650" y="72" width="160" height="92" rx="5" fill="none" stroke="currentColor"/>
+    <text x="730" y="94" text-anchor="middle" font-weight="600">fused order</text>
+    <text x="730" y="116" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">d3 › d9 › d7 › d4 › d2</text>
+    <text x="730" y="140" text-anchor="middle" font-size="11">agreement beats a</text>
+    <text x="730" y="155" text-anchor="middle" font-size="11">single first place</text>
+  </svg>
+  <figcaption>Weighted RRF with k = 60. Agreement between routes is rewarded. The flip side is the LoCoMo result: a weak route (dense at 0.75) can pull a document the strong route ranked first down below one that both routes rank in the middle, which is why BM25 + dense RRF (0.894) loses to BM25 alone (0.908).</figcaption>
+  </figure>
+</section>
+
+<section id="pipeline">
+  <h2>4. FidelityMem's full ranking pipeline</h2>
+  <p>FidelityMem is BM25 plus five more routes, fused by RRF, then re-ordered by three post-fusion steps. The controller decides which routes are in the pool and at what compression level the store is held; the planner picks weights per query.</p>
+  <figure>
+  <svg viewBox="0 0 860 470" role="img" aria-label="FidelityMem retrieval pipeline: planner classifies the query and sets route weights within the controller's route pool; six routes produce ranked lists; weighted RRF fuses them; a multiplicative modulation applies recency, utility, authority and type boosts; relation chaining promotes second-hop memories; top k is cut; conflict and sufficiency checks trigger raw-source expansion; a token budget trims the context">
+    <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+    <!-- planner -->
+    <rect x="10" y="20" width="180" height="96" rx="5" fill="none" stroke="currentColor"/>
+    <text x="100" y="42" text-anchor="middle" font-weight="600">planner</text>
+    <text x="22" y="62" font-size="11">classify query: exact /</text>
+    <text x="22" y="76" font-size="11">temporal / multi-hop / procedural</text>
+    <text x="22" y="92" font-size="11">set route weights, hops,</text>
+    <text x="22" y="106" font-size="11">expansion budget, "wants recent"</text>
+    <rect x="10" y="130" width="180" height="58" rx="5" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="100" y="150" text-anchor="middle" font-weight="600" fill="var(--accent)">controller</text>
+    <text x="22" y="168" font-size="11">route pool (authoritative),</text>
+    <text x="22" y="182" font-size="11">compression level, gate profile</text>
+    <line x1="100" y1="130" x2="100" y2="118" stroke="var(--accent)" marker-end="url(#a4)"/>
+    <text x="108" y="126" font-size="10" fill="var(--accent)">pool</text>
+    <!-- routes -->
+    <g font-size="11">
+      <rect x="230" y="14" width="150" height="30" rx="4" fill="none" stroke="var(--lex)" stroke-width="1.5"/><text x="305" y="33" text-anchor="middle" fill="var(--lex)" font-weight="600">lexical (BM25)</text>
+      <rect x="230" y="52" width="150" height="30" rx="4" fill="none" stroke="var(--dense)" stroke-width="1.5"/><text x="305" y="71" text-anchor="middle" fill="var(--dense)" font-weight="600">vector (cosine)</text>
+      <rect x="230" y="90" width="150" height="30" rx="4" fill="none" stroke="var(--graph)" stroke-width="1.5"/><text x="305" y="109" text-anchor="middle" fill="var(--graph)" font-weight="600">graph (relations)</text>
+      <rect x="230" y="128" width="150" height="30" rx="4" fill="none" stroke="currentColor"/><text x="305" y="147" text-anchor="middle">trie (identifiers, phrases)</text>
+      <rect x="230" y="166" width="150" height="30" rx="4" fill="none" stroke="currentColor"/><text x="305" y="185" text-anchor="middle">temporal (episodic BM25)</text>
+      <rect x="230" y="204" width="150" height="30" rx="4" fill="none" stroke="currentColor"/><text x="305" y="223" text-anchor="middle">procedural (BM25 subset)</text>
+    </g>
+    <text x="305" y="252" text-anchor="middle" font-size="11" fill="var(--muted)">each returns 3·k candidates</text>
+    <line x1="190" y1="68" x2="225" y2="68" stroke="currentColor" marker-end="url(#a4)"/>
+    <text x="207" y="60" text-anchor="middle" font-size="10">plan</text>
+    <!-- graph detail -->
+    <text x="395" y="100" font-size="10" fill="var(--graph)">seeds = query entities</text>
+    <text x="395" y="112" font-size="10" fill="var(--graph)">+ relation objects of top-3 BM25 hits</text>
+    <text x="395" y="124" font-size="10" fill="var(--graph)">hop score .9 subject / .5 mention,</text>
+    <text x="395" y="136" font-size="10" fill="var(--graph)">hubs (degree &gt; 40) not traversed</text>
+    <!-- fusion chain -->
+    <g>
+      <line x1="380" y1="29" x2="585" y2="29" stroke="currentColor"/>
+      <line x1="380" y1="67" x2="585" y2="67" stroke="currentColor"/>
+      <line x1="380" y1="143" x2="585" y2="143" stroke="currentColor"/>
+      <line x1="380" y1="181" x2="585" y2="181" stroke="currentColor"/>
+      <line x1="380" y1="219" x2="585" y2="219" stroke="currentColor"/>
+      <line x1="585" y1="29" x2="585" y2="219" stroke="currentColor"/>
+      <line x1="585" y1="124" x2="625" y2="124" stroke="currentColor" marker-end="url(#a4)"/>
+    </g>
+    <rect x="630" y="94" width="220" height="60" rx="5" fill="none" stroke="currentColor"/>
+    <text x="740" y="114" text-anchor="middle" font-weight="600">1 · weighted RRF</text>
+    <text x="740" y="132" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">Σ w_route / (60 + rank)</text>
+    <text x="740" y="146" text-anchor="middle" font-size="11">weights from the planner</text>
+    <line x1="740" y1="154" x2="740" y2="174" stroke="currentColor" marker-end="url(#a4)"/>
+    <rect x="630" y="178" width="220" height="74" rx="5" fill="none" stroke="currentColor"/>
+    <text x="740" y="198" text-anchor="middle" font-weight="600">2 · modulation (multiplicative)</text>
+    <text x="740" y="216" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">fused/max · (1 + .05·recency</text>
+    <text x="740" y="230" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">+ .2·tanh(utility) + .05·authority + type)</text>
+    <text x="740" y="246" text-anchor="middle" font-size="11">nudges and tie-breaks only</text>
+    <line x1="740" y1="252" x2="740" y2="272" stroke="currentColor" marker-end="url(#a4)"/>
+    <rect x="630" y="276" width="220" height="60" rx="5" fill="none" stroke="var(--graph)" stroke-width="1.5"/>
+    <text x="740" y="296" text-anchor="middle" font-weight="600" fill="var(--graph)">3 · relation chaining (2 hops)</text>
+    <text x="740" y="314" text-anchor="middle" font-size="11">memories about objects of a top hit's</text>
+    <text x="740" y="328" text-anchor="middle" font-size="11">relations are promoted beside it (≤3)</text>
+    <line x1="740" y1="336" x2="740" y2="356" stroke="currentColor" marker-end="url(#a4)"/>
+    <rect x="630" y="360" width="220" height="40" rx="5" fill="none" stroke="currentColor"/>
+    <text x="740" y="385" text-anchor="middle" font-weight="600">cut to top k</text>
+    <line x1="630" y1="380" x2="595" y2="380" stroke="currentColor" marker-end="url(#a4)"/>
+    <rect x="370" y="340" width="220" height="80" rx="5" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="480" y="360" text-anchor="middle" font-weight="600" fill="var(--accent)">4 · expansion to raw source</text>
+    <text x="480" y="378" text-anchor="middle" font-size="11">if two hits contradict (same predicate),</text>
+    <text x="480" y="392" text-anchor="middle" font-size="11">query words barely covered, or exact query:</text>
+    <text x="480" y="406" text-anchor="middle" font-size="11">swap compressed text for the original</text>
+    <line x1="370" y1="380" x2="335" y2="380" stroke="currentColor" marker-end="url(#a4)"/>
+    <rect x="160" y="340" width="170" height="80" rx="5" fill="none" stroke="currentColor"/>
+    <text x="245" y="360" text-anchor="middle" font-weight="600">5 · token budget</text>
+    <text x="245" y="378" text-anchor="middle" font-size="11">drop expanded form first,</text>
+    <text x="245" y="392" text-anchor="middle" font-size="11">then the memory; count</text>
+    <text x="245" y="406" text-anchor="middle" font-size="11">retrievals for utility</text>
+    <line x1="160" y1="380" x2="125" y2="380" stroke="currentColor" marker-end="url(#a4)"/>
+    <rect x="10" y="350" width="110" height="60" rx="5" fill="none" stroke="currentColor"/>
+    <text x="65" y="376" text-anchor="middle" font-weight="600">context</text>
+    <text x="65" y="394" text-anchor="middle" font-size="11">to the reader</text>
+    <text x="10" y="450" font-size="12" fill="var(--muted)">On LoCoMo the controller selects the pool {lexical} alone: steps 1 to 3 then reduce to BM25 order, and FidelityMem ties BM25 exactly.</text>
+  </svg>
+  <figcaption>The retrieval path of one query. Steps 2 and 3 only reorder what the routes already found; step 4 changes what text is served, not which memory. The controller's choice of route pool is what decides whether the dense and graph routes take part at all.</figcaption>
+  </figure>
+
+  <h3>What each component is responsible for</h3>
+  <div class="wrap"><table>
+    <thead><tr><th>Component</th><th>Decides</th><th>Evidence it uses</th><th>Can it raise recall above BM25?</th></tr></thead>
+    <tbody>
+      <tr><td>Planner</td><td>Query type, route weights, hops, expansion budget</td><td>Regex cues in the query (dates, "latest", identifiers, "how do I")</td><td>Only indirectly, by weighting the route that is right for the query</td></tr>
+      <tr><td>Controller</td><td>Route pool, compression level, gate profile, top-k, expansion budget</td><td>Recall on probe queries vs the best raw retrieval; cost = storage, tokens, latency, noise</td><td>No. It can only avoid losses; it selects the pool with the best measured recall, which on LoCoMo is BM25 alone</td></tr>
+      <tr><td class="lex">Lexical route</td><td>Candidates by exact stemmed-word overlap</td><td>Term frequency, document frequency, length</td><td>It is BM25</td></tr>
+      <tr><td class="dense">Vector route</td><td>Candidates by embedding similarity</td><td>MiniLM or word vectors over 120-word windows</td><td>Yes when the question paraphrases the evidence; on LoCoMo it rarely does</td></tr>
+      <tr><td class="graph">Graph route</td><td>Candidates reachable from query entities through extracted relations</td><td>Subject-predicate-object triples, co-mentions, hub pruning</td><td>Yes on multi-hop questions (the ablation shows chaining is the multi-hop component); neutral elsewhere</td></tr>
+      <tr><td>Trie route</td><td>Candidates sharing identifiers or exact 2-4-word phrases</td><td>Character trie of identifier-like tokens, n-gram phrases</td><td>Yes for codes, ticket ids, exact quotes; LoCoMo has almost none</td></tr>
+      <tr><td>Temporal / procedural routes</td><td>BM25 restricted to episodic or procedural memories</td><td>Memory type tags from extraction</td><td>Neutral; recency ordering only when the query asks for "latest"</td></tr>
+      <tr><td>RRF fusion</td><td>One order from several lists</td><td>Ranks only</td><td>Raises recall when routes disagree and both are good; lowers it when one route is weak</td></tr>
+      <tr><td>Modulation</td><td>Tie-breaks</td><td>Age, past usefulness, source authority, type</td><td>No, by design: factors are ≤ 1.3×</td></tr>
+      <tr><td>Relation chaining</td><td>Promotes the second hop</td><td>Relations of the top hits</td><td>Yes on 2-hop questions</td></tr>
+      <tr><td>Expansion</td><td>Compressed vs raw text served</td><td>Contradiction detection, query-word coverage</td><td>Does not change which memories are retrieved; it protects answer accuracy after retrieval</td></tr>
+      <tr><td>Fidelity gate</td><td>How far each memory may be compressed</td><td>Probes for entities, numbers, dates, negations, content words</td><td>Does not add recall; it bounds the recall lost to compression</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="others">
+  <h2>5. What the other systems rank with</h2>
+  <p>Each competitor in the comparison is an architecture-faithful re-implementation built from the same stores, so the differences below are differences in ranking design, not in implementation quality.</p>
+  <div class="wrap"><table>
+    <thead><tr><th>System</th><th>Store unit</th><th>Candidate generation</th><th>Fusion / ordering</th><th>LoCoMo sessions R@10</th></tr></thead>
+    <tbody>
+      <tr><td>BM25</td><td>session</td><td class="lex">BM25</td><td>BM25 score</td><td class="num">0.908</td></tr>
+      <tr><td>Dense</td><td>session (windowed)</td><td class="dense">cosine</td><td>cosine</td><td class="num">0.747</td></tr>
+      <tr><td>BM25 + dense RRF</td><td>session</td><td><span class="lex">BM25</span> + <span class="dense">cosine</span></td><td>RRF, equal weights</td><td class="num">0.894</td></tr>
+      <tr><td>Lossy summary + BM25</td><td>L3 summary</td><td class="lex">BM25 over summaries</td><td>BM25 score</td><td class="num">0.548</td></tr>
+      <tr><td>Window + trie</td><td>session</td><td>trie phrase/identifier hits</td><td>trie score, then most recent 50 fill the rest</td><td class="num">0.730</td></tr>
+      <tr><td>MemGPT-style</td><td>session</td><td class="dense">cosine (archival)</td><td>core memory (last 10) pinned first, then cosine</td><td class="num">0.702</td></tr>
+      <tr><td>Mem0-style</td><td>atomic fact sentence</td><td class="dense">cosine over facts</td><td>facts mapped back to sessions, dedup</td><td class="num">0.539</td></tr>
+      <tr><td>Zep-style</td><td>session + entity graph</td><td><span class="lex">BM25</span> + <span class="dense">cosine</span> + <span class="graph">1-hop graph</span></td><td>RRF, equal weights</td><td class="num">0.875</td></tr>
+      <tr><td>A-MEM-style</td><td>session + nearest-neighbour links</td><td class="dense">cosine</td><td>cosine, then linked neighbours appended</td><td class="num">0.747</td></tr>
+      <tr><td>HippoRAG-style</td><td>session + entity graph</td><td><span class="graph">2-hop graph</span> + <span class="dense">cosine</span></td><td>RRF, graph weight 1.5</td><td class="num">0.704</td></tr>
+      <tr><td>FidelityMem controller</td><td>session, gated compression</td><td>routes chosen by the controller</td><td>pipeline above</td><td class="num">0.908</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The pattern in the last column: every system whose first stage is dense retrieval sits at 0.70 to 0.75, every system that includes BM25 sits at 0.87 to 0.91, and adding a weaker route to BM25 through equal-weight RRF costs one to three points. Numbers are seed 0 of the MiniLM run; the three-seed means with intervals follow when the run completes.</p>
+</section>
+
+<section id="levers">
+  <h2>6. Where a ranking change could still beat BM25</h2>
+  <ul>
+    <li><strong>Reranking, not fusion.</strong> Use BM25 for candidates and a cross-encoder or LLM reranker to reorder the top 20 to 30. The Haiku reranker tried in Phase 6 gave no gain at K=5 on sessions, but a cross-encoder trained for passage ranking was not tried.</li>
+    <li><strong>Smaller units with session mapping.</strong> Retrieve turns or 120-word windows and score a session by its best window. This gives the dense route sharp vectors and keeps BM25's precision. The evidence-first experiment did this only for the context, not for ranking.</li>
+    <li><strong>Route weighting learned from the query log.</strong> Today RRF weights are hand-set by query type. The controller could tune the dense weight per dataset the same way it tunes the route pool; on LoCoMo it would learn a weight near zero, on a paraphrase-heavy dataset a higher one.</li>
+    <li><strong>Query-side entity expansion.</strong> The graph route already seeds from relations; feeding the bridge entity back into BM25 (the bridged second pass) is what lifts multi-hop. The same trick applied to coreferent names ("my sister" to a known name) is untested.</li>
+  </ul>
+  <p>LongMemEval is the right place to test these, since its multi-session and knowledge-update questions are the ones where keyword overlap is weakest.</p>
+</section>
+</main>

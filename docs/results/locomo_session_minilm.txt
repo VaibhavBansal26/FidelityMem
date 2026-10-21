@@ -56,3 +56,4 @@ fidelitymem_ctrl:self(L0/c)  10   0.908   0.867  0.736  0.765     7420    0.93  
 fidelitymem_ctrl:qlog(L3/c)  10   0.908   0.867  0.734  0.764     7294    0.94    1.31    192142   0.00   1.128
 [timing] fixed_window: 0.5s
 [timing] bm25: 2.4s
+[timing] vector: 233.1s
