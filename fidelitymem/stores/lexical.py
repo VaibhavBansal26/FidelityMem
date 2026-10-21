@@ -45,12 +45,20 @@ class BM25Index:
         return len(self._len)
 
     def search(self, query: str, k: int = 10, allowed: set[str] | None = None) -> list[tuple[str, float]]:
+        return self.search_weighted({t: 1.0 for t in set(content_tokens(query))}, k, allowed)
+
+    def vocabulary(self) -> list[str]:
+        return list(self._postings)
+
+    def search_weighted(self, terms: dict[str, float], k: int = 10, allowed: set[str] | None = None) -> list[tuple[str, float]]:
+        """BM25 over weighted query terms (weight 1.0 = an ordinary query term; a
+        semantic neighbour of a query term carries a fraction of that)."""
         n = len(self._len)
         if n == 0:
             return []
         avgdl = self._total_len / n
         scores: dict[str, float] = defaultdict(float)
-        for t in set(content_tokens(query)):
+        for t, w in terms.items():
             docs = self._postings.get(t)
             if not docs:
                 continue
@@ -59,5 +67,5 @@ class BM25Index:
                 if allowed is not None and d not in allowed:
                     continue
                 dl = self._len[d]
-                scores[d] += idf * tf * (self.k1 + 1) / (tf + self.k1 * (1 - self.b + self.b * dl / avgdl))
+                scores[d] += w * idf * tf * (self.k1 + 1) / (tf + self.k1 * (1 - self.b + self.b * dl / avgdl))
         return sorted(scores.items(), key=lambda x: x[1], reverse=True)[:k]

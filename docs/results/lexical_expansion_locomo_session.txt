@@ -1,0 +1,14 @@
+episodes=272 questions=1986 seeds=[0, 1, 2]
+[seed 0] lexicon m=3: 3849 keys, 6s
+[seed 0] m=3 alpha=0.2: R@10=0.916 MRR=0.767 adversarial=0.966 multi_hop=0.695 open_domain=0.654 single_hop=0.981 temporal=0.944
+[seed 0] m=3 alpha=0.4: R@10=0.913 MRR=0.747 adversarial=0.960 multi_hop=0.689 open_domain=0.676 single_hop=0.979 temporal=0.942
+[seed 0] lexicon m=6: 3849 keys, 6s
+[seed 0] m=6 alpha=0.2: R@10=0.914 MRR=0.758 adversarial=0.964 multi_hop=0.702 open_domain=0.656 single_hop=0.977 temporal=0.942
+[seed 0] m=6 alpha=0.4: R@10=0.905 MRR=0.719 adversarial=0.946 multi_hop=0.693 open_domain=0.668 single_hop=0.968 temporal=0.937
+[seed 1] lexicon m=3: 3849 keys, 6s
+[seed 1] m=3 alpha=0.2: R@10=0.916 MRR=0.767 adversarial=0.966 multi_hop=0.695 open_domain=0.654 single_hop=0.981 temporal=0.944
+[seed 1] m=3 alpha=0.4: R@10=0.913 MRR=0.747 adversarial=0.960 multi_hop=0.689 open_domain=0.676 single_hop=0.979 temporal=0.942
+[seed 1] lexicon m=6: 3849 keys, 6s
+[seed 1] m=6 alpha=0.2: R@10=0.914 MRR=0.758 adversarial=0.964 multi_hop=0.702 open_domain=0.656 single_hop=0.977 temporal=0.942
+[seed 1] m=6 alpha=0.4: R@10=0.905 MRR=0.719 adversarial=0.946 multi_hop=0.693 open_domain=0.668 single_hop=0.968 temporal=0.937
+[seed 2] lexicon m=3: 3849 keys, 6s
