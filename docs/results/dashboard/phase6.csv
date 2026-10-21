@@ -3,6 +3,8 @@ system,stage,accuracy,abstention,recall_at_5,tokens_per_query,cost_per_question_
 FidelityMem (extractive compression),LLM-judged accuracy,0.63,0.145,0.82,3725,0.02365,0.774,0.441,0.702,0.4,0.367
 Zep-style,LLM-judged accuracy,0.48,0.305,0.645,3645,0.02324,0.643,0.265,0.468,0.6,0.267
 "FidelityMem (Claude compression, gated)",LLM-judged accuracy,0.615,0.175,0.814,2858,0.01873,0.786,0.353,0.723,0.8,0.233
+BM25 + evidence-first 8×3,LLM-judged accuracy,0.635,0.145,0.83,2623,0.01935,0.845,0.353,0.681,0.6,0.3
+FidelityMem + evidence-first 8×3,LLM-judged accuracy,0.585,0.16,0.82,2627,0.01934,0.81,0.353,0.574,0.4,0.267
 BM25 + rerank,retrieval with LLM steps,,,0.83,3793,,,,,,
 FidelityMem + rerank,retrieval with LLM steps,,,0.823,3777,,,,,,
 BM25 + rewrite,retrieval with LLM steps,,,0.818,3806,,,,,,

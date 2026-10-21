@@ -5,14 +5,36 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fidelitymem"
 version = "0.1.0"
-description = "Recall-constrained adaptive hybrid memory for LLM agents"
+description = "Recall-constrained adaptive hybrid memory for LLM agents: fidelity-gated compression, hybrid retrieval, and a controller that keeps a stated share of evidence recall"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
+authors = [{name = "Vaibhav Bansal"}]
+keywords = ["llm", "agents", "memory", "retrieval", "rag", "compression", "bm25"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = ["numpy>=1.24", "pydantic>=2.0"]
 
+[project.urls]
+Homepage = "https://github.com/VaibhavBansal26/FidelityMem"
+Repository = "https://github.com/VaibhavBansal26/FidelityMem"
+Paper = "https://github.com/VaibhavBansal26/FidelityMem/blob/main/docs/PAPER.md"
+
 [project.optional-dependencies]
-dev = ["pytest>=7"]
+dev = ["pytest>=7", "build", "twine"]
+embed = ["spacy>=3.7"]
+llm = ["anthropic>=1.0"]
+eval = ["matplotlib>=3.8", "spacy>=3.7", "anthropic>=1.0"]
 
 [project.scripts]
 fidelitymem-bench = "fidelitymem.eval.cli:main"
