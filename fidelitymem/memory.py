@@ -291,8 +291,9 @@ class FidelityMem:
         # restore
         for mid, (t, lvl, f) in original.items():
             m = self.memories[mid]
+            changed = m.compressed_text != t
             m.compressed_text, m.compression_level, m.fidelity_score = t, lvl, f
-            if m.active:
+            if m.active and changed:
                 self.lexical.add(mid, t)
                 self.vector.add(mid, t)
                 self.trie.add(mid, t)

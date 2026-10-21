@@ -13,6 +13,7 @@ class BM25Index:
         self._df: Counter = Counter()
         self._postings: dict[str, dict[str, int]] = defaultdict(dict)  # term -> {doc_id: tf}
         self._len: dict[str, int] = {}
+        self._terms: dict[str, list[str]] = {}  # doc -> distinct terms, so remove is O(terms), not O(vocabulary)
         self._total_len = 0
 
     def add(self, doc_id: str, text: str) -> None:
@@ -24,13 +25,15 @@ class BM25Index:
             self._postings[t][doc_id] = c
             self._df[t] += 1
         self._len[doc_id] = len(toks)
+        self._terms[doc_id] = list(tf)
         self._total_len += len(toks)
 
     def remove(self, doc_id: str) -> None:
         if doc_id not in self._len:
             return
-        for t, docs in list(self._postings.items()):
-            if doc_id in docs:
+        for t in self._terms.pop(doc_id, ()):
+            docs = self._postings.get(t)
+            if docs is not None and doc_id in docs:
                 del docs[doc_id]
                 self._df[t] -= 1
                 if not docs:
