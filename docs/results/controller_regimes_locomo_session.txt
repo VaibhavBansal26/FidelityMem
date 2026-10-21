@@ -15,3 +15,17 @@ fixed:lex+vec(1.0)           10   0.836   0.794  0.554  0.610     7372    5.23  
 fixed:lex+vec(0.5)           10   0.846   0.803  0.589  0.640     7386    1.21    1.89    195165   0.00     -  
 fixed:lex+vec+graph+temporal 10   0.758   0.707  0.371  0.449     7394    2.70    4.31    195165   0.00     -  
 controller(L1/lex/vw1.0)     10   0.839   0.798  0.602  0.648     7177    0.85    1.32    192142   0.11     -  
+
+### paraphrased r=1.0: controller calibrated on 594 probes in 247s -> {'version': 1, 'config': {'compression_level': 3, 'top_k': 10, 'expand_budget': 2, 'routes': ('lexical', 'vector'), 'gate_profile': 'content', 'vector_weight': 1.0}, 'rejected_candidates': 1}
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+fixed:lexical                10   0.643   0.603  0.405  0.452     7078    0.87    1.40    195165   0.00     -  
+fixed:lex+vec(1.0)           10   0.716   0.672  0.417  0.477     7298    5.34    7.57    195165   0.00     -  
+fixed:lex+vec(0.5)           10   0.705   0.660  0.429  0.482     7334    1.17    1.81    195165   0.00     -  
+fixed:lex+vec+graph+temporal 10   0.637   0.589  0.305  0.371     7330    2.59    4.50    195165   0.00     -  
+controller(L3/lex+vec/vw1.0) 10   0.714   0.671  0.421  0.478     7187    1.36    2.36    192142   0.15     -  
+
+### Summary: held-out Recall@K, controller vs best fixed
+  literal                controller=0.908 (controller(L2/lex/vw1.0))  best fixed=0.908 (fixed:lexical)  lexical=0.908
+  paraphrased r=0.5      controller=0.839 (controller(L1/lex/vw1.0))  best fixed=0.846 (fixed:lex+vec(0.5))  lexical=0.841
+  paraphrased r=1.0      controller=0.714 (controller(L3/lex+vec/vw1.0))  best fixed=0.716 (fixed:lex+vec(1.0))  lexical=0.643
+total 909s
