@@ -420,6 +420,19 @@ Two LLM-side levers that published systems use to pass lexical retrieval were te
 
 Neither helps here. Rewriting hurts both systems: on LoCoMo the question's own words are the best lexical key, and the hypothetical sentence adds words that match the wrong sessions. Reranking is neutral (+0.3 for FidelityMem, 0 for BM25): when the gold session is in the top 20 it is already in the top 5, so a reranker has nothing to recover; the questions that fail are the ones whose evidence BM25 never surfaces at all. The combination is the worst of both. The practical conclusion is that the remaining headroom on conversational retrieval is in the *first-stage* signal (a strong dense model, an LLM extractor for relations and resolved dates), not in query-side or rerank-side LLM calls, which cost about $0.003 per question and 1–2 s of latency for nothing on this data.
 
+### 5.6d Evidence-first hierarchical context (same 200 questions)
+
+A change aimed at the gap between retrieval and answering: retrieve 8 sessions instead of 5, then inside each session rank its turns against the question (BM25 over the session's own turns), keep the best 3 turns plus one neighbour either side in original order, mark the matched turns, and cap the context there. Recall is still scored on the top 5 sessions. Applied identically to BM25 and FidelityMem.
+
+| System | accuracy | abstention | Recall@5 | tokens/q | accuracy: single-hop / multi-hop / temporal | API cost / question |
+|---|---:|---:|---:|---:|---|---:|
+| BM25, raw K=5 | 0.645 | 0.135 | 0.830 | 3 792 | 0.81 / 0.38 / 0.68 | $0.0240 |
+| bm25+focus8x3 | 0.635 | 0.145 | 0.830 | 2623 | 0.84 / 0.35 / 0.68 | $0.0193 |
+| FidelityMem, raw K=5 | 0.630 | 0.145 | 0.820 | 3 725 | 0.77 / 0.44 / 0.70 | $0.0237 |
+| fidelitymem+focus8x3 | 0.585 | 0.160 | 0.820 | 2627 | 0.81 / 0.35 / 0.57 | $0.0193 |
+
+The hierarchical context saves 30 % of the tokens and cost per question at no measurable accuracy change for BM25 (−1.0 point) and a 4.5-point drop for FidelityMem, which is within the sample's noise but in the wrong direction. Reading the per-category numbers, the loss is on single-hop questions whose answer sits in a turn the in-session BM25 did not rank among the top 3 (the surrounding turns were cut). So the lever is a token lever, not an accuracy lever: on this data the reader is not losing answers to context length, it is losing them to evidence that is not retrieved or not recognised, and that returns the problem to first-stage retrieval signal. Together with §5.6c, every LLM-side and context-side change tried on LoCoMo sessions moved accuracy by less than the noise; the only change that moved cost substantially without moving accuracy was gated LLM compression at ingestion (§5.6b).
+
 ## 6. Limitations and what is not shown
 
 1. **No LLM in the loop.** Ingestion, compression and the benchmark are deterministic. Answer accuracy on LoCoMo or LongMemEval, which needs an LLM reader and judge, is not measured. The protocols are compatible: the same gate and controller apply to an LLM compressor.

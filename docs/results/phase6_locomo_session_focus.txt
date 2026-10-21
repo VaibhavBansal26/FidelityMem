@@ -1,0 +1,14 @@
+phase6 dataset=locomo granularity=session questions=200 calib=594 K=5 mode=claude embedder=spacy:en_core_web_md
+[phase6] bm25: built in 0s
+[phase6] bm25: accuracy=0.635 recall@5=0.830 tokens/q=2623
+[phase6] fidelitymem controller: {'version': 1, 'config': {'compression_level': 1, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical',), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+[phase6] fidelitymem: built in 160s
+[phase6] fidelitymem: accuracy=0.585 recall@5=0.820 tokens/q=2627
+
+| System | accuracy | abstain | recall@K | tokens/q | p50 ms | est. cost / q |
+|---|---:|---:|---:|---:|---:|---:|
+| bm25+focus8x3 | 0.635 | 0.145 | 0.830 | 2623 | 3.41 | $0.0193 |
+| fidelitymem+focus8x3 | 0.585 | 0.160 | 0.820 | 2627 | 4.1 | $0.0193 |
+  bm25+focus8x3 by type: {'adversarial': 0.3, 'multi_hop': 0.353, 'open_domain': 0.6, 'single_hop': 0.845, 'temporal': 0.681}
+  fidelitymem+focus8x3 by type: {'adversarial': 0.267, 'multi_hop': 0.353, 'open_domain': 0.4, 'single_hop': 0.81, 'temporal': 0.574}
+DONE
