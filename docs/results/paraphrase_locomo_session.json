@@ -1,0 +1,404 @@
+{
+ "original": [
+  {
+   "system": "bm25",
+   "k": 10,
+   "recall": 0.9151602517899188,
+   "complete_recall": 0.8753784056508577,
+   "mrr": 0.7724913106850544,
+   "ndcg": 0.7940944817149684,
+   "tokens_per_query": 7425.809788092835,
+   "p50_ms": 0.1501809992987546,
+   "p95_ms": 0.3235710000808467,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.9392523364485982,
+    "open_domain": 0.6586438923395445,
+    "multi_hop": 0.6941573792637622,
+    "single_hop": 0.9785969084423306,
+    "adversarial": 0.9708520179372198
+   },
+   "ci95": {}
+  },
+  {
+   "system": "bm25+lexicon(m3,a0.4)",
+   "k": 10,
+   "recall": 0.9132003507760319,
+   "complete_recall": 0.8718466195761857,
+   "mrr": 0.7474748930853876,
+   "ndcg": 0.7750796740143545,
+   "tokens_per_query": 7531.630171543895,
+   "p50_ms": 0.23173299996415153,
+   "p95_ms": 0.4270250001354725,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.942367601246106,
+    "open_domain": 0.6761128364389234,
+    "multi_hop": 0.6888677811550151,
+    "single_hop": 0.9785969084423306,
+    "adversarial": 0.9596412556053812
+   },
+   "ci95": {}
+  },
+  {
+   "system": "dense",
+   "k": 10,
+   "recall": 0.7515622747585411,
+   "complete_recall": 0.7108980827447023,
+   "mrr": 0.4642444700719171,
+   "ndcg": 0.5192262848272384,
+   "tokens_per_query": 7304.997477295661,
+   "p50_ms": 23.45450799930404,
+   "p95_ms": 34.04213800058642,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.7045690550363447,
+    "open_domain": 0.5912267080745341,
+    "multi_hop": 0.6047407970280311,
+    "single_hop": 0.8162901307966707,
+    "adversarial": 0.7892376681614349
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.0+vec1.0",
+   "k": 10,
+   "recall": 0.8990153444492496,
+   "complete_recall": 0.856710393541877,
+   "mrr": 0.6607727483862701,
+   "ndcg": 0.7039790574018394,
+   "tokens_per_query": 7457.286074672048,
+   "p50_ms": 0.22636999983660644,
+   "p95_ms": 0.40324300061911345,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.8951194184839044,
+    "open_domain": 0.665243271221532,
+    "multi_hop": 0.6996904199031858,
+    "single_hop": 0.9643281807372176,
+    "adversarial": 0.952914798206278
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.2+vec1.0",
+   "k": 10,
+   "recall": 0.9025098906027261,
+   "complete_recall": 0.8622603430877901,
+   "mrr": 0.666432215334839,
+   "ndcg": 0.7100323582632511,
+   "tokens_per_query": 7469.6912209889,
+   "p50_ms": 0.228512999456143,
+   "p95_ms": 0.44157100001029903,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.9065420560747663,
+    "open_domain": 0.661620082815735,
+    "multi_hop": 0.7053388494877857,
+    "single_hop": 0.9655172413793104,
+    "adversarial": 0.9551569506726457
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.2+vec0.5",
+   "k": 10,
+   "recall": 0.9080688498069931,
+   "complete_recall": 0.8683148335015136,
+   "mrr": 0.7073684990309611,
+   "ndcg": 0.7434458953742118,
+   "tokens_per_query": 7477.346619576186,
+   "p50_ms": 0.23150299966800958,
+   "p95_ms": 0.4758059994856012,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.9190031152647975,
+    "open_domain": 0.6797360248447205,
+    "multi_hop": 0.7065842057863334,
+    "single_hop": 0.9702734839476813,
+    "adversarial": 0.9573991031390134
+   },
+   "ci95": {}
+  }
+ ],
+ "paraphrased r=0.5": [
+  {
+   "system": "bm25",
+   "k": 10,
+   "recall": 0.8413999807793955,
+   "complete_recall": 0.7996972754793138,
+   "mrr": 0.6325510947735973,
+   "ndcg": 0.6703573555392837,
+   "tokens_per_query": 7296.201311806256,
+   "p50_ms": 0.1102759997593239,
+   "p95_ms": 0.2672569999049301,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.8753894080996885,
+    "open_domain": 0.620600414078675,
+    "multi_hop": 0.6048210064167511,
+    "single_hop": 0.8953626634958383,
+    "adversarial": 0.9103139013452914
+   },
+   "ci95": {}
+  },
+  {
+   "system": "bm25+lexicon(m3,a0.4)",
+   "k": 10,
+   "recall": 0.8254937292777857,
+   "complete_recall": 0.7820383451059536,
+   "mrr": 0.6087838162510211,
+   "ndcg": 0.6490985351515952,
+   "tokens_per_query": 7425.054994954591,
+   "p50_ms": 0.20294599926273804,
+   "p95_ms": 0.4121349993511103,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.8541017653167187,
+    "open_domain": 0.619047619047619,
+    "multi_hop": 0.5993245525160419,
+    "single_hop": 0.882282996432818,
+    "adversarial": 0.8834080717488789
+   },
+   "ci95": {}
+  },
+  {
+   "system": "dense",
+   "k": 10,
+   "recall": 0.6860784761264076,
+   "complete_recall": 0.6422805247225025,
+   "mrr": 0.40512469367161597,
+   "ndcg": 0.4588901235813804,
+   "tokens_per_query": 7242.962663975782,
+   "p50_ms": 23.77352300027269,
+   "p95_ms": 34.889202999693225,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.6474558670820353,
+    "open_domain": 0.5866977225672878,
+    "multi_hop": 0.5407731059326804,
+    "single_hop": 0.7366230677764566,
+    "adversarial": 0.7309417040358744
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.0+vec1.0",
+   "k": 10,
+   "recall": 0.8425363990197492,
+   "complete_recall": 0.8007063572149344,
+   "mrr": 0.5676527237198277,
+   "ndcg": 0.6212590898809157,
+   "tokens_per_query": 7391.332492431887,
+   "p50_ms": 0.21725399983552052,
+   "p95_ms": 0.5033139996157843,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.8655244029075804,
+    "open_domain": 0.6430512422360248,
+    "multi_hop": 0.6344436001350895,
+    "single_hop": 0.9024970273483948,
+    "adversarial": 0.8856502242152466
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.2+vec1.0",
+   "k": 10,
+   "recall": 0.8433232425159771,
+   "complete_recall": 0.801715438950555,
+   "mrr": 0.5766491679079974,
+   "ndcg": 0.6282673965309978,
+   "tokens_per_query": 7403.024722502522,
+   "p50_ms": 0.19082400012848666,
+   "p95_ms": 0.34284600042155944,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.8722741433021807,
+    "open_domain": 0.6493918219461697,
+    "multi_hop": 0.6266759540695711,
+    "single_hop": 0.906064209274673,
+    "adversarial": 0.8811659192825112
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.2+vec0.5",
+   "k": 10,
+   "recall": 0.8506102541924944,
+   "complete_recall": 0.805247225025227,
+   "mrr": 0.6105242820303366,
+   "ndcg": 0.6563327280333048,
+   "tokens_per_query": 7411.0635721493445,
+   "p50_ms": 0.18811900008586235,
+   "p95_ms": 0.32894900050450815,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.8769470404984424,
+    "open_domain": 0.6942287784679089,
+    "multi_hop": 0.622483958122256,
+    "single_hop": 0.9108204518430439,
+    "adversarial": 0.8946188340807175
+   },
+   "ci95": {}
+  }
+ ],
+ "paraphrased r=1.0": [
+  {
+   "system": "bm25",
+   "k": 10,
+   "recall": 0.6349881072509731,
+   "complete_recall": 0.5943491422805247,
+   "mrr": 0.41126767895183636,
+   "ndcg": 0.45417968145601234,
+   "tokens_per_query": 7088.9500504540865,
+   "p50_ms": 0.07423799979733303,
+   "p95_ms": 0.2358859992455109,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.7128764278296988,
+    "open_domain": 0.4779373706004141,
+    "multi_hop": 0.4547619047619047,
+    "single_hop": 0.6712247324613555,
+    "adversarial": 0.6569506726457399
+   },
+   "ci95": {}
+  },
+  {
+   "system": "bm25+lexicon(m3,a0.4)",
+   "k": 10,
+   "recall": 0.6331423285762338,
+   "complete_recall": 0.591321897073663,
+   "mrr": 0.40240297599026154,
+   "ndcg": 0.44641985610469315,
+   "tokens_per_query": 7286.500504540868,
+   "p50_ms": 0.1609029995961464,
+   "p95_ms": 0.4075580000062473,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.705607476635514,
+    "open_domain": 0.5166925465838509,
+    "multi_hop": 0.47997298210064165,
+    "single_hop": 0.6652794292508918,
+    "adversarial": 0.6412556053811659
+   },
+   "ci95": {}
+  },
+  {
+   "system": "dense",
+   "k": 10,
+   "recall": 0.6167111143145453,
+   "complete_recall": 0.5746720484359233,
+   "mrr": 0.33829705444236224,
+   "ndcg": 0.39266984230309565,
+   "tokens_per_query": 7192.439455095863,
+   "p50_ms": 22.827181000138808,
+   "p95_ms": 34.78600499965978,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.5893042575285565,
+    "open_domain": 0.5753752587991718,
+    "multi_hop": 0.5025540357987167,
+    "single_hop": 0.6521997621878716,
+    "adversarial": 0.6502242152466368
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.0+vec1.0",
+   "k": 10,
+   "recall": 0.7078329969727548,
+   "complete_recall": 0.6644803229061554,
+   "mrr": 0.42241883298896415,
+   "ndcg": 0.47854077931671885,
+   "tokens_per_query": 7319.391523713421,
+   "p50_ms": 0.21092299994052155,
+   "p95_ms": 0.5043110004407936,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.7206645898234684,
+    "open_domain": 0.5755693581780538,
+    "multi_hop": 0.5536854103343465,
+    "single_hop": 0.7413793103448276,
+    "adversarial": 0.7600896860986547
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.2+vec1.0",
+   "k": 10,
+   "recall": 0.6971843816571364,
+   "complete_recall": 0.6528758829465187,
+   "mrr": 0.4243865423734243,
+   "ndcg": 0.4771153402645639,
+   "tokens_per_query": 7337.71190716448,
+   "p50_ms": 0.19321699983265717,
+   "p95_ms": 0.4669370000556228,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.72533748701973,
+    "open_domain": 0.53027950310559,
+    "multi_hop": 0.5379446695936058,
+    "single_hop": 0.7342449464922711,
+    "adversarial": 0.742152466367713
+   },
+   "ci95": {}
+  },
+  {
+   "system": "rrf lex1.2+vec0.5",
+   "k": 10,
+   "recall": 0.6960811990453767,
+   "complete_recall": 0.6493440968718466,
+   "mrr": 0.4344585395544023,
+   "ndcg": 0.4845522233629212,
+   "tokens_per_query": 7360.550454086781,
+   "p50_ms": 0.16949500059126876,
+   "p95_ms": 0.34948399934364716,
+   "storage_tokens": 195165,
+   "expansion_rate": 0.0,
+   "retention": null,
+   "per_type": {
+    "temporal": 0.7300103842159917,
+    "open_domain": 0.5588121118012422,
+    "multi_hop": 0.5297478329393223,
+    "single_hop": 0.7330558858501783,
+    "adversarial": 0.7354260089686099
+   },
+   "ci95": {}
+  }
+ ]
+}
