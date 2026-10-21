@@ -1,0 +1,18 @@
+phase6 dataset=locomo granularity=session questions=200 calib=594 K=5 mode=claude embedder=spacy:en_core_web_md
+[phase6] bm25: built in 0s
+[phase6] bm25: accuracy=0.645 recall@5=0.830 tokens/q=3792
+[phase6] fidelitymem controller: {'version': 1, 'config': {'compression_level': 3, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical',), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+[phase6] fidelitymem: built in 141s
+[phase6] fidelitymem: accuracy=0.630 recall@5=0.820 tokens/q=3725
+[phase6] zep_style: built in 17s
+[phase6] zep_style: accuracy=0.480 recall@5=0.645 tokens/q=3645
+
+| System | accuracy | abstain | recall@K | tokens/q | p50 ms | est. cost / q |
+|---|---:|---:|---:|---:|---:|---:|
+| bm25 | 0.645 | 0.135 | 0.830 | 3792 | 0.28 | $0.0240 |
+| fidelitymem | 0.630 | 0.145 | 0.820 | 3725 | 0.93 | $0.0237 |
+| zep_style | 0.480 | 0.305 | 0.645 | 3645 | 4.23 | $0.0232 |
+  bm25 by type: {'adversarial': 0.4, 'multi_hop': 0.382, 'open_domain': 0.8, 'single_hop': 0.81, 'temporal': 0.681}
+  fidelitymem by type: {'adversarial': 0.367, 'multi_hop': 0.441, 'open_domain': 0.4, 'single_hop': 0.774, 'temporal': 0.702}
+  zep_style by type: {'adversarial': 0.267, 'multi_hop': 0.265, 'open_domain': 0.6, 'single_hop': 0.643, 'temporal': 0.468}
+DONE

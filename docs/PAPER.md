@@ -383,19 +383,23 @@ A proposal raised during the design discussion: number semantically similar word
 
 The storage saving exists only where text repeats (the synthetic filler), and comes from prefix sharing and stopword dropping rather than from semantics. On real conversation the trie is larger than the raw text (per-node overhead, no shared prefixes). The codebook does what the fidelity argument predicts: even with as many codes as vocabulary entries, k-means merges neighbours, so "machine" decodes as "dashboard" and "mentioned" as "clarified"; the protected-token rule keeps fact-probe fidelity at 0.98 on LoCoMo, but content-word fidelity drops to 0.85 and retrieval loses 8 points to BM25 because merged codes create false matches and flatten idf. Context tokens are unchanged in any case, since the model reads decoded text. We therefore keep the trie as an exact/prefix identifier route (§3.4) and do not use a semantic codebook for storage. A variant that codes only predicates and keeps every argument verbatim is the one worth revisiting; it is a graph-store compaction, not a compression of memories.
 
-### 5.6 Phase 6: LLM-judged accuracy (pipeline complete, result pending a credential)
+### 5.6 Phase 6: LLM-judged answer accuracy (LoCoMo sessions, 200 test questions, K = 5)
 
-The concept's final phase is answer accuracy with an LLM reader and judge beside recall, tokens, latency and cost. `fidelitymem/eval/phase6.py` runs it: for each question a system retrieves its top-K context, a Claude reader answers from that context only (abstaining when the context lacks the answer), and a Claude judge marks the answer against the gold answer; it reports accuracy overall and per LoCoMo category, Recall@K, tokens per query, retrieval latency, reader and judge token usage and the estimated API cost per question. FidelityMem runs under its controller calibrated on the 30 % query-log split, optionally with the Claude compressor and extractor at ingestion (`--llm-compress`), so the gate is evaluated against LLM-written summaries as well as extractive ones.
+The concept's final phase is answer accuracy with an LLM reader and judge beside recall, tokens, latency and cost. `fidelitymem/eval/phase6.py` runs it: for each question a system retrieves its top-K context, a Claude Opus 5.5 reader (low effort) answers from that context only and abstains when the context lacks the answer, and a Claude Sonnet 5.5 judge marks the answer against the gold answer. FidelityMem runs under its controller calibrated on the 30 % query-log split; test questions are a fixed 200-question sample of the remaining 70 %, seed 0. Adversarial questions are scored by the judge against their reference answer (the dataset's "no information" answers), so abstention is the correct behaviour there.
 
-The build environment held no Anthropic credential, so the pipeline was validated with a mock reader and judge (`--mock`: the judge checks containment of the gold answer in the context). On 100 LoCoMo session questions that check gives BM25 0.26, FidelityMem 0.25, Zep-style 0.14, which simply tracks retrieval recall (0.86 / 0.84 / 0.66) and is not an accuracy number. The real run is one command once a key is present:
+| System | accuracy | abstention | Recall@5 | tokens/q | accuracy: single-hop / multi-hop / temporal / open-domain / adversarial | API cost / question |
+|---|---:|---:|---:|---:|---|---:|
+| bm25 | 0.645 | 0.135 | 0.830 | 3792 | 0.81 / 0.38 / 0.68 / 0.80 / 0.40 | $0.0240 |
+| fidelitymem | 0.630 | 0.145 | 0.820 | 3725 | 0.77 / 0.44 / 0.70 / 0.40 / 0.37 | $0.0237 |
+| zep_style | 0.480 | 0.305 | 0.645 | 3645 | 0.64 / 0.27 / 0.47 / 0.60 / 0.27 | $0.0232 |
 
-```
-python -m fidelitymem.eval.phase6 --dataset locomo --path data/locomo/locomo10.json \
-    --session-level --questions 300 --k 5 --systems bm25 fidelitymem zep_style \
-    --reader-model claude-opus-5-5 --judge-model claude-sonnet-5-5 --out docs/results/phase6_locomo.json
-```
+Three observations. **The retrieval tie carries through to accuracy.** FidelityMem 63.0 % against BM25 64.5 % on the same questions, inside the noise of a 200-question sample (±6.7 points at 95 %), with equal tokens per query and equal API cost; the controller again chose the lexical route with level-3 compression under the content profile, which on sessions stores 98 % of the raw text. **A real architecture gap shows up as a real accuracy gap.** Zep-style, 18 points lower on Recall@5, is 16.5 points lower on accuracy and abstains twice as often (30.5 % against 13.5–14.5 %), because the reader is instructed to abstain when the evidence is missing. **Category profile.** FidelityMem is ahead on multi-hop (44 % vs 38 %) and temporal (70 % vs 68 %) questions and behind on open-domain (40 % vs 80 %, on 5 questions) and single-hop (77 % vs 81 %); with 200 questions none of these per-category differences is individually significant. The reader consumed about 5 200 input tokens per question (context plus prompt); at list prices the whole run cost about $14.
 
-Estimated cost at list prices: about 3 700 context tokens per question for the reader and 300 for the judge, so roughly $0.017 per question per system with an Opus reader and a Sonnet judge, about $15 for 300 questions across three systems; a Haiku reader brings it under $1. LongMemEval runs through the same command with `--dataset longmemeval --path <file>` once the file is available.
+A second run with the Claude compressor and extractor at FidelityMem ingestion (`--llm-compress`) is reported in §5.6b.
+
+### 5.6b Phase 6 with LLM compression at ingestion
+
+*(pending at the time of writing: the run was ingesting 272 sessions through the Claude compressor, roughly 800 calls, before answering its 200 questions.)*
 
 ## 6. Limitations and what is not shown
 
