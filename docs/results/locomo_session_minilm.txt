@@ -121,3 +121,15 @@ fidelitymem_ctrl:qlog(L1/c)  10   0.912   0.875  0.736  0.767     7328    0.83  
 [timing] amem_style: 244.5s
 [timing] hipporag_style: 164.6s
 [timing] fidelitymem_L0_raw: 36.6s
+[timing] recompress L1/facts: 89.9s
+[timing] fidelitymem_L1_gate:facts: 6.4s
+[timing] recompress L2/facts: 0.7s
+[timing] fidelitymem_L2_gate:facts: 4.2s
+[timing] recompress L3/facts: 5.0s
+[timing] fidelitymem_L3_gate:facts: 4.6s
+[timing] recompress L1/content: 4.4s
+[timing] fidelitymem_L1_gate:content: 6.9s
+[timing] recompress L2/content: 4.6s
+[timing] fidelitymem_L2_gate:content: 4.1s
+[timing] recompress L3/content: 5.6s
+[timing] fidelitymem_L3_gate:content: 4.2s
