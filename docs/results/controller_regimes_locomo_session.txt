@@ -1,1 +1,9 @@
 episodes=272 questions=1982 embedder=onnx:all-MiniLM-L6-v2-onnx ingest=13s
+
+### literal: controller calibrated on 594 probes in 288s -> {'version': 1, 'config': {'compression_level': 2, 'top_k': 10, 'expand_budget': 2, 'routes': ('lexical',), 'gate_profile': 'content', 'vector_weight': 1.0}, 'rejected_candidates': 0}
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+fixed:lexical                10   0.908   0.867  0.736  0.765     7420    0.85    1.07    195165   0.00     -  
+fixed:lex+vec(1.0)           10   0.896   0.851  0.644  0.690     7446    5.49    7.59    195165   0.00     -  
+fixed:lex+vec(0.5)           10   0.901   0.857  0.679  0.720     7453    1.22    2.11    195165   0.00     -  
+fixed:lex+vec+graph+temporal 10   0.807   0.758  0.410  0.489     7472    2.75    4.45    195165   0.00     -  
+controller(L2/lex/vw1.0)     10   0.908   0.867  0.734  0.764     7318    0.91    1.46    192142   0.10     -  
