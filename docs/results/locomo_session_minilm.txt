@@ -1,0 +1,27 @@
+dataset=locomo episodes=272 questions=1986 embedder=onnx:all-MiniLM-L6-v2-onnx seeds=[0, 1, 2]
+[timing] fixed_window: 0.5s
+[timing] bm25: 4.0s
+[timing] vector: 188.4s
+[timing] bm25+vector_rrf: 245.7s
+[timing] summary_L3+bm25: 3.8s
+[timing] window_trie: 4.5s
+[timing] memgpt_style: 117.7s
+[timing] mem0_style: 77.3s
+[timing] zep_style: 62.6s
+[timing] amem_style: 48.2s
+[timing] hipporag_style: 89.7s
+[timing] fidelitymem_L0_raw: 37.5s
+[timing] recompress L1/facts: 68.6s
+[timing] fidelitymem_L1_gate:facts: 7.6s
+[timing] recompress L2/facts: 0.6s
+[timing] fidelitymem_L2_gate:facts: 5.2s
+[timing] recompress L3/facts: 5.6s
+[timing] fidelitymem_L3_gate:facts: 4.6s
+[timing] recompress L1/content: 4.5s
+[timing] fidelitymem_L1_gate:content: 7.0s
+[timing] recompress L2/content: 4.4s
+[timing] fidelitymem_L2_gate:content: 4.2s
+[timing] recompress L3/content: 5.9s
+[timing] fidelitymem_L3_gate:content: 4.1s
+[timing] controller:self: 254.7s
+[controller:self] {'version': 1, 'config': {'compression_level': 0, 'top_k': 10, 'expand_budget': 2, 'routes': ('lexical',), 'gate_profile': 'content'}, 'rejected_candidates': 4}
