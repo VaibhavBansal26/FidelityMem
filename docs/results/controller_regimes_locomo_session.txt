@@ -1,0 +1,1 @@
+episodes=272 questions=1982 embedder=onnx:all-MiniLM-L6-v2-onnx ingest=13s
