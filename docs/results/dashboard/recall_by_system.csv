@@ -109,6 +109,23 @@ LoCoMo sessions,272,5,pretrained word vectors,FidelityMem controller (query log)
 "LoCoMo sessions · adapted embedder, recall-charged cost",272,5,adapted (trained per seed),FidelityMem L3 no gate,FidelityMem,0.381,0.011,0.35,0.253,13.4,2324,2.39
 "LoCoMo sessions · adapted embedder, recall-charged cost",272,5,adapted (trained per seed),FidelityMem controller (self-probes),FidelityMem,0.749,0.427,0.709,0.637,73.5,2737,0.74
 "LoCoMo sessions · adapted embedder, recall-charged cost",272,5,adapted (trained per seed),FidelityMem controller (query log),FidelityMem,0.742,0.048,0.699,0.586,87.5,3313,1.09
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),Fixed window,Classic baseline,0.018,0.006,0.014,0.01,100.0,3307,0.0
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),BM25,Classic baseline,0.858,0.009,0.817,0.764,100.0,3707,0.22
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),Dense,Classic baseline,0.424,0.029,0.393,0.315,100.0,3671,0.23
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),BM25 + dense RRF,Classic baseline,0.747,0.021,0.703,0.585,100.0,3736,0.42
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),Lossy summary + BM25,Classic baseline,0.425,0.003,0.395,0.339,13.4,506,0.12
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),Window + trie,Memory-system architecture,0.652,0.008,0.622,0.558,100.0,3798,0.31
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),MemGPT-style,Memory-system architecture,0.392,0.037,0.363,0.174,100.0,3530,0.17
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),Mem0-style,Memory-system architecture,0.291,0.009,0.268,0.226,13.9,3784,7.88
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),Zep-style,Memory-system architecture,0.707,0.011,0.662,0.525,100.0,3733,1.54
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),A-MEM-style,Memory-system architecture,0.424,0.029,0.393,0.315,100.0,3671,0.17
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),HippoRAG-style,Memory-system architecture,0.441,0.011,0.408,0.323,100.0,3650,1.81
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem raw (L0),FidelityMem,0.61,0.016,0.566,0.415,100.0,3817,2.87
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem L3 gated (facts),FidelityMem,0.473,0.012,0.437,0.32,21.9,1253,2.25
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem L2 gated (content),FidelityMem,0.608,0.013,0.564,0.414,98.5,3777,2.63
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem L3 no gate,FidelityMem,0.371,0.055,0.339,0.246,13.4,2339,2.37
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem controller (self-probes),FidelityMem,0.851,0.015,0.81,0.73,99.5,3694,0.58
+LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem controller (query log),FidelityMem,0.849,0.014,0.807,0.729,98.5,3651,0.64
 LoCoMo turns,5882,10,pretrained word vectors,Fixed window,Classic baseline,0.001,0.003,0.001,0.0,100.0,423,0.0
 LoCoMo turns,5882,10,pretrained word vectors,BM25,Classic baseline,0.558,0.014,0.515,0.409,100.0,452,2.6
 LoCoMo turns,5882,10,pretrained word vectors,Dense,Classic baseline,0.216,0.009,0.196,0.132,100.0,584,10.64

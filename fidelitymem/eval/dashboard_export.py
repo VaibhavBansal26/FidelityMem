@@ -74,6 +74,8 @@ def export(results_dir: Path, out_dir: Path) -> tuple[int, int]:
                 variant += ", ρ=0.98"
             elif stem.endswith("_v2"):
                 variant += ", recall-charged cost"
+            elif stem.endswith("_v3"):
+                variant += " (leak-free split)"
             else:
                 variant += ", first run"
         name = f"LoCoMo {'sessions' if gran == 'session' else 'turns'}" + variant

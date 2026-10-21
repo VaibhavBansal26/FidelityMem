@@ -190,15 +190,22 @@ The weak dense route is the common cause of every hybrid architecture's loss to 
 | LoCoMo sessions (K=5) | 0.287 → 0.498 | 0.727 → 0.784 | 0.856 |
 | LoCoMo turns (K=10) | 0.214 → 0.356 | 0.504 → 0.555 | 0.551 |
 
-Every dense-using system improves when all of them share the adapted embedder (3 seeds, per-seed training, LoCoMo sessions): dense alone 0.287 → 0.484, Zep-style 0.687 → 0.731, HippoRAG-style 0.401 → 0.475, FidelityMem's default route mix 0.563 → 0.635. Fusion now beats BM25 on synthetic and turn data and trails it by seven points on sessions.
+Every dense-using system improves when all of them share the adapted embedder, and the comparison is only valid when the questions the adapter learns from are disjoint from the questions the controller calibrates on. Our first per-seed run violated that: the adapter trained on the whole calibration split and the controller then scored route sets on the same questions, where the dense route had effectively memorised the evidence; lexical+dense looked lossless on those probes and lost ten points on the test split (controller 0.742 ±0.048). Neither a tighter bound (ρ = 0.98) nor a recall-loss term in the cost changed the choice, because on the leaked probes there was no recall loss to detect. Splitting the calibration set in half (adapter on one half, controller on the other) removes the effect:
 
-The adapted embedder also exposed a flaw in the controller's objective. With a stronger dense route, lexical+dense configurations pass the retention bound on the calibration probes (within 2–5 % of the best raw retrieval) and the cost term then prefers them for their better precision; on the test split they lose ten points (controller 0.742 ±0.048 against 0.849 with the base embedder). Tightening ρ to 0.98 did not change the choice: the gap between calibration and test exceeded the slack either way. The repair is in the objective, not the bound: a term that charges for recall lost *inside* the bound (λ·(1 − retention), λ = 1), so a feasible configuration that gives up two points of recall has to buy them back with real savings. Results with that term are in §5.2d.
+| LoCoMo sessions, K=5, 3 seeds | base embedder | adapted, leak-free split |
+|---|---|---|
+| Dense alone | 0.287 ±0.016 | 0.424 ±0.029 |
+| BM25 + dense RRF | 0.726 ±0.005 | 0.747 ±0.021 |
+| Zep-style | 0.687 ±0.023 | 0.707 ±0.011 |
+| HippoRAG-style | 0.401 ±0.022 | 0.441 ±0.011 |
+| FidelityMem default routes (raw) | 0.563 ±0.016 | 0.610 ±0.016 |
+| FidelityMem controller, self-probes | 0.851 ±0.015 | 0.851 ±0.015 |
+| FidelityMem controller, query log | 0.849 ±0.014 | 0.849 ±0.014 |
+| BM25 | 0.858 ±0.009 | 0.858 ±0.009 |
+
+The dense route gains 14 points on sessions from roughly 600 training pairs, and 21 points when trained on the full calibration split as in the table above this one. Fusion still trails BM25 by 11 points on sessions, so the controller keeps selecting lexical-only there, and its result is unchanged. The lesson for the protocol is that a learned retrieval component and a controller that selects among retrieval components must not share calibration data; the lesson for the system is that the controller held the line through a mis-specified calibration only because it also had the raw lexical route to fall back on. We keep the recall-loss term (λ = 1) in the objective because it is correct in principle, and note that it did nothing here.
 
 A last negative control for the embedder: the semantic-trie node embeddings of §5.5 (a memory as the IDF-weighted mean of its code-cluster centroids) match full dense recall exactly on the synthetic corpus and lose 3–6 points on LoCoMo turns, for a dense index 4–9× smaller. Quantising the *adapted* embedder's space the same way is the natural follow-up.
-
-### 5.2d Adapted embedder with the recall-charged objective
-
-*(pending: 3-seed run in progress at the time of writing; produced by `python -m fidelitymem.eval.real --dataset locomo --path data/locomo/locomo10.json --session-level --seeds 0 1 2 --k 5 --fast-controller --embedder adapted-train`.)*
 
 ### 5.3 Ablation (synthetic, n = 1 000, K = 10, level 3 gated, 3 seeds, pretrained embedder)
 

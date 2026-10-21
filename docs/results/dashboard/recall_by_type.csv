@@ -159,6 +159,46 @@ LoCoMo sessions,FidelityMem controller (query log),multi hop,0.542
 "LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (query log),multi hop,0.432
 "LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (query log),open domain,0.495
 "LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (query log),single hop,0.83
+LoCoMo sessions · adapted embedder (leak-free split),BM25,adversarial,0.932
+LoCoMo sessions · adapted embedder (leak-free split),BM25,temporal,0.883
+LoCoMo sessions · adapted embedder (leak-free split),BM25,single hop,0.944
+LoCoMo sessions · adapted embedder (leak-free split),BM25,open domain,0.568
+LoCoMo sessions · adapted embedder (leak-free split),BM25,multi hop,0.547
+LoCoMo sessions · adapted embedder (leak-free split),Window + trie,adversarial,0.746
+LoCoMo sessions · adapted embedder (leak-free split),Window + trie,temporal,0.683
+LoCoMo sessions · adapted embedder (leak-free split),Window + trie,single hop,0.765
+LoCoMo sessions · adapted embedder (leak-free split),Window + trie,open domain,0.315
+LoCoMo sessions · adapted embedder (leak-free split),Window + trie,multi hop,0.238
+LoCoMo sessions · adapted embedder (leak-free split),Mem0-style,adversarial,0.293
+LoCoMo sessions · adapted embedder (leak-free split),Mem0-style,temporal,0.342
+LoCoMo sessions · adapted embedder (leak-free split),Mem0-style,single hop,0.318
+LoCoMo sessions · adapted embedder (leak-free split),Mem0-style,open domain,0.254
+LoCoMo sessions · adapted embedder (leak-free split),Mem0-style,multi hop,0.157
+LoCoMo sessions · adapted embedder (leak-free split),Zep-style,adversarial,0.766
+LoCoMo sessions · adapted embedder (leak-free split),Zep-style,temporal,0.735
+LoCoMo sessions · adapted embedder (leak-free split),Zep-style,single hop,0.784
+LoCoMo sessions · adapted embedder (leak-free split),Zep-style,open domain,0.483
+LoCoMo sessions · adapted embedder (leak-free split),Zep-style,multi hop,0.423
+LoCoMo sessions · adapted embedder (leak-free split),HippoRAG-style,adversarial,0.487
+LoCoMo sessions · adapted embedder (leak-free split),HippoRAG-style,temporal,0.464
+LoCoMo sessions · adapted embedder (leak-free split),HippoRAG-style,single hop,0.483
+LoCoMo sessions · adapted embedder (leak-free split),HippoRAG-style,open domain,0.306
+LoCoMo sessions · adapted embedder (leak-free split),HippoRAG-style,multi hop,0.261
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem raw (L0),adversarial,0.695
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem raw (L0),temporal,0.513
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem raw (L0),single hop,0.692
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem raw (L0),open domain,0.446
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem raw (L0),multi hop,0.401
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (self-probes),adversarial,0.922
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (self-probes),temporal,0.87
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (self-probes),single hop,0.94
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (self-probes),open domain,0.568
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (self-probes),multi hop,0.543
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (query log),adversarial,0.921
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (query log),temporal,0.873
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (query log),single hop,0.934
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (query log),open domain,0.558
+LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (query log),multi hop,0.542
 LoCoMo turns,BM25,adversarial,0.569
 LoCoMo turns,BM25,open domain,0.294
 LoCoMo turns,BM25,single hop,0.637
