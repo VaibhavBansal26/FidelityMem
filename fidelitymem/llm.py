@@ -67,6 +67,8 @@ class MockLLM:
     """Deterministic stand-in: compresses extractively, extracts by rule, judges by containment."""
 
     calls: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
 
     def complete(self, system: str, user: str, max_tokens: int = 2048) -> str:
         self.calls += 1

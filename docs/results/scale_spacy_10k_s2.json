@@ -1,0 +1,409 @@
+{
+ "embedder": "spacy:en_core_web_md",
+ "seeds": [
+  2
+ ],
+ "levels": {
+  "10000": [
+   {
+    "system": "fixed_window",
+    "k": 10,
+    "recall": 0.005,
+    "complete_recall": 0.0,
+    "mrr": 0.00125,
+    "ndcg": 0.001934264036172708,
+    "tokens_per_query": 669.0,
+    "p50_ms": 0.0004249995981808752,
+    "p95_ms": 0.0009180002962239087,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 0.0,
+     "temporal": 0.0,
+     "multi_hop": 0.02,
+     "exact": 0.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "bm25",
+    "k": 10,
+    "recall": 0.875,
+    "complete_recall": 0.75,
+    "mrr": 0.99,
+    "ndcg": 0.89733315187177,
+    "tokens_per_query": 682.02,
+    "p50_ms": 0.05243499981588684,
+    "p95_ms": 0.09512700125924312,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 0.5,
+     "exact": 1.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "vector",
+    "k": 10,
+    "recall": 0.51,
+    "complete_recall": 0.44,
+    "mrr": 0.3838333333333333,
+    "ndcg": 0.3934339857556269,
+    "tokens_per_query": 698.5,
+    "p50_ms": 11.95641300000716,
+    "p95_ms": 12.079259999154601,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 0.56,
+     "temporal": 0.6,
+     "multi_hop": 0.28,
+     "exact": 0.6
+    },
+    "ci95": {}
+   },
+   {
+    "system": "bm25+vector_rrf",
+    "k": 10,
+    "recall": 0.865,
+    "complete_recall": 0.74,
+    "mrr": 0.7292738095238096,
+    "ndcg": 0.7123865027875363,
+    "tokens_per_query": 724.81,
+    "p50_ms": 11.956623999139993,
+    "p95_ms": 15.955122999002924,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 0.5,
+     "exact": 0.96
+    },
+    "ci95": {}
+   },
+   {
+    "system": "summary_L3+bm25",
+    "k": 10,
+    "recall": 0.835,
+    "complete_recall": 0.75,
+    "mrr": 0.76875,
+    "ndcg": 0.7404802077622008,
+    "tokens_per_query": 220.12,
+    "p50_ms": 0.03425999966566451,
+    "p95_ms": 0.053907002438791096,
+    "storage_tokens": 192619,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 0.96,
+     "temporal": 1.0,
+     "multi_hop": 0.38,
+     "exact": 1.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "window+trie",
+    "k": 10,
+    "recall": 0.875,
+    "complete_recall": 0.75,
+    "mrr": 1.0,
+    "ndcg": 0.9032867981913646,
+    "tokens_per_query": 819.8,
+    "p50_ms": 0.08927499948185869,
+    "p95_ms": 0.15265000183717348,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 0.5,
+     "exact": 1.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "memgpt_style",
+    "k": 10,
+    "recall": 0.495,
+    "complete_recall": 0.43,
+    "mrr": 0.14961904761904762,
+    "ndcg": 0.2262967041009735,
+    "tokens_per_query": 687.75,
+    "p50_ms": 11.956829999689944,
+    "p95_ms": 15.968165000231238,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 0.56,
+     "temporal": 0.6,
+     "multi_hop": 0.26,
+     "exact": 0.56
+    },
+    "ci95": {}
+   },
+   {
+    "system": "mem0_style",
+    "k": 10,
+    "recall": 0.82,
+    "complete_recall": 0.72,
+    "mrr": 0.6503253968253968,
+    "ndcg": 0.6645873836657078,
+    "tokens_per_query": 795.63,
+    "p50_ms": 11.954690999118611,
+    "p95_ms": 15.958406998834107,
+    "storage_tokens": 84797,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 0.92,
+     "temporal": 0.96,
+     "multi_hop": 0.4,
+     "exact": 1.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "zep_style",
+    "k": 10,
+    "recall": 0.89,
+    "complete_recall": 0.78,
+    "mrr": 0.9086666666666666,
+    "ndcg": 0.8457240126412121,
+    "tokens_per_query": 750.47,
+    "p50_ms": 23.93348999976297,
+    "p95_ms": 37.80087400082266,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 0.56,
+     "exact": 1.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "amem_style",
+    "k": 10,
+    "recall": 0.51,
+    "complete_recall": 0.44,
+    "mrr": 0.3838333333333333,
+    "ndcg": 0.3934339857556269,
+    "tokens_per_query": 698.5,
+    "p50_ms": 11.953917000937508,
+    "p95_ms": 18.712928002059925,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 0.56,
+     "temporal": 0.6,
+     "multi_hop": 0.28,
+     "exact": 0.6
+    },
+    "ci95": {}
+   },
+   {
+    "system": "hipporag_style",
+    "k": 10,
+    "recall": 0.92,
+    "complete_recall": 0.92,
+    "mrr": 0.7415277777777777,
+    "ndcg": 0.7778733589608917,
+    "tokens_per_query": 806.33,
+    "p50_ms": 23.956757002451923,
+    "p95_ms": 35.9291119966656,
+    "storage_tokens": 726439,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 0.84,
+     "temporal": 0.92,
+     "multi_hop": 1.0,
+     "exact": 0.92
+    },
+    "ci95": {}
+   },
+   {
+    "system": "fidelitymem_L0_raw",
+    "k": 10,
+    "recall": 1.0,
+    "complete_recall": 1.0,
+    "mrr": 0.8584285714285714,
+    "ndcg": 0.8976203624379012,
+    "tokens_per_query": 767.11,
+    "p50_ms": 24.387366000155453,
+    "p95_ms": 48.3081009988382,
+    "storage_tokens": 725444,
+    "expansion_rate": 0.0,
+    "retention": null,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 1.0,
+     "exact": 1.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "fidelitymem_L1_noexpand",
+    "k": 10,
+    "recall": 1.0,
+    "complete_recall": 1.0,
+    "mrr": 0.94375,
+    "ndcg": 0.9602644725356391,
+    "tokens_per_query": 489.83,
+    "p50_ms": 24.163731999578886,
+    "p95_ms": 40.186438000091584,
+    "storage_tokens": 447614,
+    "expansion_rate": 0.0,
+    "retention": 1.0,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 1.0,
+     "exact": 1.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "fidelitymem_L1_gated",
+    "k": 10,
+    "recall": 1.0,
+    "complete_recall": 1.0,
+    "mrr": 0.94375,
+    "ndcg": 0.9602644725356391,
+    "tokens_per_query": 540.32,
+    "p50_ms": 24.206792000768473,
+    "p95_ms": 36.897360001603374,
+    "storage_tokens": 447614,
+    "expansion_rate": 1.52,
+    "retention": 1.0,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 1.0,
+     "exact": 1.0
+    },
+    "ci95": {}
+   },
+   {
+    "system": "fidelitymem_L2_noexpand",
+    "k": 10,
+    "recall": 0.99,
+    "complete_recall": 0.99,
+    "mrr": 0.9416666666666668,
+    "ndcg": 0.9559436073324115,
+    "tokens_per_query": 372.84,
+    "p50_ms": 24.117270000715507,
+    "p95_ms": 40.37569900174276,
+    "storage_tokens": 300354,
+    "expansion_rate": 0.0,
+    "retention": 0.99,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 1.0,
+     "exact": 0.96
+    },
+    "ci95": {}
+   },
+   {
+    "system": "fidelitymem_L2_gated",
+    "k": 10,
+    "recall": 0.99,
+    "complete_recall": 0.99,
+    "mrr": 0.9416666666666668,
+    "ndcg": 0.9559436073324115,
+    "tokens_per_query": 448.26,
+    "p50_ms": 24.26060099969618,
+    "p95_ms": 38.25115600193385,
+    "storage_tokens": 300354,
+    "expansion_rate": 1.52,
+    "retention": 0.99,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 1.0,
+     "exact": 0.96
+    },
+    "ci95": {}
+   },
+   {
+    "system": "fidelitymem_L3_noexpand",
+    "k": 10,
+    "recall": 0.99,
+    "complete_recall": 0.99,
+    "mrr": 0.9416666666666668,
+    "ndcg": 0.9559436073324115,
+    "tokens_per_query": 372.84,
+    "p50_ms": 24.046001002716366,
+    "p95_ms": 40.08020399851375,
+    "storage_tokens": 299627,
+    "expansion_rate": 0.0,
+    "retention": 0.99,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 1.0,
+     "exact": 0.96
+    },
+    "ci95": {}
+   },
+   {
+    "system": "fidelitymem_L3_gated",
+    "k": 10,
+    "recall": 0.99,
+    "complete_recall": 0.99,
+    "mrr": 0.9416666666666668,
+    "ndcg": 0.9559436073324115,
+    "tokens_per_query": 448.44,
+    "p50_ms": 24.563860999478493,
+    "p95_ms": 37.38152599908062,
+    "storage_tokens": 299627,
+    "expansion_rate": 1.52,
+    "retention": 0.99,
+    "per_type": {
+     "factual": 1.0,
+     "temporal": 1.0,
+     "multi_hop": 1.0,
+     "exact": 0.96
+    },
+    "ci95": {}
+   },
+   {
+    "system": "fidelitymem_ctrl(L2/f)",
+    "k": 10,
+    "recall": 0.94,
+    "complete_recall": 0.94,
+    "mrr": 0.7966666666666667,
+    "ndcg": 0.8315848120498422,
+    "tokens_per_query": 316.96,
+    "p50_ms": 0.3463749999355059,
+    "p95_ms": 0.45524999950430356,
+    "storage_tokens": 300354,
+    "expansion_rate": 0.0,
+    "retention": 0.94,
+    "per_type": {
+     "factual": 0.88,
+     "temporal": 1.0,
+     "multi_hop": 1.0,
+     "exact": 0.88
+    },
+    "ci95": {}
+   }
+  ]
+ }
+}

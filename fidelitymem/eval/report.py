@@ -62,6 +62,7 @@ def cross_scale(report: dict, metric: str, nd=3) -> str:
 
 def main(path: str) -> None:
     report = json.load(open(path))
+    report = report.get("levels", report)
     levels = sorted(report, key=int)
     print("## Cross-scale Recall@K\n")
     print(cross_scale(report, "recall"))

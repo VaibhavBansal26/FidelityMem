@@ -1,0 +1,25 @@
+embedder=spacy:en_core_web_md
+[fidelitymem n=10000 k=10] {'ingest_s': 48.482430078001926, 'memories': 9980, 'backoffs': 1483, 'optimise_s': 1019.034823558999, 'controller': {'version': 1, 'config': {'compression_level': 2, 'top_k': 10, 'expand_budget': 0, 'routes': ('lexical',), 'gate_profile': 'facts'}, 'rejected_candidates': 0}, 'controller_measurement': {'retention': 1.0638297872340425, 'cost': 1.2951531852962248}}
+
+### 10000 memories, K=10, seeds=[2]
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+fixed_window                 10   0.005   0.000  0.001  0.002      669    0.00    0.00    726439   0.00     -  
+bm25                         10   0.875   0.750  0.990  0.897      682    0.05    0.10    726439   0.00     -  
+vector                       10   0.510   0.440  0.384  0.393      698   11.96   12.08    726439   0.00     -  
+bm25+vector_rrf              10   0.865   0.740  0.729  0.712      725   11.96   15.96    726439   0.00     -  
+summary_L3+bm25              10   0.835   0.750  0.769  0.740      220    0.03    0.05    192619   0.00     -  
+window+trie                  10   0.875   0.750  1.000  0.903      820    0.09    0.15    726439   0.00     -  
+memgpt_style                 10   0.495   0.430  0.150  0.226      688   11.96   15.97    726439   0.00     -  
+mem0_style                   10   0.820   0.720  0.650  0.665      796   11.95   15.96     84797   0.00     -  
+zep_style                    10   0.890   0.780  0.909  0.846      750   23.93   37.80    726439   0.00     -  
+amem_style                   10   0.510   0.440  0.384  0.393      698   11.95   18.71    726439   0.00     -  
+hipporag_style               10   0.920   0.920  0.742  0.778      806   23.96   35.93    726439   0.00     -  
+fidelitymem_L0_raw           10   1.000   1.000  0.858  0.898      767   24.39   48.31    725444   0.00     -  
+fidelitymem_L1_noexpand      10   1.000   1.000  0.944  0.960      490   24.16   40.19    447614   0.00   1.000
+fidelitymem_L1_gated         10   1.000   1.000  0.944  0.960      540   24.21   36.90    447614   1.52   1.000
+fidelitymem_L2_noexpand      10   0.990   0.990  0.942  0.956      373   24.12   40.38    300354   0.00   0.990
+fidelitymem_L2_gated         10   0.990   0.990  0.942  0.956      448   24.26   38.25    300354   1.52   0.990
+fidelitymem_L3_noexpand      10   0.990   0.990  0.942  0.956      373   24.05   40.08    299627   0.00   0.990
+fidelitymem_L3_gated         10   0.990   0.990  0.942  0.956      448   24.56   37.38    299627   1.52   0.990
+fidelitymem_ctrl(L2/f)       10   0.940   0.940  0.797  0.832      317    0.35    0.46    300354   0.00   0.940
+DONE

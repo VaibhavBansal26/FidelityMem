@@ -99,114 +99,158 @@ Retention cannot be observed on live queries, so it is measured on **self-genera
 ## 5. Results
 
 <!-- RESULTS:BEGIN -->
-### 5.1 Synthetic benchmark at 300, 1 000 and 3 000 records (K = 10, 3 seeds, pretrained embedder)
+### 5.1 Synthetic benchmark at 300, 1 000, 3 000 and 10 000 records (K = 10, 3 seeds, pretrained embedder)
 
-Recall@10 across record counts (the controller row names the levels it chose across seeds):
+Recall@10 across record counts (± = 95 % CI over seeds; the controller row names the levels it chose across seeds):
 
-| System | n=300 | n=1000 | n=3000 |
-|---|---:|---:|---:|
-| fixed_window | 0.038 | 0.005 | 0.012 |
-| bm25 | 0.888 | 0.878 | 0.875 |
-| vector | 0.735 | 0.687 | 0.630 |
-| bm25+vector_rrf | 0.877 | 0.875 | 0.872 |
-| summary_L3+bm25 | 0.855 | 0.853 | 0.850 |
-| window+trie | 0.875 | 0.875 | 0.875 |
-| memgpt_style | 0.705 | 0.658 | 0.605 |
-| mem0_style | 0.850 | 0.842 | 0.825 |
-| zep_style | 0.952 | 0.952 | 0.915 |
-| amem_style | 0.735 | 0.687 | 0.630 |
-| hipporag_style | 1.000 | 1.000 | 1.000 |
-| fidelitymem_L0_raw | 0.998 | 0.995 | 1.000 |
-| fidelitymem_L1_noexpand | 0.998 | 0.995 | 1.000 |
-| fidelitymem_L1_gated | 0.998 | 0.995 | 1.000 |
-| fidelitymem_L2_noexpand | 0.998 | 0.995 | 1.000 |
-| fidelitymem_L2_gated | 0.998 | 0.995 | 1.000 |
-| fidelitymem_L3_noexpand | 0.998 | 0.995 | 1.000 |
-| fidelitymem_L3_gated | 0.998 | 0.995 | 1.000 |
-| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f) | 0.995 | 0.993 | 0.977 |
+| System | n=300 | n=1000 | n=3000 | n=10000 |
+|---|---:|---:|---:|---:|
+| fixed_window | 0.038 | 0.005 | 0.012 | 0.002 |
+| bm25 | 0.888 | 0.878 | 0.875 | 0.875 |
+| vector | 0.735 | 0.687 | 0.630 | 0.547 |
+| bm25+vector_rrf | 0.877 | 0.875 | 0.872 | 0.862 |
+| summary_L3+bm25 | 0.855 | 0.853 | 0.850 | 0.857 |
+| window+trie | 0.875 | 0.875 | 0.875 | 0.875 |
+| memgpt_style | 0.705 | 0.658 | 0.605 | 0.528 |
+| mem0_style | 0.850 | 0.842 | 0.825 | 0.825 |
+| zep_style | 0.952 | 0.952 | 0.915 | 0.885 |
+| amem_style | 0.735 | 0.687 | 0.630 | 0.547 |
+| hipporag_style | 1.000 | 1.000 | 1.000 | 0.950 |
+| fidelitymem_L0_raw | 0.998 | 0.995 | 1.000 | 0.997 |
+| fidelitymem_L1_noexpand | 0.998 | 0.995 | 1.000 | 1.000 |
+| fidelitymem_L1_gated | 0.998 | 0.995 | 1.000 | 1.000 |
+| fidelitymem_L2_noexpand | 0.998 | 0.995 | 1.000 | 0.997 |
+| fidelitymem_L2_gated | 0.998 | 0.995 | 1.000 | 0.997 |
+| fidelitymem_L3_noexpand | 0.998 | 0.995 | 1.000 | 0.997 |
+| fidelitymem_L3_gated | 0.998 | 0.995 | 1.000 | 0.997 |
+| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f)/(L2/f/L3/f) | 0.995 | 0.993 | 0.977 | 0.967 |
 
-Stored tokens (index size) across record counts:
+Complete-evidence-set recall (all gold episodes in the top 10):
 
-| System | n=300 | n=1000 | n=3000 |
-|---|---:|---:|---:|
-| fixed_window | 22687 | 73463 | 219337 |
-| bm25 | 22687 | 73463 | 219337 |
-| vector | 22687 | 73463 | 219337 |
-| bm25+vector_rrf | 22687 | 73463 | 219337 |
-| summary_L3+bm25 | 6850 | 20392 | 58681 |
-| window+trie | 22687 | 73463 | 219337 |
-| memgpt_style | 22687 | 73463 | 219337 |
-| mem0_style | 5302 | 12055 | 28989 |
-| zep_style | 22687 | 73463 | 219337 |
-| amem_style | 22687 | 73463 | 219337 |
-| hipporag_style | 22687 | 73463 | 219337 |
-| fidelitymem_L0_raw | 22687 | 73448 | 219187 |
-| fidelitymem_L1_noexpand | 14730 | 46185 | 135639 |
-| fidelitymem_L1_gated | 14730 | 46185 | 135639 |
-| fidelitymem_L2_noexpand | 10847 | 32159 | 91936 |
-| fidelitymem_L2_gated | 10847 | 32159 | 91936 |
-| fidelitymem_L3_noexpand | 10814 | 32091 | 91703 |
-| fidelitymem_L3_gated | 10814 | 32091 | 91703 |
-| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f) | 10814 | 36718 | 106872 |
+| System | n=300 | n=1000 | n=3000 | n=10000 |
+|---|---:|---:|---:|---:|
+| fixed_window | 0.030 | 0.003 | 0.010 | 0.000 |
+| bm25 | 0.777 | 0.757 | 0.750 | 0.750 |
+| vector | 0.640 | 0.603 | 0.560 | 0.480 |
+| bm25+vector_rrf | 0.753 | 0.753 | 0.747 | 0.737 |
+| summary_L3+bm25 | 0.770 | 0.767 | 0.760 | 0.760 |
+| window+trie | 0.750 | 0.750 | 0.750 | 0.750 |
+| memgpt_style | 0.617 | 0.580 | 0.533 | 0.463 |
+| mem0_style | 0.737 | 0.730 | 0.720 | 0.723 |
+| zep_style | 0.903 | 0.903 | 0.830 | 0.770 |
+| amem_style | 0.640 | 0.603 | 0.560 | 0.480 |
+| hipporag_style | 1.000 | 1.000 | 1.000 | 0.950 |
+| fidelitymem_L0_raw | 0.997 | 0.993 | 1.000 | 0.997 |
+| fidelitymem_L1_noexpand | 0.997 | 0.993 | 1.000 | 1.000 |
+| fidelitymem_L1_gated | 0.997 | 0.993 | 1.000 | 1.000 |
+| fidelitymem_L2_noexpand | 0.997 | 0.993 | 1.000 | 0.997 |
+| fidelitymem_L2_gated | 0.997 | 0.993 | 1.000 | 0.997 |
+| fidelitymem_L3_noexpand | 0.997 | 0.993 | 1.000 | 0.997 |
+| fidelitymem_L3_gated | 0.997 | 0.993 | 1.000 | 0.997 |
+| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f)/(L2/f/L3/f) | 0.993 | 0.993 | 0.977 | 0.967 |
+
+Stored tokens (index size):
+
+| System | n=300 | n=1000 | n=3000 | n=10000 |
+|---|---:|---:|---:|---:|
+| fixed_window | 22687 | 73463 | 219337 | 726798 |
+| bm25 | 22687 | 73463 | 219337 | 726798 |
+| vector | 22687 | 73463 | 219337 | 726798 |
+| bm25+vector_rrf | 22687 | 73463 | 219337 | 726798 |
+| summary_L3+bm25 | 6850 | 20392 | 58681 | 192728 |
+| window+trie | 22687 | 73463 | 219337 | 726798 |
+| memgpt_style | 22687 | 73463 | 219337 | 726798 |
+| mem0_style | 5302 | 12055 | 28989 | 84736 |
+| zep_style | 22687 | 73463 | 219337 | 726798 |
+| amem_style | 22687 | 73463 | 219337 | 726798 |
+| hipporag_style | 22687 | 73463 | 219337 | 726798 |
+| fidelitymem_L0_raw | 22687 | 73448 | 219187 | 725582 |
+| fidelitymem_L1_noexpand | 14730 | 46185 | 135639 | 446463 |
+| fidelitymem_L1_gated | 14730 | 46185 | 135639 | 446463 |
+| fidelitymem_L2_noexpand | 10847 | 32159 | 91936 | 299732 |
+| fidelitymem_L2_gated | 10847 | 32159 | 91936 | 299732 |
+| fidelitymem_L3_noexpand | 10814 | 32091 | 91703 | 298898 |
+| fidelitymem_L3_gated | 10814 | 32091 | 91703 | 298898 |
+| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f)/(L2/f/L3/f) | 10814 | 36718 | 106872 | 299141 |
 
 Context tokens per query:
 
-| System | n=300 | n=1000 | n=3000 |
-|---|---:|---:|---:|
-| fixed_window | 831 | 719 | 726 |
-| bm25 | 651 | 669 | 677 |
-| vector | 771 | 741 | 719 |
-| bm25+vector_rrf | 741 | 738 | 726 |
-| summary_L3+bm25 | 238 | 239 | 239 |
-| window+trie | 796 | 800 | 817 |
-| memgpt_style | 796 | 754 | 727 |
-| mem0_style | 768 | 763 | 760 |
-| zep_style | 743 | 746 | 766 |
-| amem_style | 771 | 741 | 719 |
-| hipporag_style | 776 | 770 | 817 |
-| fidelitymem_L0_raw | 756 | 763 | 777 |
-| fidelitymem_L1_noexpand | 521 | 520 | 521 |
-| fidelitymem_L1_gated | 554 | 561 | 573 |
-| fidelitymem_L2_noexpand | 407 | 405 | 401 |
-| fidelitymem_L2_gated | 448 | 457 | 468 |
-| fidelitymem_L3_noexpand | 407 | 405 | 401 |
-| fidelitymem_L3_gated | 448 | 457 | 468 |
-| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f) | 333 | 374 | 362 |
+| System | n=300 | n=1000 | n=3000 | n=10000 |
+|---|---:|---:|---:|---:|
+| fixed_window | 831 | 719 | 726 | 713 |
+| bm25 | 651 | 669 | 677 | 674 |
+| vector | 771 | 741 | 719 | 692 |
+| bm25+vector_rrf | 741 | 738 | 726 | 708 |
+| summary_L3+bm25 | 238 | 239 | 239 | 230 |
+| window+trie | 796 | 800 | 817 | 820 |
+| memgpt_style | 796 | 754 | 727 | 682 |
+| mem0_style | 768 | 763 | 760 | 782 |
+| zep_style | 743 | 746 | 766 | 745 |
+| amem_style | 771 | 741 | 719 | 692 |
+| hipporag_style | 776 | 770 | 817 | 807 |
+| fidelitymem_L0_raw | 756 | 763 | 777 | 757 |
+| fidelitymem_L1_noexpand | 521 | 520 | 521 | 500 |
+| fidelitymem_L1_gated | 554 | 561 | 573 | 549 |
+| fidelitymem_L2_noexpand | 407 | 405 | 401 | 374 |
+| fidelitymem_L2_gated | 448 | 457 | 468 | 448 |
+| fidelitymem_L3_noexpand | 407 | 405 | 401 | 374 |
+| fidelitymem_L3_gated | 448 | 457 | 468 | 448 |
+| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f)/(L2/f/L3/f) | 333 | 374 | 362 | 356 |
 
-Full table at 3 000 records (± = 95 % CI over seeds):
+p95 retrieval latency, ms (three evaluation processes shared the machine; indicative):
+
+| System | n=300 | n=1000 | n=3000 | n=10000 |
+|---|---:|---:|---:|---:|
+| fixed_window | 0.00 | 0.00 | 0.00 | 0.00 |
+| bm25 | 0.05 | 0.03 | 0.05 | 0.09 |
+| vector | 1.99 | 2.23 | 11.97 | 17.36 |
+| bm25+vector_rrf | 3.73 | 3.51 | 13.34 | 18.63 |
+| summary_L3+bm25 | 0.03 | 0.03 | 0.04 | 0.06 |
+| window+trie | 0.08 | 0.08 | 0.10 | 0.15 |
+| memgpt_style | 2.50 | 2.29 | 10.66 | 18.63 |
+| mem0_style | 2.46 | 2.34 | 2.00 | 17.70 |
+| zep_style | 2.50 | 2.45 | 10.88 | 36.48 |
+| amem_style | 2.20 | 2.23 | 13.26 | 19.55 |
+| hipporag_style | 2.27 | 3.78 | 15.96 | 31.97 |
+| fidelitymem_L0_raw | 6.44 | 7.27 | 28.61 | 48.93 |
+| fidelitymem_L1_noexpand | 1.58 | 2.26 | 19.60 | 45.31 |
+| fidelitymem_L1_gated | 1.64 | 2.20 | 20.14 | 36.73 |
+| fidelitymem_L2_noexpand | 1.56 | 1.94 | 19.56 | 38.11 |
+| fidelitymem_L2_gated | 1.77 | 2.10 | 20.79 | 37.38 |
+| fidelitymem_L3_noexpand | 1.45 | 2.36 | 20.76 | 40.27 |
+| fidelitymem_L3_gated | 1.81 | 2.34 | 21.42 | 39.65 |
+| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f)/(L2/f/L3/f) | 0.43 | 0.48 | 0.46 | 0.59 |
+
+Full table at 10 000 records:
 
 | System | R@K | CR@K | MRR | nDCG | tok/q | p50 ms | p95 ms | stored tok | expand | retain |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| fixed_window | 0.012 | 0.010 | 0.004 | 0.006 | 726 | 0.00 | 0.00 | 219337 | 0.00 | - |
-| bm25 | 0.875 | 0.750 | 0.997 | 0.902 | 677 | 0.03 | 0.05 | 219337 | 0.00 | - |
-| vector | 0.630 | 0.560 | 0.459 | 0.476 | 719 | 9.29 | 11.97 | 219337 | 0.00 | - |
-| bm25+vector_rrf | 0.872 | 0.747 | 0.783 | 0.759 | 726 | 8.55 | 13.34 | 219337 | 0.00 | - |
-| summary_L3+bm25 | 0.850 | 0.760 | 0.850 | 0.801 | 239 | 0.02 | 0.04 | 58681 | 0.00 | - |
-| window+trie | 0.875 | 0.750 | 1.000 | 0.903 | 817 | 0.07 | 0.10 | 219337 | 0.00 | - |
-| memgpt_style | 0.605 | 0.533 | 0.182 | 0.276 | 727 | 9.28 | 10.66 | 219337 | 0.00 | - |
-| mem0_style | 0.825 | 0.720 | 0.659 | 0.670 | 760 | 1.73 | 2.00 | 28989 | 0.00 | - |
-| zep_style | 0.915 | 0.830 | 0.943 | 0.883 | 766 | 7.97 | 10.88 | 219337 | 0.00 | - |
-| amem_style | 0.630 | 0.560 | 0.459 | 0.476 | 719 | 7.96 | 13.26 | 219337 | 0.00 | - |
-| hipporag_style | 1.000 | 1.000 | 0.879 | 0.891 | 817 | 9.26 | 15.96 | 219337 | 0.00 | - |
-| fidelitymem_L0_raw | 1.000 | 1.000 | 0.911 | 0.935 | 777 | 12.13 | 28.61 | 219187 | 0.00 | - |
-| fidelitymem_L1_noexpand | 1.000 | 1.000 | 0.958 | 0.969 | 521 | 9.70 | 19.60 | 135639 | 0.00 | 1.000 |
-| fidelitymem_L1_gated | 1.000 | 1.000 | 0.958 | 0.969 | 573 | 9.78 | 20.14 | 135639 | 1.49 | 1.000 |
-| fidelitymem_L2_noexpand | 1.000 | 1.000 | 0.966 | 0.974 | 401 | 9.64 | 19.56 | 91936 | 0.00 | 1.000 |
-| fidelitymem_L2_gated | 1.000 | 1.000 | 0.966 | 0.974 | 468 | 8.77 | 20.79 | 91936 | 1.45 | 1.000 |
-| fidelitymem_L3_noexpand | 1.000 | 1.000 | 0.966 | 0.974 | 401 | 8.76 | 20.76 | 91703 | 0.00 | 1.000 |
-| fidelitymem_L3_gated | 1.000 | 1.000 | 0.966 | 0.974 | 468 | 9.57 | 21.42 | 91703 | 1.45 | 1.000 |
-| fidelitymem_ctrl(L1/f/L3/f) | 0.977 | 0.977 | 0.914 | 0.929 | 362 | 0.32 | 0.46 | 106872 | 0.00 | 0.977 |
+| fixed_window | 0.002 | 0.000 | 0.000 | 0.001 | 713 | 0.00 | 0.00 | 726798 | 0.00 | - |
+| bm25 | 0.875 | 0.750 | 0.989 | 0.898 | 674 | 0.05 | 0.09 | 726798 | 0.00 | - |
+| vector | 0.547 | 0.480 | 0.390 | 0.407 | 692 | 11.96 | 17.36 | 726798 | 0.00 | - |
+| bm25+vector_rrf | 0.862 | 0.737 | 0.752 | 0.732 | 708 | 11.96 | 18.63 | 726798 | 0.00 | - |
+| summary_L3+bm25 | 0.857 | 0.760 | 0.798 | 0.761 | 230 | 0.04 | 0.06 | 192728 | 0.00 | - |
+| window+trie | 0.875 | 0.750 | 1.000 | 0.903 | 820 | 0.09 | 0.15 | 726798 | 0.00 | - |
+| memgpt_style | 0.528 | 0.463 | 0.155 | 0.238 | 682 | 11.96 | 18.63 | 726798 | 0.00 | - |
+| mem0_style | 0.825 | 0.723 | 0.651 | 0.670 | 782 | 11.95 | 17.70 | 84736 | 0.00 | - |
+| zep_style | 0.885 | 0.770 | 0.900 | 0.838 | 745 | 23.84 | 36.48 | 726798 | 0.00 | - |
+| amem_style | 0.547 | 0.480 | 0.390 | 0.407 | 692 | 11.96 | 19.55 | 726798 | 0.00 | - |
+| hipporag_style | 0.950 | 0.950 | 0.753 | 0.793 | 807 | 23.95 | 31.97 | 726798 | 0.00 | - |
+| fidelitymem_L0_raw | 0.997 | 0.997 | 0.865 | 0.901 | 757 | 24.21 | 48.93 | 725582 | 0.00 | - |
+| fidelitymem_L1_noexpand | 1.000 | 1.000 | 0.944 | 0.960 | 500 | 24.22 | 45.31 | 446463 | 0.00 | 1.003 |
+| fidelitymem_L1_gated | 1.000 | 1.000 | 0.944 | 0.960 | 549 | 24.03 | 36.73 | 446463 | 1.51 | 1.003 |
+| fidelitymem_L2_noexpand | 0.997 | 0.997 | 0.958 | 0.968 | 374 | 24.03 | 38.11 | 299732 | 0.00 | 1.000 |
+| fidelitymem_L2_gated | 0.997 | 0.997 | 0.958 | 0.968 | 448 | 24.25 | 37.38 | 299732 | 1.51 | 1.000 |
+| fidelitymem_L3_noexpand | 0.997 | 0.997 | 0.958 | 0.968 | 374 | 24.21 | 40.27 | 298898 | 0.00 | 1.000 |
+| fidelitymem_L3_gated | 0.997 | 0.997 | 0.958 | 0.968 | 448 | 24.50 | 39.65 | 298898 | 1.51 | 1.000 |
+| fidelitymem_ctrl(L2/f/L3/f) | 0.967 | 0.967 | 0.861 | 0.888 | 356 | 0.42 | 0.59 | 299141 | 0.67 | 0.970 |
 
-Per-level tables for 300 and 1 000 records are in `docs/results/scale_spacy_k10_300-3k.txt`.
-
-### 5.1b 10 000 records
-
-*(pending: three single-seed jobs were running at the time of writing; merged with `python -m fidelitymem.eval.merge scale docs/results/scale_spacy_10k_s*.json --out docs/results/scale_spacy_10k.json`.)*
+Per-level tables for the other record counts are in `docs/results/scale_spacy_k10_report.md`; the Pareto plots are `docs/results/pareto_synthetic_3k.png` and `pareto_synthetic_10k.png`.
 <!-- RESULTS:END -->
 
 ### 5.1 Reading the tables
 
-* **Recall at scale.** FidelityMem holds 0.995–1.000 Recall@10 and complete-set recall at every record level. With a pretrained embedder the HippoRAG-style graph ties it on recall (1.000) at full storage and lower ranking quality (nDCG 0.89–0.94 against 0.97–0.99); Zep-style falls from 0.95 to 0.92 as records grow; BM25 stays at 0.88; Mem0-style at 0.83–0.85. The synthetic benchmark therefore no longer separates FidelityMem from a graph retriever on recall alone, which is a ceiling effect of the benchmark; the separation is on storage, tokens and ranking.
+* **Recall at scale.** FidelityMem holds 0.995–1.000 Recall@10 and complete-set recall from 300 to 10 000 records. The HippoRAG-style graph ties it at 300–3 000 records (1.000, at full storage and lower nDCG) and falls to 0.950 ±0.066 at 10 000, where hub entities dilute two-hop spreading; Zep-style falls from 0.95 to 0.885; BM25 stays at 0.875–0.888 (it never reaches the second hop: complete-set recall 0.75 at every scale); Mem0-style 0.83. At 10 000 records FidelityMem is alone at the top on both recall and complete-set recall.
 * **Compression without loss.** Levels 2 and 3 store 42–48 % of the raw tokens and serve about 60 % of the context tokens per query with retention 1.0 against L0; the gate backed off on roughly one in six episodes, which is exactly the set where a gist would have dropped a fact. The lossy `summary_L3+bm25` baseline stores less (≈27 %) and loses 2–4 points of recall with wide variance across seeds.
 * **Controller choice.** With no access to the questions, the controller selected level 3 (one seed level 1) with the facts gate profile and the two cheapest routes at every scale, and its measured benchmark retention is 0.98–1.00. Its latency is the lowest of the FidelityMem rows because it dropped the graph and temporal routes it found unnecessary for the probe distribution; at 3 000 records one seed's cheaper route set cost multi-hop recall (0.977 ±0.063), still above the bound.
 * **Window + trie.** Perfect MRR on exact-value questions and competitive overall recall at small scale, but it is capped at the BM25 ceiling on factual and temporal questions and cannot reach a second hop. This is why the trie is kept as a *route* inside FidelityMem (enabled for exact and code-review queries) rather than as the system.
