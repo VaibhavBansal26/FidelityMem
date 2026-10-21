@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import itertools
 import random
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from typing import TYPE_CHECKING, Callable
 
 from .policy import MemoryPolicy
@@ -34,9 +34,13 @@ class Config:
     expand_budget: int = 3
     routes: tuple[str, ...] = ("lexical", "vector", "graph", "temporal")
     gate_profile: str = "facts"  # facts | content (stricter)
+    vector_weight: float = 1.0  # RRF weight of the dense route relative to lexical (1.0 = planner default)
 
     def as_overrides(self) -> dict:
-        return {"top_k": self.top_k, "expand_budget": self.expand_budget, "routes": list(self.routes), "per_route_k": self.top_k * 3}
+        ov = {"top_k": self.top_k, "expand_budget": self.expand_budget, "routes": list(self.routes), "per_route_k": self.top_k * 3}
+        if self.vector_weight != 1.0:
+            ov["route_weights"] = {"vector": self.vector_weight}
+        return ov
 
 
 @dataclass
@@ -137,10 +141,16 @@ class Controller:
     def candidates(self) -> list[Config]:
         keys = list(self.search_space)
         out = []
+        seen = set()
         for combo in itertools.product(*(self.search_space[k] for k in keys)):
             c = Config(**dict(zip(keys, combo)))
-            if c.compression_level <= self.policy.max_compression_level:
-                out.append(c)
+            if "vector" not in c.routes and c.vector_weight != 1.0:
+                c = replace(c, vector_weight=1.0)  # the dense weight only matters when the dense route is in the pool
+            key = (c.compression_level, c.top_k, c.expand_budget, c.routes, c.gate_profile, c.vector_weight)
+            if key in seen or c.compression_level > self.policy.max_compression_level:
+                continue
+            seen.add(key)
+            out.append(c)
         # group by (level, profile) so the store is recompressed once per group, not once per candidate
         out.sort(key=lambda c: (c.compression_level, c.gate_profile), reverse=True)
         return out
