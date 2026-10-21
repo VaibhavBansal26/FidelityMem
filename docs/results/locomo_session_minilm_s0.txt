@@ -23,3 +23,5 @@ dataset=locomo episodes=272 questions=1986 embedder=onnx:all-MiniLM-L6-v2-onnx s
 [timing] fidelitymem_L2_gate:content: 4.2s
 [timing] recompress L3/content: 5.5s
 [timing] fidelitymem_L3_gate:content: 4.0s
+[timing] controller:self: 238.7s
+[controller:self] {'version': 1, 'config': {'compression_level': 0, 'top_k': 10, 'expand_budget': 2, 'routes': ('lexical',), 'gate_profile': 'facts', 'vector_weight': 1.0}, 'rejected_candidates': 4}
