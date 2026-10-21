@@ -2,3 +2,24 @@ dataset=locomo episodes=272 questions=1986 embedder=onnx:all-MiniLM-L6-v2-onnx s
 [timing] fixed_window: 0.4s
 [timing] bm25: 3.9s
 [timing] vector: 90.4s
+[timing] bm25+vector_rrf: 92.1s
+[timing] summary_L3+bm25: 3.2s
+[timing] window_trie: 3.0s
+[timing] memgpt_style: 45.9s
+[timing] mem0_style: 29.7s
+[timing] zep_style: 46.9s
+[timing] amem_style: 46.0s
+[timing] hipporag_style: 46.6s
+[timing] fidelitymem_L0_raw: 13.3s
+[timing] recompress L1/facts: 28.4s
+[timing] fidelitymem_L1_gate:facts: 6.3s
+[timing] recompress L2/facts: 0.6s
+[timing] fidelitymem_L2_gate:facts: 4.5s
+[timing] recompress L3/facts: 4.5s
+[timing] fidelitymem_L3_gate:facts: 4.1s
+[timing] recompress L1/content: 4.1s
+[timing] fidelitymem_L1_gate:content: 5.5s
+[timing] recompress L2/content: 4.2s
+[timing] fidelitymem_L2_gate:content: 4.0s
+[timing] recompress L3/content: 5.5s
+[timing] fidelitymem_L3_gate:content: 3.8s
