@@ -55,7 +55,9 @@ def _keep(s: str) -> bool:
 
 def export(results_dir: Path, out_dir: Path) -> tuple[int, int]:
     rows, types = [], []
-    for path in sorted(results_dir.glob("scale_*.json")):
+    merged = results_dir / "scale_spacy_k10.json"
+    scale_files = [merged] if merged.exists() else sorted(results_dir.glob("scale_*.json"))  # the merged report supersedes per-seed and partial files
+    for path in scale_files:
         rep = json.load(open(path))
         for lvl, rs in rep.get("levels", {}).items():
             raw = next((r["storage_tokens"] for r in rs if r["system"] == "fidelitymem_L0_raw"), 1)

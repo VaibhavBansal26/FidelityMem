@@ -1,60 +1,4 @@
 dataset,records,k,embedder,system,family,recall,ci95,complete_recall,mrr,storage_pct,tokens_per_query,p95_ms
-Synthetic,10000,10,pretrained word vectors,Fixed window,Classic baseline,0.002,0.007,0.0,0.0,100.2,713,0.0
-Synthetic,10000,10,pretrained word vectors,BM25,Classic baseline,0.875,0,0.75,0.989,100.2,674,0.09
-Synthetic,10000,10,pretrained word vectors,Dense,Classic baseline,0.547,0.093,0.48,0.39,100.2,692,17.36
-Synthetic,10000,10,pretrained word vectors,BM25 + dense RRF,Classic baseline,0.862,0.014,0.737,0.752,100.2,708,18.63
-Synthetic,10000,10,pretrained word vectors,Lossy summary + BM25,Classic baseline,0.857,0.05,0.76,0.798,26.6,230,0.06
-Synthetic,10000,10,pretrained word vectors,Window + trie,Memory-system architecture,0.875,0,0.75,1.0,100.2,820,0.15
-Synthetic,10000,10,pretrained word vectors,MemGPT-style,Memory-system architecture,0.528,0.123,0.463,0.155,100.2,682,18.63
-Synthetic,10000,10,pretrained word vectors,Mem0-style,Memory-system architecture,0.825,0.033,0.723,0.651,11.7,782,17.7
-Synthetic,10000,10,pretrained word vectors,Zep-style,Memory-system architecture,0.885,0.012,0.77,0.9,100.2,745,36.48
-Synthetic,10000,10,pretrained word vectors,A-MEM-style,Memory-system architecture,0.547,0.093,0.48,0.39,100.2,692,19.55
-Synthetic,10000,10,pretrained word vectors,HippoRAG-style,Memory-system architecture,0.95,0.066,0.95,0.753,100.2,807,31.97
-Synthetic,10000,10,pretrained word vectors,FidelityMem raw (L0),FidelityMem,0.997,0.014,0.997,0.865,100.0,757,48.93
-Synthetic,10000,10,pretrained word vectors,FidelityMem L3 gated,FidelityMem,0.997,0.014,0.997,0.958,41.2,448,39.65
-Synthetic,10000,10,pretrained word vectors,FidelityMem controller,FidelityMem,0.967,0.063,0.967,0.861,41.2,356,0.59
-Synthetic,10000,10,pretrained word vectors,Fixed window,Classic baseline,0.0,0,0.0,0.0,100.2,736,0.0
-Synthetic,10000,10,pretrained word vectors,BM25,Classic baseline,0.875,0,0.75,0.99,100.2,666,0.08
-Synthetic,10000,10,pretrained word vectors,Dense,Classic baseline,0.545,0,0.48,0.383,100.2,695,19.98
-Synthetic,10000,10,pretrained word vectors,BM25 + dense RRF,Classic baseline,0.865,0,0.74,0.76,100.2,701,19.97
-Synthetic,10000,10,pretrained word vectors,Lossy summary + BM25,Classic baseline,0.875,0,0.77,0.8,26.5,240,0.07
-Synthetic,10000,10,pretrained word vectors,Window + trie,Memory-system architecture,0.875,0,0.75,1.0,100.2,823,0.18
-Synthetic,10000,10,pretrained word vectors,MemGPT-style,Memory-system architecture,0.505,0,0.44,0.151,100.2,696,19.96
-Synthetic,10000,10,pretrained word vectors,Mem0-style,Memory-system architecture,0.84,0,0.74,0.66,11.6,784,21.18
-Synthetic,10000,10,pretrained word vectors,Zep-style,Memory-system architecture,0.88,0,0.76,0.881,100.2,749,35.98
-Synthetic,10000,10,pretrained word vectors,A-MEM-style,Memory-system architecture,0.545,0,0.48,0.383,100.2,695,23.96
-Synthetic,10000,10,pretrained word vectors,HippoRAG-style,Memory-system architecture,0.97,0,0.97,0.745,100.2,808,28.0
-Synthetic,10000,10,pretrained word vectors,FidelityMem raw (L0),FidelityMem,1.0,0,1.0,0.891,100.0,756,45.82
-Synthetic,10000,10,pretrained word vectors,FidelityMem L3 gated,FidelityMem,1.0,0,1.0,0.968,40.9,450,36.64
-Synthetic,10000,10,pretrained word vectors,FidelityMem controller,FidelityMem,0.99,0,0.99,0.928,40.9,377,0.73
-Synthetic,10000,10,pretrained word vectors,Fixed window,Classic baseline,0.0,0,0.0,0.0,100.2,733,0.0
-Synthetic,10000,10,pretrained word vectors,BM25,Classic baseline,0.875,0,0.75,0.988,100.2,674,0.08
-Synthetic,10000,10,pretrained word vectors,Dense,Classic baseline,0.585,0,0.52,0.404,100.2,683,20.03
-Synthetic,10000,10,pretrained word vectors,BM25 + dense RRF,Classic baseline,0.855,0,0.73,0.765,100.2,698,19.98
-Synthetic,10000,10,pretrained word vectors,Lossy summary + BM25,Classic baseline,0.86,0,0.76,0.825,26.6,230,0.05
-Synthetic,10000,10,pretrained word vectors,Window + trie,Memory-system architecture,0.875,0,0.75,1.0,100.2,818,0.12
-Synthetic,10000,10,pretrained word vectors,MemGPT-style,Memory-system architecture,0.585,0,0.52,0.164,100.2,662,19.96
-Synthetic,10000,10,pretrained word vectors,Mem0-style,Memory-system architecture,0.815,0,0.71,0.644,11.8,767,15.97
-Synthetic,10000,10,pretrained word vectors,Zep-style,Memory-system architecture,0.885,0,0.77,0.909,100.2,737,35.66
-Synthetic,10000,10,pretrained word vectors,A-MEM-style,Memory-system architecture,0.585,0,0.52,0.404,100.2,683,15.97
-Synthetic,10000,10,pretrained word vectors,HippoRAG-style,Memory-system architecture,0.96,0,0.96,0.771,100.2,807,31.98
-Synthetic,10000,10,pretrained word vectors,FidelityMem raw (L0),FidelityMem,0.99,0,0.99,0.845,100.0,749,52.67
-Synthetic,10000,10,pretrained word vectors,FidelityMem L3 gated,FidelityMem,1.0,0,1.0,0.965,41.4,445,44.92
-Synthetic,10000,10,pretrained word vectors,FidelityMem controller,FidelityMem,0.97,0,0.97,0.858,41.4,374,0.59
-Synthetic,10000,10,pretrained word vectors,Fixed window,Classic baseline,0.005,0,0.0,0.001,100.1,669,0.0
-Synthetic,10000,10,pretrained word vectors,BM25,Classic baseline,0.875,0,0.75,0.99,100.1,682,0.1
-Synthetic,10000,10,pretrained word vectors,Dense,Classic baseline,0.51,0,0.44,0.384,100.1,698,12.08
-Synthetic,10000,10,pretrained word vectors,BM25 + dense RRF,Classic baseline,0.865,0,0.74,0.729,100.1,725,15.96
-Synthetic,10000,10,pretrained word vectors,Lossy summary + BM25,Classic baseline,0.835,0,0.75,0.769,26.6,220,0.05
-Synthetic,10000,10,pretrained word vectors,Window + trie,Memory-system architecture,0.875,0,0.75,1.0,100.1,820,0.15
-Synthetic,10000,10,pretrained word vectors,MemGPT-style,Memory-system architecture,0.495,0,0.43,0.15,100.1,688,15.97
-Synthetic,10000,10,pretrained word vectors,Mem0-style,Memory-system architecture,0.82,0,0.72,0.65,11.7,796,15.96
-Synthetic,10000,10,pretrained word vectors,Zep-style,Memory-system architecture,0.89,0,0.78,0.909,100.1,750,37.8
-Synthetic,10000,10,pretrained word vectors,A-MEM-style,Memory-system architecture,0.51,0,0.44,0.384,100.1,698,18.71
-Synthetic,10000,10,pretrained word vectors,HippoRAG-style,Memory-system architecture,0.92,0,0.92,0.742,100.1,806,35.93
-Synthetic,10000,10,pretrained word vectors,FidelityMem raw (L0),FidelityMem,1.0,0,1.0,0.858,100.0,767,48.31
-Synthetic,10000,10,pretrained word vectors,FidelityMem L3 gated,FidelityMem,0.99,0,0.99,0.942,41.3,448,37.38
-Synthetic,10000,10,pretrained word vectors,FidelityMem controller,FidelityMem,0.94,0,0.94,0.797,41.4,317,0.46
 Synthetic,300,10,pretrained word vectors,Fixed window,Classic baseline,0.038,0.05,0.03,0.013,100.0,831,0.0
 Synthetic,300,10,pretrained word vectors,BM25,Classic baseline,0.888,0.019,0.777,0.997,100.0,651,0.05
 Synthetic,300,10,pretrained word vectors,Dense,Classic baseline,0.735,0.022,0.64,0.52,100.0,771,1.99
@@ -111,48 +55,6 @@ Synthetic,10000,10,pretrained word vectors,HippoRAG-style,Memory-system architec
 Synthetic,10000,10,pretrained word vectors,FidelityMem raw (L0),FidelityMem,0.997,0.014,0.997,0.865,100.0,757,48.93
 Synthetic,10000,10,pretrained word vectors,FidelityMem L3 gated,FidelityMem,0.997,0.014,0.997,0.958,41.2,448,39.65
 Synthetic,10000,10,pretrained word vectors,FidelityMem controller,FidelityMem,0.967,0.063,0.967,0.861,41.2,356,0.59
-Synthetic,300,10,pretrained word vectors,Fixed window,Classic baseline,0.038,0.05,0.03,0.013,100.0,831,0.0
-Synthetic,300,10,pretrained word vectors,BM25,Classic baseline,0.888,0.019,0.777,0.997,100.0,651,0.05
-Synthetic,300,10,pretrained word vectors,Dense,Classic baseline,0.735,0.022,0.64,0.52,100.0,771,1.99
-Synthetic,300,10,pretrained word vectors,BM25 + dense RRF,Classic baseline,0.877,0.007,0.753,0.834,100.0,741,3.73
-Synthetic,300,10,pretrained word vectors,Lossy summary + BM25,Classic baseline,0.855,0.069,0.77,0.929,30.2,238,0.03
-Synthetic,300,10,pretrained word vectors,Window + trie,Memory-system architecture,0.875,0,0.75,1.0,100.0,796,0.08
-Synthetic,300,10,pretrained word vectors,MemGPT-style,Memory-system architecture,0.705,0.012,0.617,0.209,100.0,796,2.5
-Synthetic,300,10,pretrained word vectors,Mem0-style,Memory-system architecture,0.85,0.025,0.737,0.726,23.4,768,2.46
-Synthetic,300,10,pretrained word vectors,Zep-style,Memory-system architecture,0.952,0.029,0.903,0.975,100.0,743,2.5
-Synthetic,300,10,pretrained word vectors,A-MEM-style,Memory-system architecture,0.735,0.022,0.64,0.52,100.0,771,2.2
-Synthetic,300,10,pretrained word vectors,HippoRAG-style,Memory-system architecture,1.0,0,1.0,0.944,100.0,776,2.27
-Synthetic,300,10,pretrained word vectors,FidelityMem raw (L0),FidelityMem,0.998,0.007,0.997,0.951,100.0,756,6.44
-Synthetic,300,10,pretrained word vectors,FidelityMem L3 gated,FidelityMem,0.998,0.007,0.997,0.99,47.7,448,1.81
-Synthetic,300,10,pretrained word vectors,FidelityMem controller,FidelityMem,0.995,0.022,0.993,0.971,47.7,333,0.43
-Synthetic,1000,10,pretrained word vectors,Fixed window,Classic baseline,0.005,0.022,0.003,0.002,100.0,719,0.0
-Synthetic,1000,10,pretrained word vectors,BM25,Classic baseline,0.878,0.014,0.757,0.997,100.0,669,0.03
-Synthetic,1000,10,pretrained word vectors,Dense,Classic baseline,0.687,0.059,0.603,0.494,100.0,741,2.23
-Synthetic,1000,10,pretrained word vectors,BM25 + dense RRF,Classic baseline,0.875,0.012,0.753,0.805,100.0,738,3.51
-Synthetic,1000,10,pretrained word vectors,Lossy summary + BM25,Classic baseline,0.853,0.063,0.767,0.922,27.8,239,0.03
-Synthetic,1000,10,pretrained word vectors,Window + trie,Memory-system architecture,0.875,0,0.75,1.0,100.0,800,0.08
-Synthetic,1000,10,pretrained word vectors,MemGPT-style,Memory-system architecture,0.658,0.05,0.58,0.193,100.0,754,2.29
-Synthetic,1000,10,pretrained word vectors,Mem0-style,Memory-system architecture,0.842,0.019,0.73,0.703,16.4,763,2.34
-Synthetic,1000,10,pretrained word vectors,Zep-style,Memory-system architecture,0.952,0.047,0.903,0.978,100.0,746,2.45
-Synthetic,1000,10,pretrained word vectors,A-MEM-style,Memory-system architecture,0.687,0.059,0.603,0.494,100.0,741,2.23
-Synthetic,1000,10,pretrained word vectors,HippoRAG-style,Memory-system architecture,1.0,0,1.0,0.92,100.0,770,3.78
-Synthetic,1000,10,pretrained word vectors,FidelityMem raw (L0),FidelityMem,0.995,0.012,0.993,0.932,100.0,763,7.27
-Synthetic,1000,10,pretrained word vectors,FidelityMem L3 gated,FidelityMem,0.995,0.012,0.993,0.976,43.7,457,2.34
-Synthetic,1000,10,pretrained word vectors,FidelityMem controller,FidelityMem,0.993,0.014,0.993,0.94,50.0,374,0.48
-Synthetic,3000,10,pretrained word vectors,Fixed window,Classic baseline,0.012,0.04,0.01,0.004,100.1,726,0.0
-Synthetic,3000,10,pretrained word vectors,BM25,Classic baseline,0.875,0,0.75,0.997,100.1,677,0.05
-Synthetic,3000,10,pretrained word vectors,Dense,Classic baseline,0.63,0.087,0.56,0.459,100.1,719,11.97
-Synthetic,3000,10,pretrained word vectors,BM25 + dense RRF,Classic baseline,0.872,0.014,0.747,0.783,100.1,726,13.34
-Synthetic,3000,10,pretrained word vectors,Lossy summary + BM25,Classic baseline,0.85,0.066,0.76,0.85,26.8,239,0.04
-Synthetic,3000,10,pretrained word vectors,Window + trie,Memory-system architecture,0.875,0,0.75,1.0,100.1,817,0.1
-Synthetic,3000,10,pretrained word vectors,MemGPT-style,Memory-system architecture,0.605,0.069,0.533,0.182,100.1,727,10.66
-Synthetic,3000,10,pretrained word vectors,Mem0-style,Memory-system architecture,0.825,0.025,0.72,0.659,13.2,760,2.0
-Synthetic,3000,10,pretrained word vectors,Zep-style,Memory-system architecture,0.915,0.045,0.83,0.943,100.1,766,10.88
-Synthetic,3000,10,pretrained word vectors,A-MEM-style,Memory-system architecture,0.63,0.087,0.56,0.459,100.1,719,13.26
-Synthetic,3000,10,pretrained word vectors,HippoRAG-style,Memory-system architecture,1.0,0,1.0,0.879,100.1,817,15.96
-Synthetic,3000,10,pretrained word vectors,FidelityMem raw (L0),FidelityMem,1.0,0,1.0,0.911,100.0,777,28.61
-Synthetic,3000,10,pretrained word vectors,FidelityMem L3 gated,FidelityMem,1.0,0,1.0,0.966,41.8,468,21.42
-Synthetic,3000,10,pretrained word vectors,FidelityMem controller,FidelityMem,0.977,0.063,0.977,0.914,48.8,362,0.46
 LoCoMo sessions,272,5,pretrained word vectors,Fixed window,Classic baseline,0.018,0.006,0.014,0.01,100.0,3307,0.0
 LoCoMo sessions,272,5,pretrained word vectors,BM25,Classic baseline,0.858,0.009,0.817,0.764,100.0,3707,0.22
 LoCoMo sessions,272,5,pretrained word vectors,Dense,Classic baseline,0.287,0.016,0.262,0.187,100.0,3309,2.56
