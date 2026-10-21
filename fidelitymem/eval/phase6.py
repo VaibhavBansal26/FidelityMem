@@ -155,7 +155,42 @@ def _fidelitymem_system(bench: Benchmark, calib: Benchmark | None, k: int, rho: 
     return retrieve, fm
 
 
-def run(bench: Benchmark, calib: Benchmark | None, systems: list[str], k: int, rho: float, reader, judge, llm_compress: bool, log=print, rewriter=None, reranker=None, retrieval_only: bool = False) -> list[dict]:
+def _focus_wrap(retrieve, session_turns: dict[int, list[str]], k_sessions: int, turns_per_session: int, neighbors: int, k_score: int):
+    """Evidence-first, hierarchical context: retrieve `k_sessions` sessions, then inside each
+    session rank its turns against the question (BM25 over the session's own turns) and keep
+    the top `turns_per_session` turns plus `neighbors` turns either side, in original order.
+    Recall is still scored on the top `k_score` sessions so it is comparable with the raw run."""
+    from ..stores import BM25Index
+    from ..text import content_tokens
+
+    def wrapped(q: str, kk: int = k_score):
+        hits, _ = retrieve(q, k_sessions)
+        blocks = []
+        for h in hits:
+            turns = session_turns.get(int(h[2:]), [])
+            if not turns:
+                continue
+            bm = BM25Index()
+            for i, t in enumerate(turns):
+                bm.add(str(i), t)
+            top = {int(i) for i, _ in bm.search(q, turns_per_session)}
+            if not top:
+                top = {0}
+            keep = sorted({j for i in top for j in range(max(0, i - neighbors), min(len(turns), i + neighbors + 1))})
+            block = []
+            prev = -1
+            for j in keep:
+                if prev >= 0 and j != prev + 1:
+                    block.append("…")
+                block.append(("» " if j in top else "  ") + turns[j])
+                prev = j
+            blocks.append("\n".join(block))
+        return hits[:kk], "\n\n".join(blocks)
+
+    return wrapped
+
+
+def run(bench: Benchmark, calib: Benchmark | None, systems: list[str], k: int, rho: float, reader, judge, llm_compress: bool, log=print, rewriter=None, reranker=None, retrieval_only: bool = False, focus: dict | None = None) -> list[dict]:
     out = []
     texts = [t for t, _ in bench.episodes]
     texts_of = lambda h: texts[int(h[2:])]
@@ -175,8 +210,10 @@ def run(bench: Benchmark, calib: Benchmark | None, systems: list[str], k: int, r
             retrieve = _competitor_system(name, bench, k)
         if rewriter or reranker:
             retrieve = _with_llm_steps(retrieve, texts_of, k, rewriter, reranker)
+        if focus:
+            retrieve = _focus_wrap(retrieve, focus["session_turns"], focus["sessions"], focus["turns"], focus["neighbors"], k)
         log(f"[phase6] {name}: built in {time.perf_counter() - t0:.0f}s")
-        sr = SystemResult(name + ("+rewrite" if rewriter else "") + ("+rerank" if reranker else ""))
+        sr = SystemResult(name + ("+rewrite" if rewriter else "") + ("+rerank" if reranker else "") + (f"+focus{focus['sessions']}x{focus['turns']}" if focus else ""))
         for it in bench.items:
             gold = [f"ep{i}" for i in bench.gold_indices(it)]
             t1 = time.perf_counter()
@@ -225,6 +262,10 @@ def main(argv=None):
     ap.add_argument("--rewrite", action="store_true", help="HyDE-style query rewriting with a Haiku call per question")
     ap.add_argument("--rerank", action="store_true", help="Haiku reranking of a 20-candidate pool down to K")
     ap.add_argument("--retrieval-only", action="store_true", help="skip reader and judge; report recall only")
+    ap.add_argument("--focus", action="store_true", help="evidence-first hierarchical context: retrieve --focus-sessions sessions, show the best --focus-turns turns (+neighbors) of each")
+    ap.add_argument("--focus-sessions", type=int, default=8)
+    ap.add_argument("--focus-turns", type=int, default=3)
+    ap.add_argument("--focus-neighbors", type=int, default=1)
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv)
 
@@ -265,7 +306,21 @@ def main(argv=None):
         aux = MockLLM() if a.mock else ClaudeLLM(model="claude-haiku-5-5", effort="low")
         rewriter = ClaudeRewriter(aux) if a.rewrite else None
         reranker = ClaudeReranker(aux) if a.rerank else None
-    results = run(test, calib, a.systems, a.k, a.rho, reader, judge, a.llm_compress, log=lambda s: print(s, flush=True), rewriter=rewriter, reranker=reranker, retrieval_only=a.retrieval_only)
+    focus = None
+    if a.focus:
+        if a.dataset != "locomo" or not a.session_level:
+            raise SystemExit("--focus needs --dataset locomo --session-level (session -> turn hierarchy)")
+        from .datasets import load_locomo
+
+        turn_real = load_locomo(a.path, per_turn=True)
+        by_session: dict[str, list[str]] = {}
+        for eid, text, _ in turn_real.episodes:
+            sid, dia = eid.rsplit(":", 2)[0], eid.split(":")[-2]
+            by_session.setdefault(f"{sid}:session_{dia[1:]}", []).append(text)
+        sess_text_to_id = {text: eid for eid, text, _ in real.episodes}
+        session_turns = {i: by_session.get(sess_text_to_id.get(t, ""), []) for i, (t, _) in enumerate(bench.episodes)}
+        focus = {"session_turns": session_turns, "sessions": a.focus_sessions, "turns": a.focus_turns, "neighbors": a.focus_neighbors}
+    results = run(test, calib, a.systems, a.k, a.rho, reader, judge, a.llm_compress, log=lambda s: print(s, flush=True), rewriter=rewriter, reranker=reranker, retrieval_only=a.retrieval_only, focus=focus)
     if rewriter or reranker:
         aux = (rewriter or reranker).llm
         print(f"[phase6] rewrite/rerank API tokens: in={aux.input_tokens} out={aux.output_tokens} (claude-haiku-5-5)", flush=True)
@@ -276,7 +331,7 @@ def main(argv=None):
     for r in rows:
         print(f"  {r['system']} by type: {r['accuracy_by_type']}")
     if a.out:
-        json.dump({"dataset": real.name, "granularity": real.meta.get("granularity"), "mode": mode, "k": a.k, "questions": len(test.items), "reader_model": a.reader_model, "judge_model": a.judge_model, "llm_compress": a.llm_compress, "results": rows}, open(a.out, "w"), indent=1)
+        json.dump({"dataset": real.name, "granularity": real.meta.get("granularity"), "mode": mode, "k": a.k, "questions": len(test.items), "reader_model": a.reader_model, "judge_model": a.judge_model, "llm_compress": a.llm_compress, "focus": {k2: v for k2, v in (focus or {}).items() if k2 != "session_turns"} or None, "results": rows}, open(a.out, "w"), indent=1)
 
 
 if __name__ == "__main__":
