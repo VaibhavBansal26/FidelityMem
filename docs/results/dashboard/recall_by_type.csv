@@ -39,86 +39,126 @@ LoCoMo sessions,FidelityMem controller (query log),open domain,0.558
 LoCoMo sessions,FidelityMem controller (query log),single hop,0.934
 LoCoMo sessions,FidelityMem controller (query log),temporal,0.873
 LoCoMo sessions,FidelityMem controller (query log),multi hop,0.542
-LoCoMo sessions · adapted embedder,BM25,temporal,0.883
-LoCoMo sessions · adapted embedder,BM25,adversarial,0.932
-LoCoMo sessions · adapted embedder,BM25,multi hop,0.547
-LoCoMo sessions · adapted embedder,BM25,open domain,0.568
-LoCoMo sessions · adapted embedder,BM25,single hop,0.944
-LoCoMo sessions · adapted embedder,Window + trie,temporal,0.678
-LoCoMo sessions · adapted embedder,Window + trie,adversarial,0.745
-LoCoMo sessions · adapted embedder,Window + trie,multi hop,0.236
-LoCoMo sessions · adapted embedder,Window + trie,open domain,0.297
-LoCoMo sessions · adapted embedder,Window + trie,single hop,0.768
-LoCoMo sessions · adapted embedder,Mem0-style,temporal,0.346
-LoCoMo sessions · adapted embedder,Mem0-style,adversarial,0.294
-LoCoMo sessions · adapted embedder,Mem0-style,multi hop,0.163
-LoCoMo sessions · adapted embedder,Mem0-style,open domain,0.271
-LoCoMo sessions · adapted embedder,Mem0-style,single hop,0.331
-LoCoMo sessions · adapted embedder,Zep-style,temporal,0.758
-LoCoMo sessions · adapted embedder,Zep-style,adversarial,0.812
-LoCoMo sessions · adapted embedder,Zep-style,multi hop,0.437
-LoCoMo sessions · adapted embedder,Zep-style,open domain,0.503
-LoCoMo sessions · adapted embedder,Zep-style,single hop,0.802
-LoCoMo sessions · adapted embedder,HippoRAG-style,temporal,0.493
-LoCoMo sessions · adapted embedder,HippoRAG-style,adversarial,0.532
-LoCoMo sessions · adapted embedder,HippoRAG-style,multi hop,0.266
-LoCoMo sessions · adapted embedder,HippoRAG-style,open domain,0.376
-LoCoMo sessions · adapted embedder,HippoRAG-style,single hop,0.518
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),temporal,0.552
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),adversarial,0.727
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),multi hop,0.399
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),open domain,0.453
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),single hop,0.718
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),temporal,0.815
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),adversarial,0.802
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),multi hop,0.45
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),open domain,0.496
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),single hop,0.827
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),temporal,0.731
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),adversarial,0.829
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),multi hop,0.432
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),open domain,0.495
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),single hop,0.83
-LoCoMo sessions · adapted embedder,BM25,open domain,0.568
-LoCoMo sessions · adapted embedder,BM25,multi hop,0.547
-LoCoMo sessions · adapted embedder,BM25,single hop,0.944
-LoCoMo sessions · adapted embedder,BM25,temporal,0.883
-LoCoMo sessions · adapted embedder,BM25,adversarial,0.932
-LoCoMo sessions · adapted embedder,Window + trie,open domain,0.289
-LoCoMo sessions · adapted embedder,Window + trie,multi hop,0.243
-LoCoMo sessions · adapted embedder,Window + trie,single hop,0.768
-LoCoMo sessions · adapted embedder,Window + trie,temporal,0.681
-LoCoMo sessions · adapted embedder,Window + trie,adversarial,0.737
-LoCoMo sessions · adapted embedder,Mem0-style,open domain,0.271
-LoCoMo sessions · adapted embedder,Mem0-style,multi hop,0.163
-LoCoMo sessions · adapted embedder,Mem0-style,single hop,0.331
-LoCoMo sessions · adapted embedder,Mem0-style,temporal,0.346
-LoCoMo sessions · adapted embedder,Mem0-style,adversarial,0.294
-LoCoMo sessions · adapted embedder,Zep-style,open domain,0.491
-LoCoMo sessions · adapted embedder,Zep-style,multi hop,0.419
-LoCoMo sessions · adapted embedder,Zep-style,single hop,0.791
-LoCoMo sessions · adapted embedder,Zep-style,temporal,0.727
-LoCoMo sessions · adapted embedder,Zep-style,adversarial,0.792
-LoCoMo sessions · adapted embedder,HippoRAG-style,open domain,0.382
-LoCoMo sessions · adapted embedder,HippoRAG-style,multi hop,0.261
-LoCoMo sessions · adapted embedder,HippoRAG-style,single hop,0.492
-LoCoMo sessions · adapted embedder,HippoRAG-style,temporal,0.491
-LoCoMo sessions · adapted embedder,HippoRAG-style,adversarial,0.52
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),open domain,0.451
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),multi hop,0.388
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),single hop,0.723
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),temporal,0.518
-LoCoMo sessions · adapted embedder,FidelityMem raw (L0),adversarial,0.732
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),open domain,0.493
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),multi hop,0.458
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),single hop,0.831
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),temporal,0.822
-LoCoMo sessions · adapted embedder,FidelityMem controller (self-probes),adversarial,0.799
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),open domain,0.5
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),multi hop,0.448
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),single hop,0.845
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),temporal,0.742
-LoCoMo sessions · adapted embedder,FidelityMem controller (query log),adversarial,0.847
+"LoCoMo sessions · adapted embedder, first run",BM25,temporal,0.883
+"LoCoMo sessions · adapted embedder, first run",BM25,adversarial,0.932
+"LoCoMo sessions · adapted embedder, first run",BM25,multi hop,0.547
+"LoCoMo sessions · adapted embedder, first run",BM25,open domain,0.568
+"LoCoMo sessions · adapted embedder, first run",BM25,single hop,0.944
+"LoCoMo sessions · adapted embedder, first run",Window + trie,temporal,0.678
+"LoCoMo sessions · adapted embedder, first run",Window + trie,adversarial,0.745
+"LoCoMo sessions · adapted embedder, first run",Window + trie,multi hop,0.236
+"LoCoMo sessions · adapted embedder, first run",Window + trie,open domain,0.297
+"LoCoMo sessions · adapted embedder, first run",Window + trie,single hop,0.768
+"LoCoMo sessions · adapted embedder, first run",Mem0-style,temporal,0.346
+"LoCoMo sessions · adapted embedder, first run",Mem0-style,adversarial,0.294
+"LoCoMo sessions · adapted embedder, first run",Mem0-style,multi hop,0.163
+"LoCoMo sessions · adapted embedder, first run",Mem0-style,open domain,0.271
+"LoCoMo sessions · adapted embedder, first run",Mem0-style,single hop,0.331
+"LoCoMo sessions · adapted embedder, first run",Zep-style,temporal,0.758
+"LoCoMo sessions · adapted embedder, first run",Zep-style,adversarial,0.812
+"LoCoMo sessions · adapted embedder, first run",Zep-style,multi hop,0.437
+"LoCoMo sessions · adapted embedder, first run",Zep-style,open domain,0.503
+"LoCoMo sessions · adapted embedder, first run",Zep-style,single hop,0.802
+"LoCoMo sessions · adapted embedder, first run",HippoRAG-style,temporal,0.493
+"LoCoMo sessions · adapted embedder, first run",HippoRAG-style,adversarial,0.532
+"LoCoMo sessions · adapted embedder, first run",HippoRAG-style,multi hop,0.266
+"LoCoMo sessions · adapted embedder, first run",HippoRAG-style,open domain,0.376
+"LoCoMo sessions · adapted embedder, first run",HippoRAG-style,single hop,0.518
+"LoCoMo sessions · adapted embedder, first run",FidelityMem raw (L0),temporal,0.552
+"LoCoMo sessions · adapted embedder, first run",FidelityMem raw (L0),adversarial,0.727
+"LoCoMo sessions · adapted embedder, first run",FidelityMem raw (L0),multi hop,0.399
+"LoCoMo sessions · adapted embedder, first run",FidelityMem raw (L0),open domain,0.453
+"LoCoMo sessions · adapted embedder, first run",FidelityMem raw (L0),single hop,0.718
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (self-probes),temporal,0.815
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (self-probes),adversarial,0.802
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (self-probes),multi hop,0.45
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (self-probes),open domain,0.496
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (self-probes),single hop,0.827
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (query log),temporal,0.731
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (query log),adversarial,0.829
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (query log),multi hop,0.432
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (query log),open domain,0.495
+"LoCoMo sessions · adapted embedder, first run",FidelityMem controller (query log),single hop,0.83
+"LoCoMo sessions · adapted embedder, ρ=0.98",BM25,open domain,0.568
+"LoCoMo sessions · adapted embedder, ρ=0.98",BM25,multi hop,0.547
+"LoCoMo sessions · adapted embedder, ρ=0.98",BM25,single hop,0.944
+"LoCoMo sessions · adapted embedder, ρ=0.98",BM25,temporal,0.883
+"LoCoMo sessions · adapted embedder, ρ=0.98",BM25,adversarial,0.932
+"LoCoMo sessions · adapted embedder, ρ=0.98",Window + trie,open domain,0.289
+"LoCoMo sessions · adapted embedder, ρ=0.98",Window + trie,multi hop,0.243
+"LoCoMo sessions · adapted embedder, ρ=0.98",Window + trie,single hop,0.768
+"LoCoMo sessions · adapted embedder, ρ=0.98",Window + trie,temporal,0.681
+"LoCoMo sessions · adapted embedder, ρ=0.98",Window + trie,adversarial,0.737
+"LoCoMo sessions · adapted embedder, ρ=0.98",Mem0-style,open domain,0.271
+"LoCoMo sessions · adapted embedder, ρ=0.98",Mem0-style,multi hop,0.163
+"LoCoMo sessions · adapted embedder, ρ=0.98",Mem0-style,single hop,0.331
+"LoCoMo sessions · adapted embedder, ρ=0.98",Mem0-style,temporal,0.346
+"LoCoMo sessions · adapted embedder, ρ=0.98",Mem0-style,adversarial,0.294
+"LoCoMo sessions · adapted embedder, ρ=0.98",Zep-style,open domain,0.491
+"LoCoMo sessions · adapted embedder, ρ=0.98",Zep-style,multi hop,0.419
+"LoCoMo sessions · adapted embedder, ρ=0.98",Zep-style,single hop,0.791
+"LoCoMo sessions · adapted embedder, ρ=0.98",Zep-style,temporal,0.727
+"LoCoMo sessions · adapted embedder, ρ=0.98",Zep-style,adversarial,0.792
+"LoCoMo sessions · adapted embedder, ρ=0.98",HippoRAG-style,open domain,0.382
+"LoCoMo sessions · adapted embedder, ρ=0.98",HippoRAG-style,multi hop,0.261
+"LoCoMo sessions · adapted embedder, ρ=0.98",HippoRAG-style,single hop,0.492
+"LoCoMo sessions · adapted embedder, ρ=0.98",HippoRAG-style,temporal,0.491
+"LoCoMo sessions · adapted embedder, ρ=0.98",HippoRAG-style,adversarial,0.52
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem raw (L0),open domain,0.451
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem raw (L0),multi hop,0.388
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem raw (L0),single hop,0.723
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem raw (L0),temporal,0.518
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem raw (L0),adversarial,0.732
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (self-probes),open domain,0.493
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (self-probes),multi hop,0.458
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (self-probes),single hop,0.831
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (self-probes),temporal,0.822
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (self-probes),adversarial,0.799
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (query log),open domain,0.5
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (query log),multi hop,0.448
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (query log),single hop,0.845
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (query log),temporal,0.742
+"LoCoMo sessions · adapted embedder, ρ=0.98",FidelityMem controller (query log),adversarial,0.847
+"LoCoMo sessions · adapted embedder, recall-charged cost",BM25,temporal,0.883
+"LoCoMo sessions · adapted embedder, recall-charged cost",BM25,adversarial,0.932
+"LoCoMo sessions · adapted embedder, recall-charged cost",BM25,multi hop,0.547
+"LoCoMo sessions · adapted embedder, recall-charged cost",BM25,open domain,0.568
+"LoCoMo sessions · adapted embedder, recall-charged cost",BM25,single hop,0.944
+"LoCoMo sessions · adapted embedder, recall-charged cost",Window + trie,temporal,0.666
+"LoCoMo sessions · adapted embedder, recall-charged cost",Window + trie,adversarial,0.748
+"LoCoMo sessions · adapted embedder, recall-charged cost",Window + trie,multi hop,0.246
+"LoCoMo sessions · adapted embedder, recall-charged cost",Window + trie,open domain,0.32
+"LoCoMo sessions · adapted embedder, recall-charged cost",Window + trie,single hop,0.777
+"LoCoMo sessions · adapted embedder, recall-charged cost",Mem0-style,temporal,0.346
+"LoCoMo sessions · adapted embedder, recall-charged cost",Mem0-style,adversarial,0.294
+"LoCoMo sessions · adapted embedder, recall-charged cost",Mem0-style,multi hop,0.163
+"LoCoMo sessions · adapted embedder, recall-charged cost",Mem0-style,open domain,0.271
+"LoCoMo sessions · adapted embedder, recall-charged cost",Mem0-style,single hop,0.331
+"LoCoMo sessions · adapted embedder, recall-charged cost",Zep-style,temporal,0.745
+"LoCoMo sessions · adapted embedder, recall-charged cost",Zep-style,adversarial,0.809
+"LoCoMo sessions · adapted embedder, recall-charged cost",Zep-style,multi hop,0.413
+"LoCoMo sessions · adapted embedder, recall-charged cost",Zep-style,open domain,0.482
+"LoCoMo sessions · adapted embedder, recall-charged cost",Zep-style,single hop,0.815
+"LoCoMo sessions · adapted embedder, recall-charged cost",HippoRAG-style,temporal,0.466
+"LoCoMo sessions · adapted embedder, recall-charged cost",HippoRAG-style,adversarial,0.521
+"LoCoMo sessions · adapted embedder, recall-charged cost",HippoRAG-style,multi hop,0.251
+"LoCoMo sessions · adapted embedder, recall-charged cost",HippoRAG-style,open domain,0.359
+"LoCoMo sessions · adapted embedder, recall-charged cost",HippoRAG-style,single hop,0.517
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem raw (L0),temporal,0.542
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem raw (L0),adversarial,0.728
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem raw (L0),multi hop,0.408
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem raw (L0),open domain,0.487
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem raw (L0),single hop,0.721
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (self-probes),temporal,0.816
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (self-probes),adversarial,0.79
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (self-probes),multi hop,0.458
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (self-probes),open domain,0.512
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (self-probes),single hop,0.825
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (query log),temporal,0.731
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (query log),adversarial,0.829
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (query log),multi hop,0.432
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (query log),open domain,0.495
+"LoCoMo sessions · adapted embedder, recall-charged cost",FidelityMem controller (query log),single hop,0.83
 LoCoMo turns,BM25,adversarial,0.569
 LoCoMo turns,BM25,open domain,0.294
 LoCoMo turns,BM25,single hop,0.637

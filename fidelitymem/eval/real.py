@@ -213,13 +213,20 @@ def main(argv=None) -> None:
             calib = Benchmark(bench.episodes, items[:cut], {}, name=bench.name + "-calib")
             bench = Benchmark(bench.episodes, items[cut:], {}, name=bench.name)
         if a.embedder == "adapted-train":
-            # train the retrieval-adapted embedder on THIS seed's calibration split only (no test leakage),
-            # plus a synthetic world with an unrelated seed; every system in this seed then shares it
+            # Train the retrieval-adapted embedder on HALF of this seed's calibration split; the other
+            # half stays the controller's query log. Training and controller calibration must not share
+            # questions: a dense route trained on the very probes the controller scores looks perfect
+            # there and loses on the test split. Plus a synthetic world with an unrelated seed.
             from ..stores.learned_embedder import SpacyTokenVectors, train_adapter
             from .synthetic import generate
 
             syn = generate(1000, 200, seed=sd + 100)
-            pairs = [(it.query, bench.episodes[gi][0]) for b in ((calib,) if calib else ()) for it in b.items for gi in b.gold_indices(it)]
+            train_items, probe_items = [], []
+            if calib is not None:
+                half = len(calib.items) // 2
+                train_items, probe_items = calib.items[:half], calib.items[half:]
+                calib = Benchmark(calib.episodes, probe_items, {}, name=calib.name)
+            pairs = [(it.query, bench.episodes[gi][0]) for it in train_items for gi in Benchmark(bench.episodes, train_items, {}).gold_indices(it)]
             pairs += [(it.query, syn.episodes[gi][0]) for it in syn.items for gi in syn.gold_indices(it)]
             corpus = [t for t, _ in bench.episodes] + [t for t, _ in syn.episodes]
             t0 = time.perf_counter()

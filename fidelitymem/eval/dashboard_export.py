@@ -66,7 +66,17 @@ def export(results_dir: Path, out_dir: Path) -> tuple[int, int]:
             continue
         gran = rep.get("granularity", "turn")
         emb = "adapted (trained per seed)" if "adapted" in rep.get("embedder", "") else "pretrained word vectors"
-        name = f"LoCoMo {'sessions' if gran == 'session' else 'turns'}" + (" · adapted embedder" if emb.startswith("adapted") else "")
+        stem = path.stem  # e.g. locomo_session_adapted_v2
+        variant = ""
+        if emb.startswith("adapted"):
+            variant = " · adapted embedder"
+            if stem.endswith("_rho98"):
+                variant += ", ρ=0.98"
+            elif stem.endswith("_v2"):
+                variant += ", recall-charged cost"
+            else:
+                variant += ", first run"
+        name = f"LoCoMo {'sessions' if gran == 'session' else 'turns'}" + variant
         raw = next((r["storage_tokens"] for r in rep["aggregate"] if r["system"] == "fidelitymem_L0_raw"), 1)
         rows += [_row(name, rep["episodes"], r, raw, emb) for r in rep["aggregate"] if _keep(r["system"])]
         for r in rep["aggregate"]:

@@ -1,0 +1,221 @@
+dataset=locomo episodes=272 questions=1986 embedder=spacy:en_core_web_md seeds=[0, 1, 2]
+[adapter] seed 0: trained on 1003 pairs in 51s
+[timing] fixed_window: 0.2s
+[timing] bm25: 1.8s
+[timing] vector: 2.2s
+[timing] bm25+vector_rrf: 3.0s
+[timing] summary_L3+bm25: 2.6s
+[timing] window_trie: 2.4s
+[timing] memgpt_style: 0.5s
+[timing] mem0_style: 13.0s
+[timing] zep_style: 1.8s
+[timing] amem_style: 0.4s
+[timing] hipporag_style: 2.2s
+[timing] fidelitymem_L0_raw: 3.7s
+[timing] recompress L1/facts: 2.9s
+[timing] fidelitymem_L1_gate:facts: 3.3s
+[timing] recompress L2/facts: 0.5s
+[timing] fidelitymem_L2_gate:facts: 2.5s
+[timing] recompress L3/facts: 3.6s
+[timing] fidelitymem_L3_gate:facts: 2.2s
+[timing] recompress L1/content: 3.2s
+[timing] fidelitymem_L1_gate:content: 2.6s
+[timing] recompress L2/content: 3.6s
+[timing] fidelitymem_L2_gate:content: 2.3s
+[timing] recompress L3/content: 4.7s
+[timing] fidelitymem_L3_gate:content: 2.3s
+[timing] controller:self: 104.7s
+[controller:self] {'version': 1, 'config': {'compression_level': 0, 'top_k': 5, 'expand_budget': 2, 'routes': ('lexical',), 'gate_profile': 'facts'}, 'rejected_candidates': 4}
+[timing] controller:qlog: 104.9s
+[controller:qlog] {'version': 1, 'config': {'compression_level': 1, 'top_k': 5, 'expand_budget': 2, 'routes': ('lexical', 'vector'), 'gate_profile': 'facts'}, 'rejected_candidates': 0}
+[fidelitymem locomo] ingest_s=4.6 memories=272 backoffs=1 controller={'version': 1, 'config': {'compression_level': 1, 'top_k': 5, 'expand_budget': 2, 'routes': ('lexical', 'vector'), 'gate_profile': 'facts'}, 'rejected_candidates': 0}
+
+### seed 0
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+fixed_window                  5   0.020   0.015  0.013  0.013     3260    0.00    0.00    195165   0.00     -  
+bm25                          5   0.856   0.812  0.759  0.768     3695    0.12    0.24    195165   0.00     -  
+vector                        5   0.496   0.460  0.386  0.401     3694    0.10    0.21    195165   0.00     -  
+bm25+vector_rrf               5   0.769   0.723  0.629  0.648     3758    0.28    0.56    195165   0.00     -  
+summary_L3+bm25               5   0.427   0.395  0.346  0.353      506    0.03    0.14     26114   0.00     -  
+window+trie                   5   0.655   0.625  0.558  0.571     3873    0.12    0.29    195165   0.00     -  
+memgpt_style                  5   0.460   0.426  0.210  0.267     3447    0.09    0.15    195165   0.00     -  
+mem0_style                    5   0.316   0.290  0.240  0.249     3782    7.89   11.92     27036   0.00     -  
+zep_style                     5   0.735   0.692  0.548  0.579     3778    0.71    1.38    195165   0.00     -  
+amem_style                    5   0.496   0.460  0.386  0.401     3694    0.09    0.12    195165   0.00     -  
+hipporag_style                5   0.468   0.434  0.352  0.367     3765    1.00    1.75    195165   0.00     -  
+fidelitymem_L0_raw            5   0.633   0.590  0.449  0.478     3810    1.65    2.65    195165   0.00     -  
+fidelitymem_L1_gate:facts     5   0.589   0.547  0.416  0.443     2633    1.56    2.45    127833   0.63   0.930
+fidelitymem_L2_gate:facts     5   0.489   0.452  0.348  0.370     1262    1.34    2.21     42667   0.69   0.773
+fidelitymem_L3_gate:facts     5   0.485   0.447  0.341  0.364     1254    1.28    2.11     42833   0.68   0.766
+fidelitymem_L1_gate:content   5   0.632   0.589  0.447  0.476     3776    1.48    2.42    192142   0.04   1.000
+fidelitymem_L2_gate:content   5   0.632   0.589  0.447  0.476     3776    1.48    2.42    192142   0.04   1.000
+fidelitymem_L3_gate:content   5   0.632   0.589  0.447  0.476     3776    1.53    2.43    192142   0.04   1.000
+fidelitymem_L1_nogate         5   0.580   0.538  0.413  0.438     2596    1.58    2.59    125075   0.63   0.917
+fidelitymem_L2_nogate         5   0.489   0.452  0.347  0.369     1228    1.47    3.01     41831   0.69   0.773
+fidelitymem_L3_nogate         5   0.378   0.345  0.256  0.275     2319    1.31    2.28     26114   2.69   0.598
+fidelitymem_ctrl:self(L0/f)   5   0.849   0.805  0.728  0.744     3697    0.41    0.62    195165   0.00   1.343
+fidelitymem_ctrl:qlog(L1/f)   5   0.720   0.675  0.565  0.586     2556    0.67    1.03    127833   0.42   1.139
+[adapter] seed 1: trained on 1016 pairs in 50s
+[timing] fixed_window: 0.3s
+[timing] bm25: 0.9s
+[timing] vector: 2.6s
+[timing] bm25+vector_rrf: 3.2s
+[timing] summary_L3+bm25: 2.6s
+[timing] window_trie: 3.9s
+[timing] memgpt_style: 0.5s
+[timing] mem0_style: 16.0s
+[timing] zep_style: 2.1s
+[timing] amem_style: 0.5s
+[timing] hipporag_style: 2.5s
+[timing] fidelitymem_L0_raw: 4.0s
+[timing] recompress L1/facts: 3.2s
+[timing] fidelitymem_L1_gate:facts: 3.5s
+[timing] recompress L2/facts: 0.6s
+[timing] fidelitymem_L2_gate:facts: 2.6s
+[timing] recompress L3/facts: 3.2s
+[timing] fidelitymem_L3_gate:facts: 2.3s
+[timing] recompress L1/content: 3.6s
+[timing] fidelitymem_L1_gate:content: 3.0s
+[timing] recompress L2/content: 3.9s
+[timing] fidelitymem_L2_gate:content: 2.6s
+[timing] recompress L3/content: 4.9s
+[timing] fidelitymem_L3_gate:content: 2.7s
+[timing] controller:self: 118.6s
+[controller:self] {'version': 1, 'config': {'compression_level': 3, 'top_k': 5, 'expand_budget': 2, 'routes': ('lexical',), 'gate_profile': 'content'}, 'rejected_candidates': 3}
+[timing] controller:qlog: 107.3s
+[controller:qlog] {'version': 1, 'config': {'compression_level': 3, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical', 'vector'), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+[fidelitymem locomo] ingest_s=4.9 memories=272 backoffs=1 controller={'version': 1, 'config': {'compression_level': 3, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical', 'vector'), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+
+### seed 1
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+fixed_window                  5   0.015   0.012  0.009  0.010     3386    0.00    0.00    195165   0.00     -  
+bm25                          5   0.856   0.816  0.764  0.772     3717    0.11    0.20    195165   0.00     -  
+vector                        5   0.484   0.454  0.374  0.391     3687    0.10    0.22    195165   0.00     -  
+bm25+vector_rrf               5   0.759   0.717  0.616  0.636     3760    0.28    0.51    195165   0.00     -  
+summary_L3+bm25               5   0.424   0.395  0.337  0.347      508    0.03    0.12     26114   0.00     -  
+window+trie                   5   0.656   0.628  0.568  0.579     3780    0.13    0.30    195165   0.00     -  
+memgpt_style                  5   0.452   0.425  0.204  0.262     3645    0.10    0.20    195165   0.00     -  
+mem0_style                    5   0.291   0.270  0.229  0.236     3780   11.80   12.05     27036   0.00     -  
+zep_style                     5   0.724   0.684  0.552  0.580     3741    0.77    1.45    195165   0.00     -  
+amem_style                    5   0.484   0.454  0.374  0.391     3687    0.10    0.16    195165   0.00     -  
+hipporag_style                5   0.470   0.439  0.355  0.373     3631    1.14    2.17    195165   0.00     -  
+fidelitymem_L0_raw            5   0.636   0.593  0.431  0.467     3866    1.81    2.86    195165   0.00     -  
+fidelitymem_L1_gate:facts     5   0.599   0.560  0.405  0.439     2657    1.68    2.83    127833   0.62   0.942
+fidelitymem_L2_gate:facts     5   0.485   0.449  0.341  0.362     1260    1.41    2.41     42667   0.67   0.764
+fidelitymem_L3_gate:facts     5   0.484   0.448  0.336  0.358     1254    1.37    2.25     42833   0.67   0.761
+fidelitymem_L1_gate:content   5   0.636   0.594  0.431  0.467     3821    1.60    2.83    192142   0.05   1.000
+fidelitymem_L2_gate:content   5   0.636   0.594  0.431  0.467     3821    1.70    3.06    192142   0.05   1.000
+fidelitymem_L3_gate:content   5   0.636   0.594  0.431  0.467     3821    1.67    3.26    192142   0.05   1.000
+fidelitymem_L1_nogate         5   0.598   0.559  0.403  0.437     2615    1.70    2.98    125075   0.62   0.941
+fidelitymem_L2_nogate         5   0.486   0.450  0.341  0.362     1237    1.37    2.40     41831   0.68   0.765
+fidelitymem_L3_nogate         5   0.378   0.350  0.251  0.271     2359    1.42    2.44     26114   2.70   0.595
+fidelitymem_ctrl:self(L3/c)   5   0.846   0.806  0.728  0.743     3677    0.44    0.75    192142   0.05   1.332
+fidelitymem_ctrl:qlog(L3/c)   5   0.748   0.705  0.598  0.620     3693    0.70    1.10    192142   0.00   1.176
+[adapter] seed 2: trained on 1038 pairs in 54s
+[timing] fixed_window: 0.2s
+[timing] bm25: 0.7s
+[timing] vector: 2.7s
+[timing] bm25+vector_rrf: 2.8s
+[timing] summary_L3+bm25: 2.4s
+[timing] window_trie: 4.3s
+[timing] memgpt_style: 0.6s
+[timing] mem0_style: 14.4s
+[timing] zep_style: 2.1s
+[timing] amem_style: 0.6s
+[timing] hipporag_style: 2.4s
+[timing] fidelitymem_L0_raw: 4.1s
+[timing] recompress L1/facts: 3.3s
+[timing] fidelitymem_L1_gate:facts: 3.3s
+[timing] recompress L2/facts: 0.6s
+[timing] fidelitymem_L2_gate:facts: 2.6s
+[timing] recompress L3/facts: 3.5s
+[timing] fidelitymem_L3_gate:facts: 2.8s
+[timing] recompress L1/content: 3.4s
+[timing] fidelitymem_L1_gate:content: 2.9s
+[timing] recompress L2/content: 3.8s
+[timing] fidelitymem_L2_gate:content: 2.5s
+[timing] recompress L3/content: 5.2s
+[timing] fidelitymem_L3_gate:content: 2.5s
+[timing] controller:self: 110.5s
+[controller:self] {'version': 1, 'config': {'compression_level': 3, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical', 'trie'), 'gate_profile': 'facts'}, 'rejected_candidates': 0}
+[timing] controller:qlog: 111.7s
+[controller:qlog] {'version': 1, 'config': {'compression_level': 1, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical', 'vector'), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+[fidelitymem locomo] ingest_s=4.7 memories=272 backoffs=1 controller={'version': 1, 'config': {'compression_level': 1, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical', 'vector'), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+
+### seed 2
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+fixed_window                  5   0.019   0.016  0.008  0.009     3275    0.00    0.00    195165   0.00     -  
+bm25                          5   0.862   0.822  0.768  0.776     3707    0.12    0.26    195165   0.00     -  
+vector                        5   0.472   0.442  0.364  0.381     3656    0.10    0.21    195165   0.00     -  
+bm25+vector_rrf               5   0.766   0.728  0.619  0.640     3749    0.24    0.38    195165   0.00     -  
+summary_L3+bm25               5   0.425   0.396  0.334  0.345      505    0.03    0.12     26114   0.00     -  
+window+trie                   5   0.658   0.628  0.564  0.577     3884    0.16    0.42    195165   0.00     -  
+memgpt_style                  5   0.442   0.413  0.196  0.254     3538    0.10    0.20    195165   0.00     -  
+mem0_style                    5   0.290   0.268  0.216  0.226     3780    7.88   11.90     27036   0.00     -  
+zep_style                     5   0.730   0.689  0.546  0.578     3747    0.77    1.42    195165   0.00     -  
+amem_style                    5   0.472   0.442  0.364  0.381     3656    0.15    0.23    195165   0.00     -  
+hipporag_style                5   0.456   0.424  0.338  0.356     3709    1.07    2.13    195165   0.00     -  
+fidelitymem_L0_raw            5   0.645   0.606  0.445  0.480     3790    1.90    2.97    195165   0.00     -  
+fidelitymem_L1_gate:facts     5   0.599   0.562  0.407  0.442     2624    1.59    2.54    127833   0.64   0.929
+fidelitymem_L2_gate:facts     5   0.486   0.454  0.336  0.362     1253    1.39    2.43     42667   0.70   0.754
+fidelitymem_L3_gate:facts     5   0.490   0.458  0.334  0.361     1256    1.38    2.42     42833   0.70   0.760
+fidelitymem_L1_gate:content   5   0.643   0.603  0.444  0.479     3756    1.62    2.71    192142   0.06   0.997
+fidelitymem_L2_gate:content   5   0.643   0.603  0.444  0.479     3756    1.61    2.73    192142   0.06   0.997
+fidelitymem_L3_gate:content   5   0.643   0.603  0.444  0.479     3756    1.59    2.63    192142   0.06   0.997
+fidelitymem_L1_nogate         5   0.600   0.563  0.404  0.441     2592    1.75    3.12    125075   0.64   0.930
+fidelitymem_L2_nogate         5   0.485   0.452  0.337  0.362     1239    1.34    2.35     41831   0.70   0.752
+fidelitymem_L3_nogate         5   0.386   0.354  0.252  0.276     2294    1.35    2.45     26114   2.69   0.598
+fidelitymem_ctrl:self(L3/f)   5   0.550   0.517  0.453  0.464      838    0.46    0.84     42833   0.00   0.853
+fidelitymem_ctrl:qlog(L1/c)   5   0.758   0.717  0.596  0.620     3690    0.73    1.15    192142   0.00   1.175
+
+### locomo: mean over seeds [0, 1, 2] (± = 95% CI)
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+fixed_window                  5   0.018 ±0.006   0.014  0.010  0.011     3307    0.00    0.00    195165   0.00     -  
+bm25                          5   0.858 ±0.009   0.817  0.764  0.772     3707    0.11    0.24    195165   0.00     -  
+vector                        5   0.484 ±0.030   0.452  0.375  0.391     3679    0.10    0.21    195165   0.00     -  
+bm25+vector_rrf               5   0.765 ±0.013   0.723  0.621  0.641     3756    0.27    0.48    195165   0.00     -  
+summary_L3+bm25               5   0.425 ±0.003   0.395  0.339  0.348      506    0.03    0.13     26114   0.00     -  
+window+trie                   5   0.656 ±0.004   0.627  0.563  0.576     3846    0.13    0.34    195165   0.00     -  
+memgpt_style                  5   0.451 ±0.023   0.421  0.203  0.261     3543    0.10    0.18    195165   0.00     -  
+mem0_style                    5   0.299 ±0.036   0.276  0.228  0.237     3781    9.19   11.96     27036   0.00     -  
+zep_style                     5   0.730 ±0.014   0.688  0.549  0.579     3755    0.75    1.42    195165   0.00     -  
+amem_style                    5   0.484 ±0.030   0.452  0.375  0.391     3679    0.11    0.17    195165   0.00     -  
+hipporag_style                5   0.465 ±0.019   0.433  0.348  0.365     3702    1.07    2.02    195165   0.00     -  
+fidelitymem_L0_raw            5   0.638 ±0.016   0.596  0.442  0.475     3822    1.79    2.83    195165   0.00     -  
+fidelitymem_L1_gate:facts     5   0.596 ±0.015   0.556  0.409  0.441     2638    1.61    2.61    127833   0.63   0.934
+fidelitymem_L2_gate:facts     5   0.487 ±0.004   0.452  0.342  0.365     1258    1.38    2.35     42667   0.69   0.763
+fidelitymem_L3_gate:facts     5   0.486 ±0.009   0.451  0.337  0.361     1255    1.34    2.26     42833   0.69   0.762
+fidelitymem_L1_gate:content   5   0.637 ±0.014   0.595  0.441  0.474     3784    1.57    2.65    192142   0.05   0.999
+fidelitymem_L2_gate:content   5   0.637 ±0.014   0.595  0.441  0.474     3784    1.60    2.74    192142   0.05   0.999
+fidelitymem_L3_gate:content   5   0.637 ±0.014   0.595  0.441  0.474     3784    1.60    2.77    192142   0.05   0.999
+fidelitymem_L1_nogate         5   0.593 ±0.027   0.554  0.407  0.439     2601    1.68    2.89    125075   0.63   0.929
+fidelitymem_L2_nogate         5   0.487 ±0.005   0.451  0.341  0.364     1235    1.39    2.59     41831   0.69   0.763
+fidelitymem_L3_nogate         5   0.381 ±0.011   0.350  0.253  0.274     2324    1.36    2.39     26114   2.69   0.597
+fidelitymem_ctrl:self(L0/f/L3/c/L3/f)  5   0.749 ±0.427   0.709  0.637  0.650     2737    0.44    0.74    143380   0.02   1.176
+fidelitymem_ctrl:qlog(L1/c/L1/f/L3/c)  5   0.742 ±0.048   0.699  0.586  0.609     3313    0.70    1.09    170705   0.14   1.163
+
+per-type Recall@K and answer containment:
+  fixed_window               adversarial=0.022, answer_containment=0.318, multi_hop=0.019, open_domain=0.012, single_hop=0.016, temporal=0.016
+  bm25                       adversarial=0.932, answer_containment=0.803, multi_hop=0.547, open_domain=0.568, single_hop=0.944, temporal=0.883
+  vector                     adversarial=0.555, answer_containment=0.624, multi_hop=0.285, open_domain=0.262, single_hop=0.566, temporal=0.411
+  bm25+vector_rrf            adversarial=0.857, answer_containment=0.765, multi_hop=0.449, open_domain=0.492, single_hop=0.850, temporal=0.769
+  summary_L3+bm25            adversarial=0.437, answer_containment=0.339, multi_hop=0.245, open_domain=0.286, single_hop=0.473, temporal=0.479
+  window+trie                adversarial=0.748, multi_hop=0.246, open_domain=0.320, single_hop=0.777, temporal=0.666
+  memgpt_style               adversarial=0.527, multi_hop=0.243, open_domain=0.238, single_hop=0.535, temporal=0.371
+  mem0_style                 adversarial=0.294, multi_hop=0.163, open_domain=0.271, single_hop=0.331, temporal=0.346
+  zep_style                  adversarial=0.809, multi_hop=0.413, open_domain=0.482, single_hop=0.815, temporal=0.745
+  amem_style                 adversarial=0.555, multi_hop=0.285, open_domain=0.262, single_hop=0.566, temporal=0.411
+  hipporag_style             adversarial=0.521, multi_hop=0.251, open_domain=0.359, single_hop=0.517, temporal=0.466
+  fidelitymem_L0_raw         adversarial=0.728, answer_containment=0.722, multi_hop=0.408, open_domain=0.487, single_hop=0.721, temporal=0.542
+  fidelitymem_L1_gate:facts  adversarial=0.659, answer_containment=0.643, multi_hop=0.372, open_domain=0.463, single_hop=0.682, temporal=0.519
+  fidelitymem_L2_gate:facts  adversarial=0.511, answer_containment=0.502, multi_hop=0.297, open_domain=0.378, single_hop=0.545, temporal=0.498
+  fidelitymem_L3_gate:facts  adversarial=0.508, answer_containment=0.500, multi_hop=0.300, open_domain=0.376, single_hop=0.541, temporal=0.506
+  fidelitymem_L1_gate:content adversarial=0.725, answer_containment=0.719, multi_hop=0.410, open_domain=0.473, single_hop=0.721, temporal=0.545
+  fidelitymem_L2_gate:content adversarial=0.725, answer_containment=0.719, multi_hop=0.410, open_domain=0.473, single_hop=0.721, temporal=0.545
+  fidelitymem_L3_gate:content adversarial=0.725, answer_containment=0.719, multi_hop=0.410, open_domain=0.473, single_hop=0.721, temporal=0.545
+  fidelitymem_L1_nogate      adversarial=0.656, answer_containment=0.637, multi_hop=0.371, open_domain=0.451, single_hop=0.678, temporal=0.519
+  fidelitymem_L2_nogate      adversarial=0.510, answer_containment=0.501, multi_hop=0.300, open_domain=0.379, single_hop=0.544, temporal=0.500
+  fidelitymem_L3_nogate      adversarial=0.392, answer_containment=0.520, multi_hop=0.243, open_domain=0.297, single_hop=0.438, temporal=0.362
+  fidelitymem_ctrl:self(L0/f/L3/c/L3/f) adversarial=0.790, answer_containment=0.685, multi_hop=0.458, open_domain=0.512, single_hop=0.825, temporal=0.816
+  fidelitymem_ctrl:qlog(L1/c/L1/f/L3/c) adversarial=0.829, answer_containment=0.733, multi_hop=0.432, open_domain=0.495, single_hop=0.830, temporal=0.731
+DONE
