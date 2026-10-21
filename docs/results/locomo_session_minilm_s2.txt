@@ -1,3 +1,4 @@
 dataset=locomo episodes=272 questions=1986 embedder=onnx:all-MiniLM-L6-v2-onnx seeds=[2]
 [timing] fixed_window: 0.4s
 [timing] bm25: 3.9s
+[timing] vector: 90.4s

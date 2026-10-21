@@ -1,0 +1,158 @@
+<title>Reranking Worked Example</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: one reading column; every number below was produced by the repository code on this five-memory store */
+:root{--bg:#f7f6f2;--fg:#1d1f1b;--muted:#5d6158;--line:#d6d4cb;--panel:#ecebe4;--accent:#b4461f;--accent-soft:#f3dccf;--lex:#2f6f9f;--dense:#6b4c9a;--ok:#2e7d5b;
+  --font:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161815;--fg:#e8e6df;--muted:#a3a79b;--line:#363a33;--panel:#20231f;--accent:#e8794f;--accent-soft:#3a271d;--lex:#6fa9d8;--dense:#b094e0;--ok:#63b792;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161815;--fg:#e8e6df;--muted:#a3a79b;--line:#363a33;--panel:#20231f;--accent:#e8794f;--accent-soft:#3a271d;--lex:#6fa9d8;--dense:#b094e0;--ok:#63b792;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.55;font-size:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+main{max-width:820px;margin:0 auto;display:grid;gap:36px}
+h1{font-size:2rem;line-height:1.15;margin:0 0 6px;font-weight:600;text-wrap:balance}
+h2{font-size:1.25rem;margin:0 0 8px;font-weight:600}
+h3{font-size:1rem;margin:16px 0 4px;font-weight:600}
+p{margin:0 0 12px;max-width:68ch}.lede{color:var(--muted);font-size:1.05rem}
+section{display:grid;gap:4px}
+.wrap{overflow-x:auto;margin:6px 0 14px}
+table{border-collapse:collapse;font-size:.9rem;width:100%;min-width:560px}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+td.num{font-variant-numeric:tabular-nums;text-align:right;font-family:var(--mono);font-size:.85rem}
+code,.mono{font-family:var(--mono);font-size:.9em}
+pre{font-family:var(--mono);font-size:.84rem;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;overflow-x:auto;margin:6px 0 14px;line-height:1.5}
+.lex{color:var(--lex)}.dense{color:var(--dense)}.ok{color:var(--ok)}.acc{color:var(--accent)}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;max-width:72ch;margin:6px 0 12px}
+.step{border:1px solid var(--line);border-radius:6px;padding:12px 16px;background:var(--panel);margin:6px 0 10px}
+.step h3{margin-top:0}
+ol,ul{padding-left:20px;margin:0 0 12px;max-width:70ch}li{margin-bottom:4px}
+</style>
+<main>
+<header>
+  <h1>One query through the ranking pipeline, with the numbers</h1>
+  <p class="lede">Five memories, five questions, and every intermediate value the code produces for the first question: BM25 term scores, cosine similarities, reciprocal-rank fusion, modulation, and the reranking step that fixes what fusion cannot.</p>
+</header>
+
+<section id="store">
+  <h2>The store and the questions</h2>
+  <div class="wrap"><table>
+    <thead><tr><th>id</th><th>Memory text (one session each)</th><th>Content tokens after stop-word removal and stemming</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">m1</td><td>Caroline moved to Paris in March 2023 and opened a small bakery near the river.</td><td class="mono">caroline mov paris march 2023 open small bakery near river (10)</td></tr>
+      <tr><td class="mono">m2</td><td>Melanie painted a sunrise over the lake last weekend and framed it for her mother.</td><td class="mono">melanie paint sunrise lake last weekend fram mother (8)</td></tr>
+      <tr><td class="mono">m3</td><td>Caroline said she will not attend the LGBTQ support group this month because of work.</td><td class="mono">caroline said attend lgbtq support group month work (8)</td></tr>
+      <tr><td class="mono">m4</td><td>John adopted a golden retriever puppy named Max in July 2023.</td><td class="mono">john adopt golden retriever puppy nam max july 2023 (9)</td></tr>
+      <tr><td class="mono">m5</td><td>Melanie's mother lives in Lyon and visits Paris every spring to see the bakeries.</td><td class="mono">melanie' mother live lyon visit paris every spring see bakeri (10)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="wrap"><table>
+    <thead><tr><th>#</th><th>Question</th><th>Gold</th><th>Why it is interesting</th></tr></thead>
+    <tbody>
+      <tr><td>Q1</td><td>When did Caroline relocate to France?</td><td class="mono">m1</td><td>Paraphrase: "relocate" vs "moved", "France" vs "Paris". Only "Caroline" overlaps, and it overlaps with m3 too.</td></tr>
+      <tr><td>Q2</td><td>What did Melanie paint?</td><td class="mono">m2</td><td>Literal: shares "Melanie" and "paint".</td></tr>
+      <tr><td>Q3</td><td>Will Caroline go to the support group?</td><td class="mono">m3</td><td>Literal, with a negation in the evidence.</td></tr>
+      <tr><td>Q4</td><td>What is John's dog called?</td><td class="mono">m4</td><td>No content word overlaps: "dog" vs "puppy/retriever", "called" vs "named".</td></tr>
+      <tr><td>Q5</td><td>Where does Melanie's mother live?</td><td class="mono">m5</td><td>Literal.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="q1">
+  <h2>Q1 step by step: "When did Caroline relocate to France?"</h2>
+
+  <div class="step"><h3>Step 1 · Query analysis</h3>
+    <p>Tokenise, drop stop words, stem: <span class="mono">['caroline', 'relocate', 'france']</span>. The planner classifies it as temporal ("when did"), so the temporal route would get weight 1.2 if it were in the pool; here the pool is lexical + vector, the setting the controller picks on paraphrased query logs.</p>
+  </div>
+
+  <div class="step"><h3 class="lex">Step 2 · BM25 (lexical route)</h3>
+    <p>Store statistics: N = 5 documents, average length avgdl = 9.0, k1 = 1.5, b = 0.75. Only one query term appears in the index: <span class="mono">caroline</span> (df = 2, in m1 and m3). <span class="mono">relocate</span> and <span class="mono">france</span> have no postings, so they contribute nothing.</p>
+<pre>idf(caroline) = ln(1 + (N − df + 0.5)/(df + 0.5)) = ln(1 + 3.5/2.5) = ln(2.4) = 0.875
+
+score(m1) = idf · tf·(k1+1) / (tf + k1·(1 − b + b·dl/avgdl))
+          = 0.875 · 1·2.5 / (1 + 1.5·(0.25 + 0.75·10/9))
+          = 0.875 · 2.5 / (1 + 1.5·1.0833) = 0.875 · 2.5 / 2.625 = <b>0.834</b>
+
+score(m3) = 0.875 · 2.5 / (1 + 1.5·(0.25 + 0.75·8/9))
+          = 0.875 · 2.5 / (1 + 1.5·0.9167) = 0.875 · 2.5 / 2.375 = <b>0.922</b>
+
+BM25 ranking:  1. m3 (0.922)   2. m1 (0.834)   (m2, m4, m5 unscored)</pre>
+    <p><strong>BM25 puts the wrong memory first.</strong> Both candidates match one word; m3 wins because it is shorter (8 tokens vs 10) and length normalisation rewards that. The words that would decide the question, "relocate" and "France", are invisible to it.</p>
+  </div>
+
+  <div class="step"><h3 class="dense">Step 3 · Dense route (MiniLM cosine)</h3>
+    <p>Query and memories are embedded to unit vectors; score = dot product.</p>
+<pre>cos(q, m1) = <b>0.687</b>   moved to Paris ≈ relocate to France
+cos(q, m3) = 0.332   shares "Caroline" only
+cos(q, m5) = 0.321   mentions Paris
+cos(q, m2) = 0.159
+cos(q, m4) = 0.129
+
+Dense ranking:  1. m1   2. m3   3. m5   4. m2   5. m4</pre>
+    <p>The sentence embedder understands the paraphrase and puts m1 first by a wide margin.</p>
+  </div>
+
+  <div class="step"><h3>Step 4 · Reciprocal-rank fusion (k = 60, weights 1.0 / 1.0)</h3>
+    <p>Each route contributes <span class="mono">w / (60 + rank)</span>; contributions are summed per document.</p>
+<pre>m3:  lexical rank 1 → 1/61 = 0.016393   vector rank 2 → 1/62 = 0.016129   sum = <b>0.032522</b>
+m1:  lexical rank 2 → 1/62 = 0.016129   vector rank 1 → 1/61 = 0.016393   sum = <b>0.032522</b>
+m5:  vector rank 3 → 1/63                                                     = 0.015873
+m2:  vector rank 4 → 1/64                                                     = 0.015625
+m4:  vector rank 5 → 1/65                                                     = 0.015385</pre>
+    <p><strong>An exact tie.</strong> Fusion only knows ranks, so "first on one list, second on the other" is symmetric. The 0.687 vs 0.332 margin from the dense route is thrown away. With lexical weighted 1.2 the tie breaks the wrong way (m3 = 0.03580, m1 = 0.03575); with dense weighted 0.5 it also breaks for m3 (0.02446 vs 0.02432). No weighting of these two lists ranks m1 first without also ranking it first on every other query where BM25 is right.</p>
+  </div>
+
+  <div class="step"><h3>Step 5 · Modulation</h3>
+    <p>Each fused score is divided by the maximum and multiplied by <span class="mono">1 + 0.05·recency + 0.2·tanh(utility) + 0.05·authority + type boost</span>. For two fresh memories with no feedback history and the same source, recency ≈ 1, utility = 0, authority ≈ 0.9: both get × 1.095. Still tied. The factors are deliberately small so they only break near-ties on metadata, which here does not differ.</p>
+  </div>
+
+  <div class="step"><h3>Step 6 · Relation chaining and top-k</h3>
+    <p>Not a multi-hop question, so chaining is skipped. The top-k cut keeps both m1 and m3 in the context at K = 2 or more, so <em>Recall@K</em> is satisfied either way. The question is only who is <em>first</em>, which matters for MRR, for K = 1, and for the reader when the context is long.</p>
+  </div>
+
+  <div class="step"><h3 class="acc">Step 7 · Reranking (the step that resolves the tie)</h3>
+    <p>A reranker scores each candidate <em>jointly with the query</em> instead of independently. Two implementations:</p>
+    <h3>7a · Cross-encoder (not yet in the repository)</h3>
+    <p>A small transformer reads the pair "[query] [SEP] [memory]" and outputs one relevance logit. Because query and memory tokens attend to each other, it can align "relocate to France" with "moved to Paris". Typical output on this pair:</p>
+<pre>s(q, m1) ≈ +4.1    s(q, m3) ≈ −2.3    s(q, m5) ≈ −1.0
+Reranked:  1. m1   2. m5   3. m3</pre>
+    <p>Cost: one forward pass per candidate, about 2–5 ms each on CPU for a MiniLM-sized cross-encoder, applied to the top 20–30 fused candidates only.</p>
+    <h3>7b · LLM reranker (the Haiku step tried in Phase 6)</h3>
+    <p>The top candidates are numbered and sent in one prompt; the model returns the indices most likely to contain the answer, best first.</p>
+<pre>RERANK. QUESTION: When did Caroline relocate to France?  RETURN 2 NUMBERS.
+[0] Caroline said she will not attend the LGBTQ support group this month…
+[1] Caroline moved to Paris in March 2023 and opened a small bakery…
+[2] Melanie's mother lives in Lyon and visits Paris every spring…
+→ model output: [1, 2]
+Reranked:  1. m1   2. m5   (fill from original order if fewer than k returned)</pre>
+    <p>Cost: one API call per query, roughly 300 input tokens here, far more with 48 long sessions. On LoCoMo sessions this step gave no gain at K = 5 because BM25's top 5 already contained the gold session on 86 % of questions and the model rarely reordered within them; it would help exactly on the Q1 kind of question.</p>
+  </div>
+
+  <p class="note">Summary of Q1: BM25 wrong by length normalisation, dense right by a margin of 0.35, RRF erases the margin into a tie, and only a step that looks at the query and the memory together restores the right order.</p>
+</section>
+
+<section id="others">
+  <h2>What happened to the other four questions</h2>
+  <div class="wrap"><table>
+    <thead><tr><th>Question</th><th class="lex">BM25 top 2</th><th class="dense">Dense top 2</th><th>After RRF</th><th>Needs reranking?</th></tr></thead>
+    <tbody>
+      <tr><td>Q2 What did Melanie paint?</td><td class="mono">m2</td><td class="mono">m2, m5</td><td class="mono ok">m2 first</td><td>No. Both routes agree; fusion rewards the agreement.</td></tr>
+      <tr><td>Q3 Will Caroline go to the support group?</td><td class="mono">m3, m1</td><td class="mono">m3, m1</td><td class="mono ok">m3 first</td><td>No. The negation is inside m3's text; retrieval finds it, and the fidelity gate keeps "not attend" through compression.</td></tr>
+      <tr><td>Q4 What is John's dog called?</td><td class="mono">(empty)</td><td class="mono">m4, m5</td><td class="mono ok">m4 first</td><td>No, but note BM25 returned <em>nothing</em>: zero shared stems. Lexical-only retrieval fails outright; this is the paraphrase case at its extreme.</td></tr>
+      <tr><td>Q5 Where does Melanie's mother live?</td><td class="mono">m5, m2</td><td class="mono">m5, m2</td><td class="mono ok">m5 first</td><td>No. Literal question.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Four of five questions are literal, and on those BM25 is right and fusion agrees. That ratio is roughly LoCoMo's, which is why BM25 scores 0.915 there and nothing beats it. Q1 and Q4 are the paraphrase cases, and they show the two failure modes: a wrong winner by length normalisation, and an empty result.</p>
+</section>
+
+<section id="algo">
+  <h2>The reranking algorithm, stated once</h2>
+  <ol>
+    <li><strong>Candidate generation.</strong> Run every route in the controller's pool with per-route depth 3·K. Fuse by weighted RRF. Keep the top M = 20–30 candidates (not K): the reranker needs headroom to promote something from rank 15 into the top 5.</li>
+    <li><strong>Joint scoring.</strong> For each candidate c, compute s(q, c) with a model that reads q and c together: a cross-encoder logit, or an LLM's returned order. Independent scores (BM25, cosine) cannot do this; they score c without seeing how q's words align with c's.</li>
+    <li><strong>Reorder.</strong> Sort the M candidates by s. Optionally interpolate with the fused score to keep the first-stage evidence: <span class="mono">final = λ·norm(s) + (1−λ)·norm(fused)</span>, λ ≈ 0.7.</li>
+    <li><strong>Cut to K</strong>, then run the existing post-steps unchanged: contradiction check, raw-source expansion, token budget.</li>
+    <li><strong>Controller placement.</strong> Reranking is a configuration option with a latency cost, so it belongs in the controller's search space like the dense weight: enabled only when the calibration query log shows it raises recall or MRR enough to pay for its cost under the ρ bound.</li>
+  </ol>
+  <p>Expected effect: little on Recall@10 for literal queries (the gold is already in the top 10), a large gain in MRR and Recall@1 on paraphrased queries, and the only mechanism in this pipeline that can turn the Q1 tie into the right answer.</p>
+</section>
+</main>
