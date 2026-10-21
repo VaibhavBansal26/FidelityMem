@@ -29,6 +29,7 @@ class MemoryPolicy(BaseModel):
     beta_latency: float = 1.0
     gamma_tokens: float = 1.0
     delta_noise: float = 0.5
+    lambda_recall: float = 1.0  # cost charged per unit of recall retention lost, even inside the bound
 
     def mode_defaults(self) -> dict:
         if self.mode == Mode.FAST:

@@ -52,7 +52,16 @@ class Measurement:
     noise: float  # 1 - precision proxy
 
     def cost(self, p: MemoryPolicy) -> float:
-        return p.alpha_storage * self.storage_ratio + p.beta_latency * self.latency_ms / 100.0 + p.gamma_tokens * self.tokens / 1000.0 + p.delta_noise * self.noise
+        """Operational cost plus a charge for recall lost relative to the raw reference.
+        The bound is a hard constraint; this term makes recall loss *inside* the bound
+        something a candidate must pay for with real savings, rather than free."""
+        return (
+            p.alpha_storage * self.storage_ratio
+            + p.beta_latency * self.latency_ms / 100.0
+            + p.gamma_tokens * self.tokens / 1000.0
+            + p.delta_noise * self.noise
+            + p.lambda_recall * max(0.0, 1.0 - self.retention)
+        )
 
     def feasible(self, p: MemoryPolicy) -> bool:
         return self.retention >= p.minimum_recall_retention and self.contradiction_rate <= p.maximum_contradiction_rate
