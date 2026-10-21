@@ -1,0 +1,5 @@
+episodes=272 questions=1982 embedder=onnx:all-MiniLM-L6-v2-onnx embed=159s
+[paraphrase rate=0.5] 1615/1982 questions changed, 3102/6913 eligible words replaced
+    'When did Caroline go to the LGBTQ support group?' -> 'When did Caroline go to the LGBTQ support group?'
+    'When did Melanie paint a sunrise?' -> 'When did Melanie pigment a dawn?'
+    'What fields would Caroline be likely to pursue in her educaton?' -> 'What fields would Caroline be probable to pursue in her educaton?'
