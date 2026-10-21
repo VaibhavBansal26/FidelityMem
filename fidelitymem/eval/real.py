@@ -96,29 +96,38 @@ def _baseline_real(name: str, bench: Benchmark, k: int, mode: str) -> Result:
     return r
 
 
-def run_once(bench: Benchmark, k: int, rho: float, reader=None, judge=None, levels=(1, 2, 3), with_controller: bool = True, calib: Benchmark | None = None) -> list[Result]:
+def run_once(bench: Benchmark, k: int, rho: float, reader=None, judge=None, levels=(1, 2, 3), with_controller: bool = True, calib: Benchmark | None = None, fast_controller: bool = False) -> list[Result]:
     """`calib` holds questions (with gold) the controller may calibrate on; they are never
     scored. `bench` is the test split."""
     from ..controller import ProbeQuery
     from .competitors import ALL as COMPETITORS
 
     results: list[Result] = []
-    results.append(_baseline_real("fixed_window", bench, k, "window"))
-    results.append(_baseline_real("bm25", bench, k, "bm25"))
-    results.append(_baseline_real("vector", bench, k, "vector"))
-    results.append(_baseline_real("bm25+vector_rrf", bench, k, "hybrid"))
-    results.append(_baseline_real("summary_L3+bm25", bench, k, "summary"))
+
+    def timed(label, fn):
+        t0 = time.perf_counter()
+        r = fn()
+        print(f"[timing] {label}: {time.perf_counter() - t0:.1f}s", flush=True)
+        return r
+
+    for name, mode in (("fixed_window", "window"), ("bm25", "bm25"), ("vector", "vector"), ("bm25+vector_rrf", "hybrid"), ("summary_L3+bm25", "summary")):
+        results.append(timed(name, lambda: _baseline_real(name, bench, k, mode)))
     for fn in COMPETITORS:
-        results.append(fn(bench, k))
+        results.append(timed(fn.__name__, lambda: fn(bench, k)))
     pol = MemoryPolicy(minimum_recall_retention=rho, mode=Mode.BALANCED, max_context_tokens=100_000)
     fm, ep_ids, ingest_s = _ingest(bench, pol)
+    if fast_controller:
+        fm.controller.search_space["top_k"] = [k]
+        fm.controller.search_space["expand_budget"] = [0, 2]
     _set_cfg(fm, 0, k, True)
-    raw = _measure_real("fidelitymem_L0_raw", fm, bench, ep_ids, k, reader, judge)
+    raw = timed("fidelitymem_L0_raw", lambda: _measure_real("fidelitymem_L0_raw", fm, bench, ep_ids, k, reader, judge))
     results.append(raw)
     for profile in ("facts", "content"):
         for lvl in levels:
+            t0 = time.perf_counter()
             _set_cfg(fm, lvl, k, True, profile)
-            r = _measure_real(f"fidelitymem_L{lvl}_gate:{profile}", fm, bench, ep_ids, k, reader, judge)
+            print(f"[timing] recompress L{lvl}/{profile}: {time.perf_counter() - t0:.1f}s", flush=True)
+            r = timed(f"fidelitymem_L{lvl}_gate:{profile}", lambda: _measure_real(f"fidelitymem_L{lvl}_gate:{profile}", fm, bench, ep_ids, k, reader, judge))
             r.retention = r.recall / raw.recall if raw.recall else 1.0
             results.append(r)
     # gate off: same levels, compressor never backs off
@@ -137,8 +146,12 @@ def run_once(bench: Benchmark, k: int, rho: float, reader=None, judge=None, leve
             variants.append(("qlog", [ProbeQuery(it.query, [ep_ids[i] for i in calib.gold_indices(it) if i in ep_ids]) for it in calib.items if calib.gold_indices(it)]))
         for src, probes in variants:
             _set_cfg(fm, 0, k, True)
+            space = fm.controller.search_space
             fm.controller.__init__(fm.policy)  # fresh search per probe source
+            fm.controller.search_space = space
+            t0 = time.perf_counter()
             fm.optimise(n_probes=120, probes=probes)
+            print(f"[timing] controller:{src}: {time.perf_counter() - t0:.1f}s", flush=True)
             cfg = fm.controller.current
             fm.controller.current = cfg.__class__(compression_level=cfg.compression_level, top_k=k, expand_budget=cfg.expand_budget, routes=cfg.routes, gate_profile=cfg.gate_profile)
             r = _measure_real(f"fidelitymem_ctrl:{src}(L{cfg.compression_level}/{cfg.gate_profile[:1]})", fm, bench, ep_ids, k, reader, judge)
@@ -163,6 +176,7 @@ def main(argv=None) -> None:
     ap.add_argument("--no-controller", action="store_true")
     ap.add_argument("--session-level", action="store_true", help="LoCoMo: one episode per session instead of per turn")
     ap.add_argument("--calib-frac", type=float, default=0.3, help="fraction of questions held out as the controller's query log")
+    ap.add_argument("--fast-controller", action="store_true", help="controller search with depth fixed at K and expansion in {0,2}")
     ap.add_argument("--out", default=None)
     a = ap.parse_args(argv)
 
@@ -198,7 +212,7 @@ def main(argv=None) -> None:
             cut = int(len(items) * a.calib_frac)
             calib = Benchmark(bench.episodes, items[:cut], {}, name=bench.name + "-calib")
             bench = Benchmark(bench.episodes, items[cut:], {}, name=bench.name)
-        per_seed.append(run_once(bench, a.k, a.rho, reader, judge, with_controller=not a.no_controller, calib=calib))
+        per_seed.append(run_once(bench, a.k, a.rho, reader, judge, with_controller=not a.no_controller, calib=calib, fast_controller=a.fast_controller))
         print(f"\n### seed {sd}\n{format_table(per_seed[-1])}", flush=True)
     agg = aggregate(per_seed) if len(per_seed) > 1 else per_seed[0]
     print(f"\n### {real.name}: mean over seeds {a.seeds} (± = 95% CI)\n{format_table(agg)}", flush=True)
