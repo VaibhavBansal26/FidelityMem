@@ -3,3 +3,16 @@ episodes=272 questions=1982 embedder=onnx:all-MiniLM-L6-v2-onnx embed=159s
     'When did Caroline go to the LGBTQ support group?' -> 'When did Caroline go to the LGBTQ support group?'
     'When did Melanie paint a sunrise?' -> 'When did Melanie pigment a dawn?'
     'What fields would Caroline be likely to pursue in her educaton?' -> 'What fields would Caroline be probable to pursue in her educaton?'
+[paraphrase rate=1.0] 1933/1982 questions changed, 6267/6913 eligible words replaced
+    'When did Caroline go to the LGBTQ support group?' -> 'When did Caroline go to the LGBTQ reinforcement radical?'
+    'When did Melanie paint a sunrise?' -> 'When did Melanie pigment a dawn?'
+    'What fields would Caroline be likely to pursue in her educaton?' -> 'What battlefield would Caroline be probable to prosecute in her educaton?'
+
+### LoCoMo sessions, questions: original
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+bm25                         10   0.915   0.875  0.772  0.794     7426    0.15    0.32    195165   0.00     -  
+bm25+lexicon(m3,a0.4)        10   0.913   0.872  0.747  0.775     7532    0.23    0.43    195165   0.00     -  
+dense                        10   0.752   0.711  0.464  0.519     7305   23.45   34.04    195165   0.00     -  
+rrf lex1.0+vec1.0            10   0.899   0.857  0.661  0.704     7457    0.23    0.40    195165   0.00     -  
+rrf lex1.2+vec1.0            10   0.903   0.862  0.666  0.710     7470    0.23    0.44    195165   0.00     -  
+rrf lex1.2+vec0.5            10   0.908   0.868  0.707  0.743     7477    0.23    0.48    195165   0.00     -  
