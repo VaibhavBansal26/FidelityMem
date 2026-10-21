@@ -112,3 +112,6 @@ fidelitymem_ctrl:qlog(L1/c)  10   0.912   0.875  0.736  0.767     7328    0.83  
 [timing] fixed_window: 0.4s
 [timing] bm25: 1.4s
 [timing] vector: 216.3s
+[timing] bm25+vector_rrf: 226.9s
+[timing] summary_L3+bm25: 3.0s
+[timing] window_trie: 4.9s
