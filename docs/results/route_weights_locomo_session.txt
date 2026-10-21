@@ -15,3 +15,4 @@ dataset=locomo episodes=272 questions=1986 embedder=onnx:all-MiniLM-L6-v2-onnx s
 [seed 1] fm:lex1.2+vec1.0             R@10=0.903 CR=0.862 MRR=0.655 (39s)
 [seed 1] fm:lex1.0+vec1.0             R@10=0.900 CR=0.858 MRR=0.647 (3s)
 [seed 1] fm:lex1.2+vec0.5             R@10=0.907 CR=0.866 MRR=0.692 (3s)
+[seed 1] fm:lex1.2+vec1.0+strie1.2    R@10=0.901 CR=0.859 MRR=0.706 (29s)
