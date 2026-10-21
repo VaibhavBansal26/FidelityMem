@@ -1,0 +1,43 @@
+phase6 dataset=locomo granularity=session questions=200 calib=594 K=5 mode=claude embedder=spacy:en_core_web_md
+[phase6] bm25: built in 0s
+[phase6] bm25: accuracy=0.000 recall@5=0.818 tokens/q=3806
+[phase6] fidelitymem controller: {'version': 1, 'config': {'compression_level': 2, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical',), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+[phase6] fidelitymem: built in 145s
+[phase6] fidelitymem: accuracy=0.000 recall@5=0.804 tokens/q=3743
+[phase6] rewrite/rerank API tokens: in=17215 out=13735 (claude-haiku-5-5)
+
+| System | accuracy | abstain | recall@K | tokens/q | p50 ms | est. cost / q |
+|---|---:|---:|---:|---:|---:|---:|
+| bm25+rewrite | 0.000 | 0.000 | 0.818 | 3806 | 917.79 | $0.0000 |
+| fidelitymem+rewrite | 0.000 | 0.000 | 0.804 | 3743 | 0.54 | $0.0000 |
+  bm25+rewrite by type: {}
+  fidelitymem+rewrite by type: {}
+phase6 dataset=locomo granularity=session questions=200 calib=594 K=5 mode=claude embedder=spacy:en_core_web_md
+[phase6] bm25: built in 0s
+[phase6] bm25: accuracy=0.000 recall@5=0.830 tokens/q=3793
+[phase6] fidelitymem controller: {'version': 1, 'config': {'compression_level': 3, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical',), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+[phase6] fidelitymem: built in 150s
+[phase6] fidelitymem: accuracy=0.000 recall@5=0.823 tokens/q=3777
+[phase6] rewrite/rerank API tokens: in=1795247 out=30189 (claude-haiku-5-5)
+
+| System | accuracy | abstain | recall@K | tokens/q | p50 ms | est. cost / q |
+|---|---:|---:|---:|---:|---:|---:|
+| bm25+rerank | 0.000 | 0.000 | 0.830 | 3793 | 949.41 | $0.0000 |
+| fidelitymem+rerank | 0.000 | 0.000 | 0.823 | 3777 | 937.06 | $0.0000 |
+  bm25+rerank by type: {}
+  fidelitymem+rerank by type: {}
+phase6 dataset=locomo granularity=session questions=200 calib=594 K=5 mode=claude embedder=spacy:en_core_web_md
+[phase6] bm25: built in 0s
+[phase6] bm25: accuracy=0.000 recall@5=0.808 tokens/q=3830
+[phase6] fidelitymem controller: {'version': 1, 'config': {'compression_level': 3, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical',), 'gate_profile': 'content'}, 'rejected_candidates': 0}
+[phase6] fidelitymem: built in 147s
+[phase6] fidelitymem: accuracy=0.000 recall@5=0.772 tokens/q=3835
+[phase6] rewrite/rerank API tokens: in=1819560 out=43518 (claude-haiku-5-5)
+
+| System | accuracy | abstain | recall@K | tokens/q | p50 ms | est. cost / q |
+|---|---:|---:|---:|---:|---:|---:|
+| bm25+rewrite+rerank | 0.000 | 0.000 | 0.808 | 3830 | 1928.56 | $0.0000 |
+| fidelitymem+rewrite+rerank | 0.000 | 0.000 | 0.772 | 3835 | 964.97 | $0.0000 |
+  bm25+rewrite+rerank by type: {}
+  fidelitymem+rewrite+rerank by type: {}
+DONE

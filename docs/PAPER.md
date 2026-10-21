@@ -409,6 +409,17 @@ The same evaluation with the Claude compressor and extractor at FidelityMem inge
 
 This is the first configuration in which compression pays on conversational data: 23 % fewer context tokens and 21 % lower reading cost per question, with accuracy 1.5 points below the extractive run and 3 below BM25, both inside the 200-question noise. Recall@5 is unchanged (0.814 vs 0.820), so the accuracy difference, if real, comes from what the summaries omit rather than from retrieval; the per-category profile is flat except open-domain, which has five questions. The one-off ingestion cost (about $3.5 at list prices for 272 sessions) is recovered after roughly 700 questions at the per-question saving.
 
+### 5.6c Query rewriting and LLM reranking (retrieval only, same 200 questions)
+
+Two LLM-side levers that published systems use to pass lexical retrieval were tested on the same 200 session questions with Claude Haiku 5.5: HyDE-style rewriting (the question is expanded with the sentence a speaker would have said) and reranking a 20-candidate pool down to K = 5. Both apply equally to BM25 and FidelityMem.
+
+| Recall@5 | none | + rewrite | + rerank | + rewrite + rerank |
+|---|---:|---:|---:|---:|
+| BM25 | 0.830 | 0.818 | 0.830 | 0.808 |
+| FidelityMem (controller) | 0.820 | 0.804 | 0.823 | 0.772 |
+
+Neither helps here. Rewriting hurts both systems: on LoCoMo the question's own words are the best lexical key, and the hypothetical sentence adds words that match the wrong sessions. Reranking is neutral (+0.3 for FidelityMem, 0 for BM25): when the gold session is in the top 20 it is already in the top 5, so a reranker has nothing to recover; the questions that fail are the ones whose evidence BM25 never surfaces at all. The combination is the worst of both. The practical conclusion is that the remaining headroom on conversational retrieval is in the *first-stage* signal (a strong dense model, an LLM extractor for relations and resolved dates), not in query-side or rerank-side LLM calls, which cost about $0.003 per question and 1–2 s of latency for nothing on this data.
+
 ## 6. Limitations and what is not shown
 
 1. **No LLM in the loop.** Ingestion, compression and the benchmark are deterministic. Answer accuracy on LoCoMo or LongMemEval, which needs an LLM reader and judge, is not measured. The protocols are compatible: the same gate and controller apply to an LLM compressor.
