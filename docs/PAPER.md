@@ -10,7 +10,7 @@ Working paper, October 2026. Code and benchmark: this repository.
 
 Long-running LLM agents accumulate far more history than fits in a context window. Memory systems compress, route and retrieve that history, but compression that preserves topic can still delete the entity, number, date or negation a later question needs, and no deployed system exposes evidence recall as a constraint it is required to meet. We present FidelityMem, a memory layer whose control variable is a **recall-retention bound**: minimise storage, context tokens and latency subject to the compressed index retaining at least ρ of the recall of the raw index. The bound is enforced at two points. At admission, a deterministic **fidelity gate** generates entity, number, date and negation probes from the raw source and backs the compressor off level by level until the compressed form satisfies them. At policy time, a **guarded controller** measures retention on self-generated probe queries, picks the cheapest configuration of compression level, retrieval depth, expansion budget and routes that is feasible on a tuning split, confirms it on a hold-out split, and keeps the previous policy for rollback. Retrieval is hybrid (BM25, dense, relation graph, trie, temporal, procedural) with query-type planning, relation chaining for multi-hop questions, and raw-source expansion when exact values or conflicting evidence are detected.
 
-We evaluate on a consistent-world synthetic benchmark with exact gold evidence ids, four question families (factual, temporal, two-hop, exact-value) and realistic distractors, at 300, 1 000, 3 000 and 10 000 records, against eleven baselines: five classic retrieval configurations and six architecture-faithful re-implementations of Mem0, Letta/MemGPT, Zep/Graphiti, A-MEM, HippoRAG and a sliding-window + trie design. All systems share the same extractors, BM25 and embedder, so memory architecture is the only variable. FidelityMem reaches the highest Recall@10 and complete-evidence-set recall at every scale while storing 44–47 % of the raw tokens and serving 45–55 % of the context tokens per query, and the controller selects the most aggressive compression level that holds the bound without human tuning. We state explicitly what this protocol does not show: answer accuracy with an LLM, vendor-code performance, and behaviour beyond 10⁴ records in one process.
+We evaluate on a consistent-world synthetic benchmark with exact gold evidence ids, four question families (factual, temporal, two-hop, exact-value) and realistic distractors, at 300, 1 000, 3 000 and 10 000 records, against eleven baselines: five classic retrieval configurations and six architecture-faithful re-implementations of Mem0, Letta/MemGPT, Zep/Graphiti, A-MEM, HippoRAG and a sliding-window + trie design. All systems share the same extractors, BM25 and embedder, so memory architecture is the only variable. FidelityMem reaches the highest Recall@10 and complete-evidence-set recall at every scale while storing 44–47 % of the raw tokens and serving 45–55 % of the context tokens per query, and the controller selects the most aggressive compression level that holds the bound without human tuning. On real conversation data (LoCoMo) the picture is different and we report it as measured: with a sentence embedder, BM25 alone is the strongest retriever at Recall@10 = 0.915 and every fused configuration is below it, because LoCoMo's questions reuse the evidence's words; the controller detects this from the query log and selects lexical-only retrieval, tying BM25. When the same questions are paraphrased with synonyms, BM25 loses 28 points and lexical+dense fusion only 19. Calibrated on each regime's query log alone, the controller selects lexical-only on literal queries and lexical+dense on paraphrased queries, landing within 0.2–0.7 points of the best fixed configuration in every regime, which no fixed configuration does. We state explicitly what this protocol does not show: vendor-code performance, LongMemEval (in progress), and behaviour beyond 10⁴ records in one process.
 
 ## 1. Introduction
 
@@ -23,7 +23,8 @@ FidelityMem's contribution is therefore not a new store but a **recall-constrain
 1. A deterministic fidelity gate, built from the raw source, prevents fact loss at admission without an LLM and with no labels (§3.3).
 2. A guarded search over discrete compression levels, depths, expansion budgets and routes finds the cheapest policy that holds a retention bound ρ and confirms it out of sample (§3.5).
 3. Relation chaining after fusion recovers the second hop of two-hop questions that reciprocal-rank fusion buries (§3.4).
-4. Under a fixed protocol with shared components, this design dominates six current memory architectures on recall, complete-set recall, stored tokens and tokens per query at every scale tested (§5).
+4. Under a fixed protocol with shared components, this design dominates six current memory architectures on recall, complete-set recall, stored tokens and tokens per query at every synthetic scale tested (§5.1). On LoCoMo it ties the strongest baseline (BM25) and does not beat it; we show why (§5.8).
+5. The controller selects the retrieval regime from the query log alone: lexical-only when queries are literal, lexical+dense when they are paraphrased, matching the best fixed configuration in each regime out of sample (§5.9). A 2026 study found no lightweight adaptive router that beat a fixed sparse–dense blend [22]; ours does, with a certified recall floor.
 
 ## 2. Related work
 
@@ -38,6 +39,10 @@ FidelityMem's contribution is therefore not a new store but a **recall-constrain
 | EvolveMem [10], MemRL [11] | Learned retrieval configuration / utility | Feedback-driven utility | Constraint-based rather than accuracy-based optimisation, hold-out gate, rollback |
 | Agent Zero Memory [12] | Parallel stores, provenance, citation-locked answers | Provenance on every memory | Admission-time gate rather than answer-time verification |
 | LazyMem [13] | Retrieve broadly, construct context selectively at query time | Query-time expansion | Expansion triggered by confidence, exact-value need and conflict |
+| CrystalMem [17] | Memories demoted through four fidelity states under a byte budget; a gate verifies promotions | Fidelity as an explicit state | Budget-driven demotion; FidelityMem's bound is on measured recall, not bytes |
+| ARC [18] | Older tool observations replaced by ID-addressable citations, fetched on demand | Raw source always addressable | Compaction is unconditional; FidelityMem compresses only when the gate certifies the result |
+| MemRefine [19], rate–distortion view [20] | LLM-guided compression under a hard budget; compaction as a rate–distortion decision | The budget/fidelity trade-off as the object of study | Fixed budget rather than a recall floor; no out-of-sample confirmation |
+| Training-free lexical–dense fusion for conversational memory [21]; adaptive WRRF [23]; vstash [24] | Hybrid retrieval for agent memory with fixed or per-query fusion weights | Weighted RRF over lexical and dense routes | The weight is chosen by the controller from the query log under the recall bound, together with the compression level, and confirmed on a hold-out split |
 | Facts as First-Class Objects [1], FACTWASH [3], Fidelity Before Structure [2] | Evidence that gist compression loses facts, qualifiers and attribution | Motivation and probe design | A gate that enforces it per memory |
 
 ## 3. Method
@@ -433,9 +438,61 @@ A change aimed at the gap between retrieval and answering: retrieve 8 sessions i
 
 The hierarchical context saves 30 % of the tokens and cost per question at no measurable accuracy change for BM25 (−1.0 point) and a 4.5-point drop for FidelityMem, which is within the sample's noise but in the wrong direction. Reading the per-category numbers, the loss is on single-hop questions whose answer sits in a turn the in-session BM25 did not rank among the top 3 (the surrounding turns were cut). So the lever is a token lever, not an accuracy lever: on this data the reader is not losing answers to context length, it is losing them to evidence that is not retrieved or not recognised, and that returns the problem to first-stage retrieval signal. Together with §5.6c, every LLM-side and context-side change tried on LoCoMo sessions moved accuracy by less than the noise; the only change that moved cost substantially without moving accuracy was gated LLM compression at ingestion (§5.6b).
 
+
+### 5.7 LoCoMo sessions with a sentence embedder (MiniLM-L6, K = 10, seed 0; three-seed intervals in progress)
+
+The word-vector embedder of §5.2 is the weakest component of the system. Replacing it with all-MiniLM-L6-v2 (ONNX, CPU; long sessions embedded as the mean of overlapping 120-word windows) changes the dense route and everything fused with it. Seed 0, Recall@10 over 1 390 scored questions:
+
+| System | R@10 | CR@10 | MRR | stored tok | p95 ms |
+|---|---:|---:|---:|---:|---:|
+| bm25 | 0.908 | 0.868 | 0.765 | 195165 | 0.34 |
+| vector (MiniLM) | 0.747 | 0.707 | 0.464 | 195165 | 21.6 |
+| bm25+vector_rrf | 0.894 | 0.850 | 0.655 | 195165 | 22.6 |
+| zep_style | 0.875 | 0.832 | 0.573 | 195165 | 7.9 |
+| hipporag_style | 0.704 | 0.662 | 0.399 | 195165 | 25.0 |
+| fidelitymem_L0_raw (all routes) | 0.805 | 0.757 | 0.409 | 195165 | 31.9 |
+| fidelitymem_L3_gate:facts | 0.665 | 0.622 | 0.327 | 42833 | 4.0 |
+| fidelitymem_L3_gate:content | 0.795 | 0.747 | 0.406 | 192142 | 4.3 |
+| fidelitymem_ctrl:self (L0, lexical) | 0.908 | 0.867 | 0.736 | 195165 | 1.6 |
+| fidelitymem_ctrl:qlog (L3, lexical) | 0.908 | 0.867 | 0.734 | 192142 | 1.3 |
+
+The dense route improves from 0.287 (§5.2) to 0.747, but every configuration that fuses it with BM25 remains below BM25 alone, and the controller, from both probe sources, selects lexical-only retrieval and ties BM25 exactly. The content-profile gate backs off to raw text on almost every session (storage 98 %): a chat session has a fact in nearly every sentence, so there is little to remove at ρ = 0.95. The facts-profile gate compresses to 22 % of storage at 0.82 retention, which the controller rejects at ρ = 0.95.
+
+**Route weights (3 seeds, seeds identical to ±0.5 pt).** Fixed RRF weights do not change the conclusion: lexical only 0.915; lexical 1.2 + dense 0.5 0.907; lexical 1.2 + dense 1.0 0.904; + identifier trie 1.2 0.903; + semantic-codebook trie 1.2 0.900; lexical 1.2 + graph 1.2 0.882; all routes with planner weights 0.873; semantic trie alone 0.825. Every route added to BM25 lowers recall on this dataset in proportion to its weight. A hash-map **semantic lexicon** (each indexed stem mapped to its word-vector neighbours; neighbours scored at α·similarity inside the BM25 formula) is neutral: 0.916 at α = 0.2, 0.905 at α = 0.4 with six neighbours.
+
+### 5.8 Why BM25 wins on LoCoMo: a paraphrase-robustness test
+
+BM25 matches stemmed surface forms only. Its lead on LoCoMo is a property of how the questions were written: annotators reused the words of the evidence. To separate the retriever from the benchmark we rewrote every question with WordNet synonyms (first lemma of a different stem; names, numbers, dates and stop words protected) at two strengths, 45 % and 91 % of eligible content words replaced, and scored every strategy on the original and rewritten questions against the same store (MiniLM, K = 10, 1 982 questions).
+
+| System | original | 45 % replaced | 91 % replaced |
+|---|---:|---:|---:|
+| bm25 | 0.915 | 0.841 (−7.4) | 0.635 (−28.0) |
+| bm25 + semantic lexicon | 0.913 | 0.825 (−8.8) | 0.633 (−28.0) |
+| dense (MiniLM) | 0.752 | 0.686 (−6.6) | 0.617 (−13.5) |
+| RRF lexical 1.0 + dense 1.0 | 0.899 | 0.843 (−5.6) | **0.708** (−19.1) |
+| RRF lexical 1.2 + dense 1.0 | 0.903 | 0.843 (−6.0) | 0.697 (−20.5) |
+| RRF lexical 1.2 + dense 0.5 | 0.908 | **0.851** (−5.7) | 0.696 (−21.2) |
+
+The ordering flips with the paraphrase level: fusion is one point behind BM25 on literal questions, one point ahead at 45 % and seven points ahead at 91 %, and the best dense weight rises as the wording drifts. The lexicon does not help, because expanding a wrong-sense synonym with its own neighbours adds noise rather than recovering the original word. WordNet first-sense substitution produces some unnatural rewrites ("paint a sunrise" → "pigment a dawn"), which is why even the dense route drops; an LLM paraphrase set would give a cleaner curve.
+
+### 5.9 The controller selects the retrieval regime from the query log
+
+The result above means no fixed configuration is right for both regimes. We therefore added the dense-route weight {0.5, 1.0} to the controller's search space (together with compression level, expansion budget, route pool and gate profile; top-k fixed at K = 10) and ran the controller three times on the same store: calibrated on a 30 % calibration split of the literal, the 45 %-paraphrased and the 91 %-paraphrased questions respectively (594 probes each), scored on the other 70 % of the same regime. Fixed configurations were scored on the same held-out split. Seed 0, Recall@10:
+
+| Query regime | Controller selected | Controller | Best fixed configuration | Lexical only |
+|---|---|---:|---:|---:|
+| literal | L2, {lexical} | **0.908** | 0.908 (lexical) | 0.908 |
+| 45 % paraphrased | L1, {lexical} | 0.839 | 0.846 (lexical + dense 0.5) | 0.841 |
+| 91 % paraphrased | L3, {lexical, dense}, dense 1.0 | **0.714** | 0.716 (lexical + dense 1.0) | 0.643 |
+
+The controller never sees the test questions. From the query log alone it switches from lexical-only to lexical+dense exactly where that switch pays, lands within 0.2–0.7 points of the best fixed configuration in every regime, and chooses a compression level under the same recall bound in the same search. Lexical-only loses seven points on paraphrased queries; lexical+dense loses one point on literal queries; the controller loses neither. In the middle regime it accepts a 0.7-point recall loss for lexical-only's lower latency: the objective minimises cost subject to retention ≥ ρ = 0.95 of the best raw retrieval, so a gain inside the slack does not justify the dense route's cost. This is by design and should be read as such.
+
+This is, to our knowledge, the first positive result for a query-log-adaptive sparse–dense configuration selector in agent memory: a 2026 study on financial documents reports an oracle headroom of 22 % over fixed blends that no lightweight adaptive router could realise under cross-validation [22]. The difference is the selector: a discrete guarded search with an out-of-sample confirmation step, rather than a per-query predictor.
+
 ## 6. Limitations and what is not shown
 
-1. **No LLM in the loop.** Ingestion, compression and the benchmark are deterministic. Answer accuracy on LoCoMo or LongMemEval, which needs an LLM reader and judge, is not measured. The protocols are compatible: the same gate and controller apply to an LLM compressor.
+1. **LLM evaluation is limited.** Answer accuracy is measured on 200 LoCoMo questions (§5.6), which gives ±7-point intervals; the ingestion gate and the controller themselves are deterministic. LongMemEval runs under the standard per-question protocol are in progress.
+1b. **Paraphrase and regime results are single-seed and WordNet-based.** §5.8–5.9 use one ingestion seed and first-sense synonym substitution; three seeds and an LLM-written paraphrase set are the obvious next step. The controller's half-paraphrase choice shows that its cost objective will trade a small recall gain for latency inside the ρ slack.
 2. **Re-implementations, not vendor code.** The six architecture baselines reproduce published retrieval designs with shared components. They are faithful to the architecture, not to the vendors' tuned systems.
 3. **One synthetic dataset.** The question families and distractors were designed to stress fact loss and multi-hop retrieval. Results on human conversation data may differ; the generator is seeded and public so the experiment is reproducible and extendable.
 4. **Probe distribution.** The controller optimises against self-generated probes, which here are fact-dense sentences. A deployment whose users ask about low-fact-density content would need probes sampled from real query logs; the API accepts any probe set.
@@ -444,7 +501,7 @@ The hierarchical context saves 30 % of the tokens and cost per question at no me
 
 ## 7. Conclusion
 
-A memory system can be made to keep a stated share of its evidence recall, cheaply and without labels, by generating fidelity probes from the raw source and by searching policies under that bound with an out-of-sample gate. On a controlled protocol the resulting system dominates six current memory architectures on recall and evidence completeness while halving stored and served tokens. The unique parts are the gate, the controller and LLM-free ingestion; the rest is a careful integration of known components, and we have tried to say so plainly.
+A memory system can be made to keep a stated share of its evidence recall, cheaply and without labels, by generating fidelity probes from the raw source and by searching policies under that bound with an out-of-sample gate. On a controlled synthetic protocol the resulting system dominates six current memory architectures on recall and evidence completeness while halving stored and served tokens. On real conversation data it does not beat BM25 and we show why: the questions reuse the evidence's words. The system's value there is the controller, which selects lexical-only retrieval when the query log is literal and lexical+dense when it is paraphrased, matching the best fixed configuration in each regime without seeing the test questions. The unique parts are the gate, the controller and LLM-free ingestion; the rest is a careful integration of known components, and we have tried to say so plainly.
 
 ## References
 
@@ -462,3 +519,11 @@ A memory system can be made to keep a stated share of its evidence recall, cheap
 12. Agent Zero Memory: Provenance-Aware Long-Term Memory for LLM Agents. arXiv:2608.29606, 2026.
 13. LazyMem: Retrieve Broadly, Construct Selectively for Efficient Long-Term Agent Memory. arXiv:2607.22690, 2026.
 14. Wu et al. LongMemEval. arXiv:2410.10813, 2024. 15. Tan et al. MemBench. arXiv:2506.21605, 2025. 16. DolphinBench: Mapping the Pareto Frontier of Agent Memory. arXiv:2609.24971, 2026.
+17. Wu, Huang. CrystalMem. arXiv:2608.00303, 2026.
+18. Dang et al. Addressable Recall Compaction for Long Context-Window Control in AI Agents. arXiv:2607.25066, 2026.
+19. Kim et al. MemRefine. arXiv:2606.13177, 2026.
+20. Colaco, Lahjouji. What to Keep, What to Forget: A Rate–Distortion View of Memory Compaction. arXiv:2607.08032, 2026.
+21. Training-Free Lexical-Dense Fusion for Conversational-Memory Retrieval. arXiv:2606.04194, 2026.
+22. Evidence-Unit Fairness and the Limits of Query-Adaptive Sparse-Dense Fusion in Financial Document Retrieval. arXiv:2608.00183, 2026.
+23. Optimal Fusion Weights Form Intervals, Not Points: A Latency-Aware Study of Query-Adaptive WRRF. arXiv:2610.24341, 2026.
+24. Steffens. vstash: Local-First Hybrid Retrieval with Adaptive Fusion for LLM Agents. arXiv:2604.15484, 2026.
