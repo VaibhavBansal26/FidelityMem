@@ -99,14 +99,116 @@ Retention cannot be observed on live queries, so it is measured on **self-genera
 ## 5. Results
 
 <!-- RESULTS:BEGIN -->
-*(tables inserted from `docs/results/scale_k10.json` by `python -m fidelitymem.eval.report`)*
+### 5.1 Synthetic benchmark at 300, 1 000 and 3 000 records (K = 10, 3 seeds, pretrained embedder)
+
+Recall@10 across record counts (the controller row names the levels it chose across seeds):
+
+| System | n=300 | n=1000 | n=3000 |
+|---|---:|---:|---:|
+| fixed_window | 0.038 | 0.005 | 0.012 |
+| bm25 | 0.888 | 0.878 | 0.875 |
+| vector | 0.735 | 0.687 | 0.630 |
+| bm25+vector_rrf | 0.877 | 0.875 | 0.872 |
+| summary_L3+bm25 | 0.855 | 0.853 | 0.850 |
+| window+trie | 0.875 | 0.875 | 0.875 |
+| memgpt_style | 0.705 | 0.658 | 0.605 |
+| mem0_style | 0.850 | 0.842 | 0.825 |
+| zep_style | 0.952 | 0.952 | 0.915 |
+| amem_style | 0.735 | 0.687 | 0.630 |
+| hipporag_style | 1.000 | 1.000 | 1.000 |
+| fidelitymem_L0_raw | 0.998 | 0.995 | 1.000 |
+| fidelitymem_L1_noexpand | 0.998 | 0.995 | 1.000 |
+| fidelitymem_L1_gated | 0.998 | 0.995 | 1.000 |
+| fidelitymem_L2_noexpand | 0.998 | 0.995 | 1.000 |
+| fidelitymem_L2_gated | 0.998 | 0.995 | 1.000 |
+| fidelitymem_L3_noexpand | 0.998 | 0.995 | 1.000 |
+| fidelitymem_L3_gated | 0.998 | 0.995 | 1.000 |
+| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f) | 0.995 | 0.993 | 0.977 |
+
+Stored tokens (index size) across record counts:
+
+| System | n=300 | n=1000 | n=3000 |
+|---|---:|---:|---:|
+| fixed_window | 22687 | 73463 | 219337 |
+| bm25 | 22687 | 73463 | 219337 |
+| vector | 22687 | 73463 | 219337 |
+| bm25+vector_rrf | 22687 | 73463 | 219337 |
+| summary_L3+bm25 | 6850 | 20392 | 58681 |
+| window+trie | 22687 | 73463 | 219337 |
+| memgpt_style | 22687 | 73463 | 219337 |
+| mem0_style | 5302 | 12055 | 28989 |
+| zep_style | 22687 | 73463 | 219337 |
+| amem_style | 22687 | 73463 | 219337 |
+| hipporag_style | 22687 | 73463 | 219337 |
+| fidelitymem_L0_raw | 22687 | 73448 | 219187 |
+| fidelitymem_L1_noexpand | 14730 | 46185 | 135639 |
+| fidelitymem_L1_gated | 14730 | 46185 | 135639 |
+| fidelitymem_L2_noexpand | 10847 | 32159 | 91936 |
+| fidelitymem_L2_gated | 10847 | 32159 | 91936 |
+| fidelitymem_L3_noexpand | 10814 | 32091 | 91703 |
+| fidelitymem_L3_gated | 10814 | 32091 | 91703 |
+| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f) | 10814 | 36718 | 106872 |
+
+Context tokens per query:
+
+| System | n=300 | n=1000 | n=3000 |
+|---|---:|---:|---:|
+| fixed_window | 831 | 719 | 726 |
+| bm25 | 651 | 669 | 677 |
+| vector | 771 | 741 | 719 |
+| bm25+vector_rrf | 741 | 738 | 726 |
+| summary_L3+bm25 | 238 | 239 | 239 |
+| window+trie | 796 | 800 | 817 |
+| memgpt_style | 796 | 754 | 727 |
+| mem0_style | 768 | 763 | 760 |
+| zep_style | 743 | 746 | 766 |
+| amem_style | 771 | 741 | 719 |
+| hipporag_style | 776 | 770 | 817 |
+| fidelitymem_L0_raw | 756 | 763 | 777 |
+| fidelitymem_L1_noexpand | 521 | 520 | 521 |
+| fidelitymem_L1_gated | 554 | 561 | 573 |
+| fidelitymem_L2_noexpand | 407 | 405 | 401 |
+| fidelitymem_L2_gated | 448 | 457 | 468 |
+| fidelitymem_L3_noexpand | 407 | 405 | 401 |
+| fidelitymem_L3_gated | 448 | 457 | 468 |
+| fidelitymem_ctrl (L3/f)/(L1/f/L3/f)/(L1/f/L3/f) | 333 | 374 | 362 |
+
+Full table at 3 000 records (± = 95 % CI over seeds):
+
+| System | R@K | CR@K | MRR | nDCG | tok/q | p50 ms | p95 ms | stored tok | expand | retain |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| fixed_window | 0.012 | 0.010 | 0.004 | 0.006 | 726 | 0.00 | 0.00 | 219337 | 0.00 | - |
+| bm25 | 0.875 | 0.750 | 0.997 | 0.902 | 677 | 0.03 | 0.05 | 219337 | 0.00 | - |
+| vector | 0.630 | 0.560 | 0.459 | 0.476 | 719 | 9.29 | 11.97 | 219337 | 0.00 | - |
+| bm25+vector_rrf | 0.872 | 0.747 | 0.783 | 0.759 | 726 | 8.55 | 13.34 | 219337 | 0.00 | - |
+| summary_L3+bm25 | 0.850 | 0.760 | 0.850 | 0.801 | 239 | 0.02 | 0.04 | 58681 | 0.00 | - |
+| window+trie | 0.875 | 0.750 | 1.000 | 0.903 | 817 | 0.07 | 0.10 | 219337 | 0.00 | - |
+| memgpt_style | 0.605 | 0.533 | 0.182 | 0.276 | 727 | 9.28 | 10.66 | 219337 | 0.00 | - |
+| mem0_style | 0.825 | 0.720 | 0.659 | 0.670 | 760 | 1.73 | 2.00 | 28989 | 0.00 | - |
+| zep_style | 0.915 | 0.830 | 0.943 | 0.883 | 766 | 7.97 | 10.88 | 219337 | 0.00 | - |
+| amem_style | 0.630 | 0.560 | 0.459 | 0.476 | 719 | 7.96 | 13.26 | 219337 | 0.00 | - |
+| hipporag_style | 1.000 | 1.000 | 0.879 | 0.891 | 817 | 9.26 | 15.96 | 219337 | 0.00 | - |
+| fidelitymem_L0_raw | 1.000 | 1.000 | 0.911 | 0.935 | 777 | 12.13 | 28.61 | 219187 | 0.00 | - |
+| fidelitymem_L1_noexpand | 1.000 | 1.000 | 0.958 | 0.969 | 521 | 9.70 | 19.60 | 135639 | 0.00 | 1.000 |
+| fidelitymem_L1_gated | 1.000 | 1.000 | 0.958 | 0.969 | 573 | 9.78 | 20.14 | 135639 | 1.49 | 1.000 |
+| fidelitymem_L2_noexpand | 1.000 | 1.000 | 0.966 | 0.974 | 401 | 9.64 | 19.56 | 91936 | 0.00 | 1.000 |
+| fidelitymem_L2_gated | 1.000 | 1.000 | 0.966 | 0.974 | 468 | 8.77 | 20.79 | 91936 | 1.45 | 1.000 |
+| fidelitymem_L3_noexpand | 1.000 | 1.000 | 0.966 | 0.974 | 401 | 8.76 | 20.76 | 91703 | 0.00 | 1.000 |
+| fidelitymem_L3_gated | 1.000 | 1.000 | 0.966 | 0.974 | 468 | 9.57 | 21.42 | 91703 | 1.45 | 1.000 |
+| fidelitymem_ctrl(L1/f/L3/f) | 0.977 | 0.977 | 0.914 | 0.929 | 362 | 0.32 | 0.46 | 106872 | 0.00 | 0.977 |
+
+Per-level tables for 300 and 1 000 records are in `docs/results/scale_spacy_k10_300-3k.txt`.
+
+### 5.1b 10 000 records
+
+*(pending: three single-seed jobs were running at the time of writing; merged with `python -m fidelitymem.eval.merge scale docs/results/scale_spacy_10k_s*.json --out docs/results/scale_spacy_10k.json`.)*
 <!-- RESULTS:END -->
 
 ### 5.1 Reading the tables
 
-* **Recall at scale.** FidelityMem (all levels and the controller choice) is the only system at 1.0 Recall@10 and complete-set recall across all four record levels. The gap to the strongest architecture baseline (hipporag_style, then zep_style) opens on multi-hop questions as distractors grow, which is the relation-chaining effect: graph adjacency finds the second hop at every scale, but fusion alone stops surfacing it.
-* **Compression without loss.** Levels 2 and 3 store 44–46 % of the raw tokens and serve about half the context tokens per query with retention 1.0 against L0; the gate backed off on roughly one in six episodes (`backoffs` in the run log), which is exactly the set where a gist would have dropped a fact. The lossy `summary_L3+bm25` baseline stores less (≈30 %) and pays for it on exact and temporal questions.
-* **Controller choice.** With no access to the questions, the controller selected L3 with the two cheapest routes at every scale and still met ρ on its hold-out probes; its measured benchmark retention is 1.0. Its latency is the lowest of the FidelityMem rows because it dropped the graph and temporal routes it found unnecessary for the probe distribution — a limitation discussed in §6.
+* **Recall at scale.** FidelityMem holds 0.995–1.000 Recall@10 and complete-set recall at every record level. With a pretrained embedder the HippoRAG-style graph ties it on recall (1.000) at full storage and lower ranking quality (nDCG 0.89–0.94 against 0.97–0.99); Zep-style falls from 0.95 to 0.92 as records grow; BM25 stays at 0.88; Mem0-style at 0.83–0.85. The synthetic benchmark therefore no longer separates FidelityMem from a graph retriever on recall alone, which is a ceiling effect of the benchmark; the separation is on storage, tokens and ranking.
+* **Compression without loss.** Levels 2 and 3 store 42–48 % of the raw tokens and serve about 60 % of the context tokens per query with retention 1.0 against L0; the gate backed off on roughly one in six episodes, which is exactly the set where a gist would have dropped a fact. The lossy `summary_L3+bm25` baseline stores less (≈27 %) and loses 2–4 points of recall with wide variance across seeds.
+* **Controller choice.** With no access to the questions, the controller selected level 3 (one seed level 1) with the facts gate profile and the two cheapest routes at every scale, and its measured benchmark retention is 0.98–1.00. Its latency is the lowest of the FidelityMem rows because it dropped the graph and temporal routes it found unnecessary for the probe distribution; at 3 000 records one seed's cheaper route set cost multi-hop recall (0.977 ±0.063), still above the bound.
 * **Window + trie.** Perfect MRR on exact-value questions and competitive overall recall at small scale, but it is capped at the BM25 ceiling on factual and temporal questions and cannot reach a second hop. This is why the trie is kept as a *route* inside FidelityMem (enabled for exact and code-review queries) rather than as the system.
 * **Mem0-style atomic facts** has the smallest index of the baselines (≈23 % of raw) and loses recall where the atomic sentence is not the one that matches the query phrasing. **MemGPT-style** recall is as good as its vector store but its MRR collapses because the always-present core block occupies the top ranks.
 * **Latency.** FidelityMem's p95 is 1–3 ms higher than single-route baselines at 300–3 000 records and grows linearly with the dense index (a dense matmul in this container's BLAS); the comparison is of architectures, not of index engineering.
