@@ -1,0 +1,11 @@
+system,stage,accuracy,abstention,recall_at_5,tokens_per_query,cost_per_question_usd,single_hop,multi_hop,temporal,open_domain,adversarial
+"BM25, raw text",LLM-judged accuracy,0.645,0.135,0.83,3792,0.02398,0.81,0.382,0.681,0.8,0.4
+FidelityMem (extractive compression),LLM-judged accuracy,0.63,0.145,0.82,3725,0.02365,0.774,0.441,0.702,0.4,0.367
+Zep-style,LLM-judged accuracy,0.48,0.305,0.645,3645,0.02324,0.643,0.265,0.468,0.6,0.267
+"FidelityMem (Claude compression, gated)",LLM-judged accuracy,0.615,0.175,0.814,2858,0.01873,0.786,0.353,0.723,0.8,0.233
+BM25 + rerank,retrieval with LLM steps,,,0.83,3793,,,,,,
+FidelityMem + rerank,retrieval with LLM steps,,,0.823,3777,,,,,,
+BM25 + rewrite,retrieval with LLM steps,,,0.818,3806,,,,,,
+FidelityMem + rewrite,retrieval with LLM steps,,,0.804,3743,,,,,,
+BM25 + rewrite+rerank,retrieval with LLM steps,,,0.808,3830,,,,,,
+FidelityMem + rewrite+rerank,retrieval with LLM steps,,,0.772,3835,,,,,,
