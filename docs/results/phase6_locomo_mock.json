@@ -1,0 +1,84 @@
+{
+ "dataset": "locomo",
+ "granularity": "session",
+ "mode": "mock",
+ "k": 5,
+ "questions": 100,
+ "reader_model": "claude-opus-5-5",
+ "judge_model": "claude-sonnet-5-5",
+ "llm_compress": false,
+ "results": [
+  {
+   "system": "bm25",
+   "questions": 100,
+   "accuracy": 0.26,
+   "abstention_rate": 0.03,
+   "recall@k": 0.859,
+   "tokens_per_query": 3803,
+   "p50_ms": 0.13,
+   "accuracy_by_type": {
+    "adversarial": 0.357,
+    "multi_hop": 0.188,
+    "open_domain": 0.0,
+    "single_hop": 0.395,
+    "temporal": 0.042
+   },
+   "api_tokens": {
+    "reader_in": 0,
+    "reader_out": 0,
+    "judge_in": 0,
+    "judge_out": 0
+   },
+   "estimated_cost_usd": 0.0,
+   "cost_per_question_usd": 0.0
+  },
+  {
+   "system": "fidelitymem",
+   "questions": 100,
+   "accuracy": 0.25,
+   "abstention_rate": 0.02,
+   "recall@k": 0.839,
+   "tokens_per_query": 3739,
+   "p50_ms": 0.55,
+   "accuracy_by_type": {
+    "adversarial": 0.357,
+    "multi_hop": 0.188,
+    "open_domain": 0.0,
+    "single_hop": 0.372,
+    "temporal": 0.042
+   },
+   "api_tokens": {
+    "reader_in": 0,
+    "reader_out": 0,
+    "judge_in": 0,
+    "judge_out": 0
+   },
+   "estimated_cost_usd": 0.0,
+   "cost_per_question_usd": 0.0
+  },
+  {
+   "system": "zep_style",
+   "questions": 100,
+   "accuracy": 0.14,
+   "abstention_rate": 0.01,
+   "recall@k": 0.659,
+   "tokens_per_query": 3604,
+   "p50_ms": 2.57,
+   "accuracy_by_type": {
+    "adversarial": 0.357,
+    "multi_hop": 0.25,
+    "open_domain": 0.0,
+    "single_hop": 0.116,
+    "temporal": 0.0
+   },
+   "api_tokens": {
+    "reader_in": 0,
+    "reader_out": 0,
+    "judge_in": 0,
+    "judge_out": 0
+   },
+   "estimated_cost_usd": 0.0,
+   "cost_per_question_usd": 0.0
+  }
+ ]
+}

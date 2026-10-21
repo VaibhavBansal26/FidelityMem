@@ -100,3 +100,19 @@ def test_adapter_trains_and_separates():
     v = ad.embed([pairs[0][0], pairs[0][1], corpus[-1]])
     assert v.shape == (3, 64) and abs(float((v[0] ** 2).sum()) - 1) < 1e-3
     assert float(v[0] @ v[1]) > float(v[0] @ v[2])
+
+
+def test_phase6_pipeline_with_mock(tmp_path):
+    from fidelitymem.eval.datasets import load_locomo
+    from fidelitymem.eval.phase6 import run
+    from fidelitymem.eval.synthetic import Benchmark, from_real
+    from fidelitymem.llm import ClaudeJudge, ClaudeReader, MockLLM
+
+    p = _locomo_fixture(tmp_path)
+    bench = from_real(load_locomo(p), seed=0, shuffle=False)
+    llm = MockLLM()
+    reader, judge = ClaudeReader(llm), ClaudeJudge(llm)
+    reader.answer = lambda q, ctx: ctx
+    res = run(bench, None, ["bm25"], 2, 0.95, reader, judge, False, log=lambda s: None)
+    s = res[0].summary("claude-opus-5-5", "claude-sonnet-5-5")
+    assert s["questions"] == 3 and 0 <= s["accuracy"] <= 1 and "single_hop" in s["accuracy_by_type"]

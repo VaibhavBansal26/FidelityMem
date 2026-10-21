@@ -61,9 +61,27 @@ discussion, literature review, comparison matrix against current memory
 systems and an explicit statement of what is and is not demonstrated are in
 `docs/DESIGN.md`. The original research concept is `docs/CONCEPT.md`.
 
+## LLM-judged evaluation (Phase 6)
+
+```bash
+# needs ANTHROPIC_API_KEY (or ANTHROPIC_AUTH_TOKEN / `ant auth login`)
+python -m fidelitymem.eval.phase6 --dataset locomo --path data/locomo/locomo10.json \
+    --session-level --questions 300 --k 5 --out docs/results/phase6_locomo.json
+# plumbing check without a credential
+python -m fidelitymem.eval.phase6 --dataset locomo --path data/locomo/locomo10.json --session-level --mock --questions 100
+```
+
+A Claude reader answers each question from the retrieved context, a Claude judge
+scores it, and accuracy is reported per system and per question category beside
+recall, tokens, latency and estimated API cost. `--llm-compress` uses the Claude
+compressor and extractor at FidelityMem ingestion; the fidelity gate applies
+unchanged.
+
 ## Status
 
 Phases 1–5 of the concept roadmap are implemented in-process (retrieval
 baseline, hybrid memory, adaptive window and compression, three-stage
-validation, guarded policy optimisation). Phase 6 (LLM-judged LoCoMo /
-LongMemEval, durable stores, million-memory scale) is not.
+validation, guarded policy optimisation). Phase 6 is implemented end to end
+(LoCoMo and LongMemEval loaders, LLM reader and judge, cost accounting) and
+validated with a mock; the LLM-judged numbers need an API credential. Durable
+stores and million-memory scale are not built.
