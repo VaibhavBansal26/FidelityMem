@@ -117,3 +117,4 @@ fidelitymem_ctrl:qlog(L1/c)  10   0.912   0.875  0.736  0.767     7328    0.83  
 [timing] window_trie: 4.9s
 [timing] memgpt_style: 127.8s
 [timing] mem0_style: 84.4s
+[timing] zep_style: 160.6s
