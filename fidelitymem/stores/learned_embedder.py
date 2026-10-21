@@ -16,6 +16,7 @@ benchmark, and it is saved/loaded as .npz so an experiment can reuse it.
 from __future__ import annotations
 
 import math
+import re
 from collections import Counter
 from dataclasses import dataclass, field
 
@@ -77,9 +78,16 @@ class SpacyTokenVectors:
         self._cache: dict[str, np.ndarray | None] = {}
 
     def vector_of(self, tok: str):
+        """Vector for a token; an identifier without one ("billing-api", "ledger_core",
+        "v2.1") takes the mean of its sub-token vectors so entity names are not lost."""
         if tok not in self._cache:
             lex = self._nlp.vocab[tok]
-            self._cache[tok] = lex.vector.astype(np.float32) if lex.has_vector else None
+            if lex.has_vector:
+                self._cache[tok] = lex.vector.astype(np.float32)
+            else:
+                parts = [p for p in re.split(r"[-_./:]+", tok) if p]
+                vecs = [self._nlp.vocab[p].vector for p in parts if self._nlp.vocab[p].has_vector]
+                self._cache[tok] = np.mean(np.stack(vecs), axis=0).astype(np.float32) if vecs else None
         return self._cache[tok]
 
 
