@@ -199,6 +199,166 @@ LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (qu
 LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (query log),single hop,0.934
 LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (query log),open domain,0.558
 LoCoMo sessions · adapted embedder (leak-free split),FidelityMem controller (query log),multi hop,0.542
+LoCoMo sessions · MiniLM sentence embedder,BM25,adversarial,0.968
+LoCoMo sessions · MiniLM sentence embedder,BM25,single hop,0.979
+LoCoMo sessions · MiniLM sentence embedder,BM25,multi hop,0.683
+LoCoMo sessions · MiniLM sentence embedder,BM25,temporal,0.942
+LoCoMo sessions · MiniLM sentence embedder,BM25,open domain,0.663
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,adversarial,0.81
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,single hop,0.83
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,multi hop,0.376
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,temporal,0.765
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,open domain,0.426
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,adversarial,0.541
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,single hop,0.556
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,multi hop,0.468
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,temporal,0.572
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,open domain,0.413
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,adversarial,0.927
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,single hop,0.946
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,multi hop,0.672
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,temporal,0.883
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,open domain,0.721
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,adversarial,0.743
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,single hop,0.743
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,multi hop,0.545
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,temporal,0.69
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,open domain,0.621
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),adversarial,0.871
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),single hop,0.887
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),multi hop,0.632
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),temporal,0.733
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),open domain,0.664
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),adversarial,0.873
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),single hop,0.896
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),multi hop,0.608
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),temporal,0.902
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),open domain,0.611
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),adversarial,0.968
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),single hop,0.978
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),multi hop,0.686
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),temporal,0.935
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),open domain,0.657
+LoCoMo sessions · MiniLM sentence embedder,BM25,temporal,0.937
+LoCoMo sessions · MiniLM sentence embedder,BM25,single hop,0.98
+LoCoMo sessions · MiniLM sentence embedder,BM25,multi hop,0.659
+LoCoMo sessions · MiniLM sentence embedder,BM25,adversarial,0.969
+LoCoMo sessions · MiniLM sentence embedder,BM25,open domain,0.645
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,temporal,0.762
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,single hop,0.834
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,multi hop,0.367
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,adversarial,0.823
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,open domain,0.453
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,temporal,0.574
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,single hop,0.563
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,multi hop,0.46
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,adversarial,0.548
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,open domain,0.408
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,temporal,0.864
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,single hop,0.937
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,multi hop,0.647
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,adversarial,0.935
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,open domain,0.703
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,temporal,0.672
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,single hop,0.751
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,multi hop,0.533
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,adversarial,0.789
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,open domain,0.631
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),temporal,0.733
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),single hop,0.863
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),multi hop,0.614
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),adversarial,0.871
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),open domain,0.664
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),temporal,0.934
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),single hop,0.981
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),multi hop,0.657
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),adversarial,0.969
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),open domain,0.645
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),temporal,0.934
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),single hop,0.98
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),multi hop,0.66
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),adversarial,0.969
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),open domain,0.638
+LoCoMo sessions · MiniLM sentence embedder,BM25,open domain,0.654
+LoCoMo sessions · MiniLM sentence embedder,BM25,temporal,0.931
+LoCoMo sessions · MiniLM sentence embedder,BM25,adversarial,0.968
+LoCoMo sessions · MiniLM sentence embedder,BM25,single hop,0.979
+LoCoMo sessions · MiniLM sentence embedder,BM25,multi hop,0.684
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,open domain,0.388
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,temporal,0.752
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,adversarial,0.819
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,single hop,0.834
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,multi hop,0.359
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,open domain,0.436
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,temporal,0.581
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,adversarial,0.558
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,single hop,0.561
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,multi hop,0.45
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,open domain,0.733
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,temporal,0.885
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,adversarial,0.923
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,single hop,0.951
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,multi hop,0.678
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,open domain,0.663
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,temporal,0.688
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,adversarial,0.742
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,single hop,0.736
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,multi hop,0.536
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),open domain,0.647
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),temporal,0.727
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),adversarial,0.871
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),single hop,0.905
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),multi hop,0.614
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),open domain,0.646
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),temporal,0.924
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),adversarial,0.968
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),single hop,0.979
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),multi hop,0.693
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),open domain,0.646
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),temporal,0.924
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),adversarial,0.968
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),single hop,0.979
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),multi hop,0.693
+LoCoMo sessions · MiniLM sentence embedder,BM25,adversarial,0.968
+LoCoMo sessions · MiniLM sentence embedder,BM25,single hop,0.977
+LoCoMo sessions · MiniLM sentence embedder,BM25,multi hop,0.707
+LoCoMo sessions · MiniLM sentence embedder,BM25,temporal,0.957
+LoCoMo sessions · MiniLM sentence embedder,BM25,open domain,0.688
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,adversarial,0.788
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,single hop,0.82
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,multi hop,0.402
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,temporal,0.782
+LoCoMo sessions · MiniLM sentence embedder,Window + trie,open domain,0.437
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,adversarial,0.516
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,single hop,0.544
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,multi hop,0.493
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,temporal,0.561
+LoCoMo sessions · MiniLM sentence embedder,Mem0-style,open domain,0.396
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,adversarial,0.924
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,single hop,0.95
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,multi hop,0.692
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,temporal,0.901
+LoCoMo sessions · MiniLM sentence embedder,Zep-style,open domain,0.727
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,adversarial,0.699
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,single hop,0.742
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,multi hop,0.565
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,temporal,0.71
+LoCoMo sessions · MiniLM sentence embedder,HippoRAG-style,open domain,0.57
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),adversarial,0.87
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),single hop,0.893
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),multi hop,0.667
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),temporal,0.739
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem raw (L0),open domain,0.68
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),adversarial,0.68
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),single hop,0.728
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),multi hop,0.474
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),temporal,0.849
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (self-probes),open domain,0.542
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),adversarial,0.968
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),single hop,0.975
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),multi hop,0.706
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),temporal,0.948
+LoCoMo sessions · MiniLM sentence embedder,FidelityMem controller (query log),open domain,0.688
 LoCoMo turns,BM25,adversarial,0.569
 LoCoMo turns,BM25,open domain,0.294
 LoCoMo turns,BM25,single hop,0.637

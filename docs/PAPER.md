@@ -439,24 +439,24 @@ A change aimed at the gap between retrieval and answering: retrieve 8 sessions i
 The hierarchical context saves 30 % of the tokens and cost per question at no measurable accuracy change for BM25 (−1.0 point) and a 4.5-point drop for FidelityMem, which is within the sample's noise but in the wrong direction. Reading the per-category numbers, the loss is on single-hop questions whose answer sits in a turn the in-session BM25 did not rank among the top 3 (the surrounding turns were cut). So the lever is a token lever, not an accuracy lever: on this data the reader is not losing answers to context length, it is losing them to evidence that is not retrieved or not recognised, and that returns the problem to first-stage retrieval signal. Together with §5.6c, every LLM-side and context-side change tried on LoCoMo sessions moved accuracy by less than the noise; the only change that moved cost substantially without moving accuracy was gated LLM compression at ingestion (§5.6b).
 
 
-### 5.7 LoCoMo sessions with a sentence embedder (MiniLM-L6, K = 10, seed 0; three-seed intervals in progress)
+### 5.7 LoCoMo sessions with a sentence embedder (MiniLM-L6, K = 10, 3 seeds, ± = 95 % CI)
 
-The word-vector embedder of §5.2 is the weakest component of the system. Replacing it with all-MiniLM-L6-v2 (ONNX, CPU; long sessions embedded as the mean of overlapping 120-word windows) changes the dense route and everything fused with it. Seed 0, Recall@10 over 1 390 scored questions:
+The word-vector embedder of §5.2 is the weakest component of the system. Replacing it with all-MiniLM-L6-v2 (ONNX, CPU; long sessions embedded as the mean of overlapping 120-word windows) changes the dense route and everything fused with it. Recall@10 over 1 390 scored questions per seed:
 
 | System | R@10 | CR@10 | MRR | stored tok | p95 ms |
 |---|---:|---:|---:|---:|---:|
-| bm25 | 0.908 | 0.868 | 0.765 | 195165 | 0.34 |
-| vector (MiniLM) | 0.747 | 0.707 | 0.464 | 195165 | 21.6 |
-| bm25+vector_rrf | 0.894 | 0.850 | 0.655 | 195165 | 22.6 |
-| zep_style | 0.875 | 0.832 | 0.573 | 195165 | 7.9 |
-| hipporag_style | 0.704 | 0.662 | 0.399 | 195165 | 25.0 |
-| fidelitymem_L0_raw (all routes) | 0.805 | 0.757 | 0.409 | 195165 | 31.9 |
-| fidelitymem_L3_gate:facts | 0.665 | 0.622 | 0.327 | 42833 | 4.0 |
-| fidelitymem_L3_gate:content | 0.795 | 0.747 | 0.406 | 192142 | 4.3 |
-| fidelitymem_ctrl:self (L0, lexical) | 0.908 | 0.867 | 0.736 | 195165 | 1.6 |
-| fidelitymem_ctrl:qlog (L3, lexical) | 0.908 | 0.867 | 0.734 | 192142 | 1.3 |
+| bm25 | 0.914 ±0.016 | 0.876 | 0.770 | 195165 | 0.30 |
+| vector (MiniLM) | 0.751 ±0.008 | 0.711 | 0.467 | 195165 | 5.2 |
+| bm25+vector_rrf | 0.899 ±0.012 | 0.855 | 0.658 | 195165 | 5.6 |
+| zep_style | 0.882 ±0.024 | 0.841 | 0.597 | 195165 | 7.2 |
+| hipporag_style | 0.700 ±0.019 | 0.656 | 0.396 | 195165 | 7.6 |
+| fidelitymem_L0_raw (all routes) | 0.811 ±0.032 | 0.768 | 0.412 | 195165 | 9.6 |
+| fidelitymem_L3_gate:facts | 0.668 ±0.030 | 0.625 | 0.327 | 42667 | 3.7 |
+| fidelitymem_L3_gate:content | 0.804 ±0.029 | 0.760 | 0.410 | 192142 | 3.8 |
+| fidelitymem_ctrl:qlog (L1–L3, lexical) | 0.913 ±0.014 | 0.874 | 0.736 | 192142 | 1.3 |
+| fidelitymem_ctrl:self | 0.838 ±0.313 | 0.798 | 0.648 | 142000 | 1.3 |
 
-The dense route improves from 0.287 (§5.2) to 0.747, but every configuration that fuses it with BM25 remains below BM25 alone, and the controller, from both probe sources, selects lexical-only retrieval and ties BM25 exactly. The content-profile gate backs off to raw text on almost every session (storage 98 %): a chat session has a fact in nearly every sentence, so there is little to remove at ρ = 0.95. The facts-profile gate compresses to 22 % of storage at 0.82 retention, which the controller rejects at ρ = 0.95.
+The dense route improves from 0.287 (§5.2) to 0.751, but every configuration that fuses it with BM25 remains below BM25 alone. The query-log controller selects lexical-only retrieval on every seed (at L1, L3 and L3) and ties BM25 (0.913 vs 0.914). The self-probe controller is not reliable on this data: on two seeds it also selects lexical-only and scores 0.908–0.912, but on the third it accepts level-2 facts-profile compression (22 % storage) that satisfies its self-generated fact probes while losing 22 points on the real questions (0.692). Self-probes are fact-dense sentence fragments; LoCoMo questions ask about activities and opinions that the facts profile discards. This is the case for calibrating on a query log, and it is why §5.9 uses one. The content-profile gate backs off to raw text on almost every session (storage 98 %): a chat session has a fact in nearly every sentence, so there is little to remove at ρ = 0.95. The facts-profile gate compresses to 22 % of storage at 0.82 retention, which the controller rejects at ρ = 0.95.
 
 **Route weights (3 seeds, seeds identical to ±0.5 pt).** Fixed RRF weights do not change the conclusion: lexical only 0.915; lexical 1.2 + dense 0.5 0.907; lexical 1.2 + dense 1.0 0.904; + identifier trie 1.2 0.903; + semantic-codebook trie 1.2 0.900; lexical 1.2 + graph 1.2 0.882; all routes with planner weights 0.873; semantic trie alone 0.825. Every route added to BM25 lowers recall on this dataset in proportion to its weight. A hash-map **semantic lexicon** (each indexed stem mapped to its word-vector neighbours; neighbours scored at α·similarity inside the BM25 formula) is neutral: 0.916 at α = 0.2, 0.905 at α = 0.4 with six neighbours.
 

@@ -140,6 +140,74 @@ LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per
 LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem L3 no gate,FidelityMem,0.371,0.055,0.339,0.246,13.4,2339,2.37
 LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem controller (self-probes),FidelityMem,0.851,0.015,0.81,0.73,99.5,3694,0.58
 LoCoMo sessions · adapted embedder (leak-free split),272,5,adapted (trained per seed),FidelityMem controller (query log),FidelityMem,0.849,0.014,0.807,0.729,98.5,3651,0.64
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Fixed window,Classic baseline,0.032,0.006,0.025,0.012,100.0,6694,0.0
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,BM25,Classic baseline,0.914,0.016,0.876,0.77,100.0,7425,0.3
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Dense,Classic baseline,0.751,0.008,0.711,0.467,100.0,7304,5.19
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,BM25 + dense RRF,Classic baseline,0.899,0.012,0.855,0.658,100.0,7451,5.58
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Lossy summary + BM25,Classic baseline,0.538,0.021,0.498,0.355,13.4,977,0.15
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Window + trie,Memory-system architecture,0.732,0.005,0.694,0.573,100.0,7448,0.32
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,MemGPT-style,Memory-system architecture,0.702,0.0,0.659,0.191,100.0,7148,5.16
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Mem0-style,Memory-system architecture,0.536,0.021,0.493,0.322,13.9,7573,23.75
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Zep-style,Memory-system architecture,0.882,0.024,0.841,0.597,100.0,7395,7.15
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,A-MEM-style,Memory-system architecture,0.751,0.008,0.711,0.467,100.0,7304,5.73
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,HippoRAG-style,Memory-system architecture,0.7,0.019,0.656,0.396,100.0,7224,7.63
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem raw (L0),FidelityMem,0.811,0.032,0.768,0.412,100.0,7507,9.57
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L3 gated (facts),FidelityMem,0.668,0.03,0.625,0.327,21.9,2221,3.74
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L2 gated (content),FidelityMem,0.804,0.029,0.76,0.41,98.5,7438,4.22
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L3 no gate,FidelityMem,0.55,0.012,0.505,0.262,13.4,2993,3.7
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem controller (self-probes),FidelityMem,0.838,0.313,0.798,0.648,73.4,5474,1.24
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem controller (query log),FidelityMem,0.913,0.014,0.874,0.736,98.5,7310,1.3
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Fixed window,Classic baseline,0.034,0,0.026,0.015,100.0,7108,0.0
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,BM25,Classic baseline,0.908,0,0.868,0.765,100.0,7408,0.32
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Dense,Classic baseline,0.747,0,0.707,0.464,100.0,7292,5.32
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,BM25 + dense RRF,Classic baseline,0.894,0,0.85,0.655,100.0,7427,5.69
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Lossy summary + BM25,Classic baseline,0.548,0,0.505,0.363,13.4,979,0.15
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Window + trie,Memory-system architecture,0.735,0,0.696,0.567,100.0,7386,0.33
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,MemGPT-style,Memory-system architecture,0.702,0,0.659,0.193,100.0,7201,5.24
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Mem0-style,Memory-system architecture,0.539,0,0.496,0.317,13.9,7589,23.72
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Zep-style,Memory-system architecture,0.872,0,0.831,0.603,100.0,7343,7.39
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,A-MEM-style,Memory-system architecture,0.747,0,0.707,0.464,100.0,7292,4.93
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,HippoRAG-style,Memory-system architecture,0.709,0,0.666,0.407,100.0,7141,8.48
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem raw (L0),FidelityMem,0.797,0,0.751,0.405,100.0,7519,9.41
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L3 gated (facts),FidelityMem,0.663,0,0.618,0.327,21.9,2213,3.82
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L2 gated (content),FidelityMem,0.79,0,0.744,0.402,98.5,7446,4.48
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L3 no gate,FidelityMem,0.549,0,0.504,0.262,13.4,3033,3.96
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem controller (self-probes),FidelityMem,0.908,0,0.867,0.736,100.0,7420,1.2
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem controller (query log),FidelityMem,0.908,0,0.867,0.734,98.5,7294,1.16
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Fixed window,Classic baseline,0.03,0,0.023,0.012,100.0,6717,0.0
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,BM25,Classic baseline,0.913,0,0.875,0.77,100.0,7442,0.26
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Dense,Classic baseline,0.752,0,0.711,0.465,100.0,7316,5.18
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,BM25 + dense RRF,Classic baseline,0.898,0,0.854,0.656,100.0,7462,5.41
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Lossy summary + BM25,Classic baseline,0.533,0,0.494,0.353,13.4,979,0.14
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Window + trie,Memory-system architecture,0.731,0,0.692,0.584,100.0,7459,0.32
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,MemGPT-style,Memory-system architecture,0.703,0,0.661,0.191,100.0,7155,5.04
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Mem0-style,Memory-system architecture,0.543,0,0.499,0.333,13.9,7560,23.76
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Zep-style,Memory-system architecture,0.885,0,0.845,0.602,100.0,7411,7.24
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,A-MEM-style,Memory-system architecture,0.752,0,0.711,0.465,100.0,7316,5.15
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,HippoRAG-style,Memory-system architecture,0.698,0,0.655,0.39,100.0,7238,7.19
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem raw (L0),FidelityMem,0.815,0,0.774,0.415,100.0,7485,9.65
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L3 gated (facts),FidelityMem,0.659,0,0.615,0.328,21.9,2214,3.75
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L2 gated (content),FidelityMem,0.808,0,0.767,0.414,98.5,7412,4.14
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L3 no gate,FidelityMem,0.546,0,0.503,0.262,13.4,2950,3.35
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem controller (self-probes),FidelityMem,0.912,0,0.875,0.736,98.5,7352,1.17
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem controller (query log),FidelityMem,0.912,0,0.875,0.736,98.5,7328,1.48
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Fixed window,Classic baseline,0.031,0,0.026,0.01,100.0,6256,0.0
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,BM25,Classic baseline,0.921,0,0.883,0.775,100.0,7425,0.32
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Dense,Classic baseline,0.754,0,0.715,0.472,100.0,7305,5.08
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,BM25 + dense RRF,Classic baseline,0.904,0,0.862,0.661,100.0,7465,5.65
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Lossy summary + BM25,Classic baseline,0.533,0,0.495,0.349,13.4,973,0.16
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Window + trie,Memory-system architecture,0.731,0,0.693,0.569,100.0,7500,0.33
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,MemGPT-style,Memory-system architecture,0.702,0,0.659,0.19,100.0,7090,5.21
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Mem0-style,Memory-system architecture,0.526,0,0.485,0.317,13.9,7569,23.76
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,Zep-style,Memory-system architecture,0.89,0,0.849,0.585,100.0,7431,6.81
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,A-MEM-style,Memory-system architecture,0.754,0,0.715,0.472,100.0,7305,7.11
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,HippoRAG-style,Memory-system architecture,0.695,0,0.648,0.39,100.0,7293,7.23
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem raw (L0),FidelityMem,0.822,0,0.779,0.416,100.0,7517,9.64
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L3 gated (facts),FidelityMem,0.682,0,0.642,0.327,21.9,2235,3.65
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L2 gated (content),FidelityMem,0.813,0,0.769,0.413,98.5,7455,4.05
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem L3 no gate,FidelityMem,0.556,0,0.509,0.262,13.4,2995,3.8
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem controller (self-probes),FidelityMem,0.692,0,0.651,0.474,21.9,1648,1.35
+LoCoMo sessions · MiniLM sentence embedder,272,10,MiniLM-L6 sentence embedder,FidelityMem controller (query log),FidelityMem,0.919,0,0.881,0.738,98.5,7309,1.25
 LoCoMo turns,5882,10,pretrained word vectors,Fixed window,Classic baseline,0.001,0.003,0.001,0.0,100.0,423,0.0
 LoCoMo turns,5882,10,pretrained word vectors,BM25,Classic baseline,0.558,0.014,0.515,0.409,100.0,452,2.6
 LoCoMo turns,5882,10,pretrained word vectors,Dense,Classic baseline,0.216,0.009,0.196,0.132,100.0,584,10.64

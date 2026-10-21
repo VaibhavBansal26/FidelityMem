@@ -67,7 +67,8 @@ def export(results_dir: Path, out_dir: Path) -> tuple[int, int]:
         if "aggregate" not in rep:
             continue
         gran = rep.get("granularity", "turn")
-        emb = "adapted (trained per seed)" if "adapted" in rep.get("embedder", "") else "pretrained word vectors"
+        e = rep.get("embedder", "")
+        emb = "adapted (trained per seed)" if "adapted" in e else ("MiniLM-L6 sentence embedder" if e.startswith(("onnx", "st:")) else "pretrained word vectors")
         stem = path.stem  # e.g. locomo_session_adapted_v2
         variant = ""
         if emb.startswith("adapted"):
@@ -80,6 +81,8 @@ def export(results_dir: Path, out_dir: Path) -> tuple[int, int]:
                 variant += " (leak-free split)"
             else:
                 variant += ", first run"
+        if emb.startswith("MiniLM"):
+            variant = " · MiniLM sentence embedder"
         name = f"LoCoMo {'sessions' if gran == 'session' else 'turns'}" + variant
         raw = next((r["storage_tokens"] for r in rep["aggregate"] if r["system"] == "fidelitymem_L0_raw"), 1)
         rows += [_row(name, rep["episodes"], r, raw, emb) for r in rep["aggregate"] if _keep(r["system"])]
