@@ -399,7 +399,15 @@ A second run with the Claude compressor and extractor at FidelityMem ingestion (
 
 ### 5.6b Phase 6 with LLM compression at ingestion
 
-*(pending at the time of writing: the run was ingesting 272 sessions through the Claude compressor, roughly 800 calls, before answering its 200 questions.)*
+The same evaluation with the Claude compressor and extractor at FidelityMem ingestion (`--llm-compress`; 272 sessions, about 800 Opus compression calls, 57 minutes). The gate applies to the LLM's summaries exactly as to extractive ones. The controller, calibrated on the query-log split, selected level 2 under the *facts* profile, where with extractive compression it had selected level 3 under the content profile (which stores 98 % of the raw text): LLM summaries pass the fact probes while removing far more text.
+
+| FidelityMem ingestion | accuracy | abstention | Recall@5 | tokens/q | accuracy: single-hop / multi-hop / temporal / open-domain / adversarial | API cost / question |
+|---|---:|---:|---:|---:|---|---:|
+| extractive (level 3, content) | 0.630 | 0.145 | 0.820 | 3 725 | 0.77 / 0.44 / 0.70 / 0.40 / 0.37 | $0.0237 |
+| Claude compressor (level 2, facts) | 0.615 | 0.175 | 0.814 | 2858 | 0.79 / 0.35 / 0.72 / 0.80 / 0.23 | $0.0187 |
+| BM25, raw text | 0.645 | 0.135 | 0.830 | 3 792 | 0.81 / 0.38 / 0.68 / 0.80 / 0.40 | $0.0240 |
+
+This is the first configuration in which compression pays on conversational data: 23 % fewer context tokens and 21 % lower reading cost per question, with accuracy 1.5 points below the extractive run and 3 below BM25, both inside the 200-question noise. Recall@5 is unchanged (0.814 vs 0.820), so the accuracy difference, if real, comes from what the summaries omit rather than from retrieval; the per-category profile is flat except open-domain, which has five questions. The one-off ingestion cost (about $3.5 at list prices for 272 sessions) is recovered after roughly 700 questions at the per-question saving.
 
 ## 6. Limitations and what is not shown
 

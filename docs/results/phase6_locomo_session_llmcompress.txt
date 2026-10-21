@@ -1,0 +1,10 @@
+phase6 dataset=locomo granularity=session questions=200 calib=594 K=5 mode=claude embedder=spacy:en_core_web_md
+[phase6] fidelitymem controller: {'version': 1, 'config': {'compression_level': 2, 'top_k': 5, 'expand_budget': 0, 'routes': ('lexical',), 'gate_profile': 'facts'}, 'rejected_candidates': 0}
+[phase6] fidelitymem: built in 3401s
+[phase6] fidelitymem: accuracy=0.615 recall@5=0.814 tokens/q=2858
+
+| System | accuracy | abstain | recall@K | tokens/q | p50 ms | est. cost / q |
+|---|---:|---:|---:|---:|---:|---:|
+| fidelitymem | 0.615 | 0.175 | 0.814 | 2858 | 0.82 | $0.0187 |
+  fidelitymem by type: {'adversarial': 0.233, 'multi_hop': 0.353, 'open_domain': 0.8, 'single_hop': 0.786, 'temporal': 0.723}
+DONE

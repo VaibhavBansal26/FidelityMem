@@ -1,0 +1,36 @@
+{
+ "dataset": "locomo",
+ "granularity": "session",
+ "mode": "claude",
+ "k": 5,
+ "questions": 200,
+ "reader_model": "claude-opus-5-5",
+ "judge_model": "claude-sonnet-5-5",
+ "llm_compress": true,
+ "results": [
+  {
+   "system": "fidelitymem",
+   "questions": 200,
+   "accuracy": 0.615,
+   "abstention_rate": 0.175,
+   "recall@k": 0.814,
+   "tokens_per_query": 2858,
+   "p50_ms": 0.82,
+   "accuracy_by_type": {
+    "adversarial": 0.233,
+    "multi_hop": 0.353,
+    "open_domain": 0.8,
+    "single_hop": 0.786,
+    "temporal": 0.723
+   },
+   "api_tokens": {
+    "reader_in": 799006,
+    "reader_out": 15605,
+    "judge_in": 39695,
+    "judge_out": 15857
+   },
+   "estimated_cost_usd": 3.7461,
+   "cost_per_question_usd": 0.01873
+  }
+ ]
+}
