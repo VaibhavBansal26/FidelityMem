@@ -65,3 +65,18 @@ fidelitymem_ctrl:qlog(L3/c)  10   0.908   0.867  0.734  0.764     7294    0.94  
 [timing] zep_style: 54.5s
 [timing] amem_style: 51.4s
 [timing] hipporag_style: 53.9s
+[timing] fidelitymem_L0_raw: 14.6s
+[timing] recompress L1/facts: 32.7s
+[timing] fidelitymem_L1_gate:facts: 6.7s
+[timing] recompress L2/facts: 0.7s
+[timing] fidelitymem_L2_gate:facts: 4.7s
+[timing] recompress L3/facts: 4.9s
+[timing] fidelitymem_L3_gate:facts: 4.6s
+[timing] recompress L1/content: 4.9s
+[timing] fidelitymem_L1_gate:content: 6.7s
+[timing] recompress L2/content: 4.8s
+[timing] fidelitymem_L2_gate:content: 4.2s
+[timing] recompress L3/content: 5.7s
+[timing] fidelitymem_L3_gate:content: 4.3s
+[timing] controller:self: 278.0s
+[controller:self] {'version': 1, 'config': {'compression_level': 2, 'top_k': 10, 'expand_budget': 2, 'routes': ('lexical',), 'gate_profile': 'content'}, 'rejected_candidates': 3}

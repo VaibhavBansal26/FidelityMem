@@ -160,6 +160,8 @@ class FidelityMem:
         self.lexical.add(mem.id, mem.compressed_text)
         self.vector.add(mem.id, mem.compressed_text)
         self.trie.add(mem.id, mem.compressed_text)
+        if self.retriever.semantic_trie is not None:
+            self.retriever.semantic_trie.add(mem.id, mem.compressed_text)
         self.graph.add_memory(mem.id, mem.entities, mem.relations)
 
     def _supersede(self, old_id: str, new_id: str, at: datetime) -> None:
@@ -171,8 +173,26 @@ class FidelityMem:
             self.lexical.remove(old_id)
             self.vector.remove(old_id)
             self.trie.remove(old_id)
+            if self.retriever.semantic_trie is not None:
+                self.retriever.semantic_trie.remove(old_id)
             self.graph.remove_memory(old_id)
             self.telemetry.superseded += 1
+
+    def enable_semantic_trie(self, word_embedder=None, n_codes: int = 2000, seed: int = 0) -> None:
+        """Attach the semantic-codebook trie as a retrieval route ("semantic_trie"). The codebook
+        is fitted on the words of the memories stored so far; later memories reuse it."""
+        from .stores.semantic_trie import SemanticCodebook, SemanticTrie
+
+        if word_embedder is None:
+            from .stores.embedders import SpacyVectorEmbedder
+
+            word_embedder = SpacyVectorEmbedder()
+        cb = SemanticCodebook(word_embedder, n_codes=n_codes, seed=seed).fit([m.compressed_text for m in self.memories.values()])
+        st = SemanticTrie(cb)
+        for mid, m in self.memories.items():
+            if m.active:
+                st.add(mid, m.compressed_text)
+        self.retriever.semantic_trie = st
 
     def forget(self, memory_id: str) -> bool:
         """User-requested forgetting: remove derived memory and raw episode text."""
@@ -183,6 +203,8 @@ class FidelityMem:
         self.lexical.remove(memory_id)
         self.vector.remove(memory_id)
         self.trie.remove(memory_id)
+        if self.retriever.semantic_trie is not None:
+            self.retriever.semantic_trie.remove(memory_id)
         self.graph.remove_memory(memory_id)
         self.probes.pop(memory_id, None)
         self.archive._items.pop(m.episode_id, None)
@@ -209,6 +231,9 @@ class FidelityMem:
                     self.lexical.add(mem.id, text)
                     self.vector.add(mem.id, text)
                     self.trie.add(mem.id, text)
+                    if self.retriever.semantic_trie is not None:
+                        self.retriever.semantic_trie.remove(mem.id)
+                        self.retriever.semantic_trie.add(mem.id, text)
                 n += 1
         return n
 
@@ -297,6 +322,9 @@ class FidelityMem:
                 self.lexical.add(mid, t)
                 self.vector.add(mid, t)
                 self.trie.add(mid, t)
+                if self.retriever.semantic_trie is not None:
+                    self.retriever.semantic_trie.remove(mid)
+                    self.retriever.semantic_trie.add(mid, t)
         return Measurement(cfg, r_raw, r_c, (r_c / r_raw) if r_raw > 0 else 1.0, contradiction_rate, toks, lat, stored / raw_tokens, 1 - prec)
 
     def optimise(self, n_probes: int = 120, seed: int = 0, probes: list[ProbeQuery] | None = None) -> Measurement | None:

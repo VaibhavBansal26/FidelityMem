@@ -128,6 +128,19 @@ class SemanticTrie:
             self._code_docs[c].add(doc_id)
         node.ids.add(doc_id)
 
+    def remove(self, doc_id: str) -> None:
+        seq = self._seq.pop(doc_id, None)
+        if seq is None:
+            return
+        for c in set(seq):
+            self._code_docs[c].discard(doc_id)
+        node = self.root
+        for c in seq:
+            node = node.children.get(c)
+            if node is None:
+                return
+        node.ids.discard(doc_id)
+
     def decode(self, doc_id: str) -> str:
         return " ".join(self.cb.decode_token(c) for c in self._seq.get(doc_id, []))
 

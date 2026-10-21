@@ -26,6 +26,7 @@ class RetrievalStats:
 class HybridRetriever:
     def __init__(self, memories: dict[str, Memory], archive: ArchivalStore, lexical: BM25Index, vector: VectorIndex, graph: GraphStore, trie: TrieIndex | None = None):
         self.trie = trie
+        self.semantic_trie = None  # optional SemanticTrie (stores.semantic_trie), attached by the facade
         self.memories = memories
         self.archive = archive
         self.lexical = lexical
@@ -61,6 +62,10 @@ class HybridRetriever:
             return self.vector.search(query, k, None if allowed is self.active else allowed)
         if route == "trie":
             return self.trie.search(query, k, allowed) if self.trie is not None else []
+        if route == "semantic_trie":
+            if self.semantic_trie is None:
+                return []
+            return [(i, sc) for i, sc in self.semantic_trie.search(query, k * 4) if i in allowed][:k]
         if route == "graph":
             known = self.graph.known_entities()
             seeds: dict[str, float] = {}

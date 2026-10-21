@@ -30,6 +30,7 @@ class MemoryPolicy(BaseModel):
     gamma_tokens: float = 1.0
     delta_noise: float = 0.5
     lambda_recall: float = 1.0  # cost charged per unit of recall retention lost, even inside the bound
+    route_weights: dict[str, float] = Field(default_factory=dict)  # fixed RRF weights per route; override the planner's query-type weights
 
     def mode_defaults(self) -> dict:
         if self.mode == Mode.FAST:

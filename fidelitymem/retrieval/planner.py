@@ -79,6 +79,7 @@ def plan_for(query: str, policy: MemoryPolicy, overrides: dict | None = None) ->
         w["procedural"] = 0.8
         w["trie"] = 1.2
         boost = {"procedural": 0.1, "semantic": 0.05, "episodic": 0.05}
+    w.update(policy.route_weights)  # user-fixed weights win over the query-type heuristics
     routes = sorted(pool)
     top_k = d["top_k"]
     expand = d["expand_budget"]
