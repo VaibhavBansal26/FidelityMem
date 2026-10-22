@@ -40,3 +40,41 @@ rrf+hub sessions only        10   0.446   0.413  0.102  0.178      463    0.88  
 rrf+hub days only            10   0.446   0.413  0.102  0.178      463    0.61    0.78     20421   0.00     -  
 
 ### LoCoMo sessions: episodes=19 questions=199 pool=50 K=10
+embedded 19 episodes in 4s
+  bm25                         R@10=0.935 MRR=0.790 nDCG=0.817 p95=0.0ms  adversarial=1.00 multi_hop=0.82 open_domain=0.71 single_hop=0.97 temporal=0.95
+  rrf lex+dense                R@10=0.948 MRR=0.642 nDCG=0.710 p95=7.1ms  adversarial=1.00 multi_hop=0.74 open_domain=0.91 single_hop=1.00 temporal=0.97
+  rrf lex1.2+dense0.5          R@10=0.952 MRR=0.720 nDCG=0.772 p95=0.1ms  adversarial=1.00 multi_hop=0.82 open_domain=0.85 single_hop=1.00 temporal=0.95
+  bm25+hub(a0.3,b0.0)          R@10=0.922 MRR=0.789 nDCG=0.811 p95=0.9ms  adversarial=1.00 multi_hop=0.76 open_domain=0.65 single_hop=0.97 temporal=0.95
+  rrf+hub(a0.3,b0.0)           R@10=0.859 MRR=0.455 nDCG=0.540 p95=2.0ms  adversarial=0.96 multi_hop=0.63 open_domain=0.83 single_hop=0.97 temporal=0.73
+  bm25+hub(a0.3,b0.3)          R@10=0.921 MRR=0.789 nDCG=0.811 p95=3.7ms  adversarial=1.00 multi_hop=0.76 open_domain=0.65 single_hop=0.97 temporal=0.95
+  rrf+hub(a0.3,b0.3)           R@10=0.857 MRR=0.458 nDCG=0.542 p95=4.1ms  adversarial=0.96 multi_hop=0.62 open_domain=0.83 single_hop=0.96 temporal=0.76
+  bm25+hub(a0.5,b0.0)          R@10=0.914 MRR=0.772 nDCG=0.799 p95=0.9ms  adversarial=1.00 multi_hop=0.75 open_domain=0.65 single_hop=0.96 temporal=0.95
+  rrf+hub(a0.5,b0.0)           R@10=0.775 MRR=0.348 nDCG=0.438 p95=2.1ms  adversarial=0.91 multi_hop=0.58 open_domain=0.74 single_hop=0.89 temporal=0.57
+  bm25+hub(a0.5,b0.3)          R@10=0.913 MRR=0.777 nDCG=0.801 p95=3.5ms  adversarial=1.00 multi_hop=0.74 open_domain=0.65 single_hop=0.96 temporal=0.95
+  rrf+hub(a0.5,b0.3)           R@10=0.770 MRR=0.346 nDCG=0.433 p95=3.6ms  adversarial=0.89 multi_hop=0.58 open_domain=0.74 single_hop=0.89 temporal=0.57
+  bm25+hub(a0.7,b0.0)          R@10=0.913 MRR=0.729 nDCG=0.766 p95=1.2ms  adversarial=1.00 multi_hop=0.74 open_domain=0.65 single_hop=0.96 temporal=0.95
+  rrf+hub(a0.7,b0.0)           R@10=0.724 MRR=0.273 nDCG=0.370 p95=1.2ms  adversarial=0.85 multi_hop=0.55 open_domain=0.65 single_hop=0.83 temporal=0.54
+  bm25+hub(a0.7,b0.3)          R@10=0.913 MRR=0.734 nDCG=0.770 p95=2.1ms  adversarial=1.00 multi_hop=0.74 open_domain=0.65 single_hop=0.96 temporal=0.95
+  rrf+hub(a0.7,b0.3)           R@10=0.685 MRR=0.259 nDCG=0.350 p95=3.7ms  adversarial=0.83 multi_hop=0.52 open_domain=0.56 single_hop=0.76 temporal=0.54
+  rrf+hub entities only        R@10=0.746 MRR=0.322 nDCG=0.410 p95=2.8ms  adversarial=0.89 multi_hop=0.56 open_domain=0.56 single_hop=0.87 temporal=0.54
+  rrf+hub sessions only        R@10=0.948 MRR=0.642 nDCG=0.710 p95=0.2ms  adversarial=1.00 multi_hop=0.74 open_domain=0.91 single_hop=1.00 temporal=0.97
+  rrf+hub days only            R@10=0.948 MRR=0.642 nDCG=0.710 p95=0.3ms  adversarial=1.00 multi_hop=0.74 open_domain=0.91 single_hop=1.00 temporal=0.97
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+bm25                         10   0.935   0.909  0.790  0.817     7612    0.02    0.05     15644   0.00     -  
+rrf lex+dense                10   0.948   0.924  0.642  0.710     8463    3.79    7.09     15644   0.00     -  
+rrf lex1.2+dense0.5          10   0.952   0.929  0.720  0.772     8419    0.07    0.12     15644   0.00     -  
+bm25+hub(a0.3,b0.0)          10   0.922   0.893  0.789  0.811     7828    0.84    0.92     15644   0.00     -  
+rrf+hub(a0.3,b0.0)           10   0.859   0.812  0.455  0.540     8807    1.07    1.99     15644   0.00     -  
+bm25+hub(a0.3,b0.3)          10   0.921   0.893  0.789  0.811     7867    1.94    3.65     15644   0.00     -  
+rrf+hub(a0.3,b0.3)           10   0.857   0.807  0.458  0.542     8879    2.22    4.09     15644   0.00     -  
+bm25+hub(a0.5,b0.0)          10   0.914   0.888  0.772  0.799     7859    0.83    0.89     15644   0.00     -  
+rrf+hub(a0.5,b0.0)           10   0.775   0.721  0.348  0.438     8773    1.04    2.12     15644   0.00     -  
+bm25+hub(a0.5,b0.3)          10   0.913   0.888  0.777  0.801     7905    1.93    3.50     15644   0.00     -  
+rrf+hub(a0.5,b0.3)           10   0.770   0.716  0.346  0.433     8851    2.25    3.56     15644   0.00     -  
+bm25+hub(a0.7,b0.0)          10   0.913   0.888  0.729  0.766     7872    0.84    1.21     15644   0.00     -  
+rrf+hub(a0.7,b0.0)           10   0.724   0.670  0.273  0.370     8762    1.03    1.20     15644   0.00     -  
+bm25+hub(a0.7,b0.3)          10   0.913   0.888  0.734  0.770     7918    1.93    2.13     15644   0.00     -  
+rrf+hub(a0.7,b0.3)           10   0.685   0.629  0.259  0.350     8926    2.30    3.69     15644   0.00     -  
+rrf+hub entities only        10   0.746   0.690  0.322  0.410     8880    1.63    2.78     15644   0.00     -  
+rrf+hub sessions only        10   0.948   0.924  0.642  0.710     8463    0.17    0.21     15644   0.00     -  
+rrf+hub days only            10   0.948   0.924  0.642  0.710     8463    0.24    0.29     15644   0.00     -  
