@@ -1,0 +1,42 @@
+
+### LoCoMo turns: episodes=419 questions=199 pool=50 K=10
+embedded 419 episodes in 5s
+  bm25                         R@10=0.617 MRR=0.419 nDCG=0.461 p95=0.3ms  adversarial=0.65 multi_hop=0.34 open_domain=0.32 single_hop=0.65 temporal=0.84
+  rrf lex+dense                R@10=0.593 MRR=0.384 nDCG=0.425 p95=7.1ms  adversarial=0.61 multi_hop=0.33 open_domain=0.23 single_hop=0.63 temporal=0.84
+  rrf lex1.2+dense0.5          R@10=0.626 MRR=0.398 nDCG=0.443 p95=0.5ms  adversarial=0.67 multi_hop=0.33 open_domain=0.27 single_hop=0.64 temporal=0.89
+  bm25+hub(a0.3,b0.0)          R@10=0.636 MRR=0.412 nDCG=0.457 p95=1.7ms  adversarial=0.71 multi_hop=0.30 open_domain=0.32 single_hop=0.68 temporal=0.84
+  rrf+hub(a0.3,b0.0)           R@10=0.558 MRR=0.333 nDCG=0.381 p95=1.5ms  adversarial=0.59 multi_hop=0.35 open_domain=0.23 single_hop=0.55 temporal=0.81
+  bm25+hub(a0.3,b0.3)          R@10=0.636 MRR=0.423 nDCG=0.465 p95=1.7ms  adversarial=0.71 multi_hop=0.29 open_domain=0.32 single_hop=0.68 temporal=0.84
+  rrf+hub(a0.3,b0.3)           R@10=0.580 MRR=0.341 nDCG=0.393 p95=2.2ms  adversarial=0.63 multi_hop=0.33 open_domain=0.23 single_hop=0.58 temporal=0.84
+  bm25+hub(a0.5,b0.0)          R@10=0.596 MRR=0.364 nDCG=0.409 p95=1.1ms  adversarial=0.65 multi_hop=0.28 open_domain=0.27 single_hop=0.64 temporal=0.81
+  rrf+hub(a0.5,b0.0)           R@10=0.568 MRR=0.246 nDCG=0.317 p95=1.5ms  adversarial=0.56 multi_hop=0.33 open_domain=0.36 single_hop=0.56 temporal=0.84
+  bm25+hub(a0.5,b0.3)          R@10=0.606 MRR=0.386 nDCG=0.429 p95=1.7ms  adversarial=0.65 multi_hop=0.30 open_domain=0.32 single_hop=0.65 temporal=0.81
+  rrf+hub(a0.5,b0.3)           R@10=0.581 MRR=0.274 nDCG=0.341 p95=2.2ms  adversarial=0.59 multi_hop=0.35 open_domain=0.36 single_hop=0.58 temporal=0.84
+  bm25+hub(a0.7,b0.0)          R@10=0.533 MRR=0.266 nDCG=0.322 p95=1.1ms  adversarial=0.59 multi_hop=0.24 open_domain=0.27 single_hop=0.56 temporal=0.73
+  rrf+hub(a0.7,b0.0)           R@10=0.431 MRR=0.136 nDCG=0.202 p95=1.5ms  adversarial=0.43 multi_hop=0.27 open_domain=0.23 single_hop=0.44 temporal=0.62
+  bm25+hub(a0.7,b0.3)          R@10=0.547 MRR=0.271 nDCG=0.330 p95=1.7ms  adversarial=0.59 multi_hop=0.27 open_domain=0.27 single_hop=0.56 temporal=0.78
+  rrf+hub(a0.7,b0.3)           R@10=0.444 MRR=0.162 nDCG=0.225 p95=2.3ms  adversarial=0.40 multi_hop=0.27 open_domain=0.18 single_hop=0.46 temporal=0.68
+  rrf+hub entities only        R@10=0.584 MRR=0.306 nDCG=0.365 p95=1.5ms  adversarial=0.63 multi_hop=0.35 open_domain=0.32 single_hop=0.56 temporal=0.84
+  rrf+hub sessions only        R@10=0.446 MRR=0.102 nDCG=0.178 p95=1.3ms  adversarial=0.44 multi_hop=0.24 open_domain=0.18 single_hop=0.44 temporal=0.73
+  rrf+hub days only            R@10=0.446 MRR=0.102 nDCG=0.178 p95=0.8ms  adversarial=0.44 multi_hop=0.24 open_domain=0.18 single_hop=0.44 temporal=0.73
+system                        K     R@K    CR@K    MRR   nDCG    tok/q   p50ms   p95ms   storage expand  retain
+bm25                         10   0.617   0.582  0.419  0.461      470    0.17    0.28     20421   0.00     -  
+rrf lex+dense                10   0.593   0.556  0.384  0.425      445    3.60    7.08     20421   0.00     -  
+rrf lex1.2+dense0.5          10   0.626   0.587  0.398  0.443      456    0.29    0.46     20421   0.00     -  
+bm25+hub(a0.3,b0.0)          10   0.636   0.602  0.412  0.457      488    1.00    1.65     20421   0.00     -  
+rrf+hub(a0.3,b0.0)           10   0.558   0.520  0.333  0.381      459    1.25    1.54     20421   0.00     -  
+bm25+hub(a0.3,b0.3)          10   0.636   0.602  0.423  0.465      487    1.49    1.69     20421   0.00     -  
+rrf+hub(a0.3,b0.3)           10   0.580   0.546  0.341  0.393      461    1.84    2.16     20421   0.00     -  
+bm25+hub(a0.5,b0.0)          10   0.596   0.556  0.364  0.409      510    0.99    1.14     20421   0.00     -  
+rrf+hub(a0.5,b0.0)           10   0.568   0.526  0.246  0.317      485    1.25    1.48     20421   0.00     -  
+bm25+hub(a0.5,b0.3)          10   0.606   0.571  0.386  0.429      510    1.49    1.70     20421   0.00     -  
+rrf+hub(a0.5,b0.3)           10   0.581   0.536  0.274  0.341      486    1.89    2.16     20421   0.00     -  
+bm25+hub(a0.7,b0.0)          10   0.533   0.495  0.266  0.322      518    0.99    1.15     20421   0.00     -  
+rrf+hub(a0.7,b0.0)           10   0.431   0.393  0.136  0.202      493    1.26    1.54     20421   0.00     -  
+bm25+hub(a0.7,b0.3)          10   0.547   0.505  0.271  0.330      521    1.53    1.75     20421   0.00     -  
+rrf+hub(a0.7,b0.3)           10   0.444   0.408  0.162  0.225      500    1.92    2.28     20421   0.00     -  
+rrf+hub entities only        10   0.584   0.546  0.306  0.365      501    1.10    1.49     20421   0.00     -  
+rrf+hub sessions only        10   0.446   0.413  0.102  0.178      463    0.88    1.26     20421   0.00     -  
+rrf+hub days only            10   0.446   0.413  0.102  0.178      463    0.61    0.78     20421   0.00     -  
+
+### LoCoMo sessions: episodes=19 questions=199 pool=50 K=10
